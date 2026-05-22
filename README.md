@@ -240,26 +240,26 @@ The original 9 idols who launched the academy in 2024, plus 4 additions through 
 
 ### Original 9 (Launch — May 2024)
 
-| # | Name (English) | Japanese | Theme Color | Motif | Personality (one line) |
-|---|----------------|----------|-------------|-------|------------------------|
-| 1 | Saki Hanami    | 花海咲季   | Red/Pink    | Lion 🦁 | Hyper-competitive athlete, top entrance-exam scorer |
-| 2 | Temari Tsukimura | 月村手毬 | Purple/Navy | Wolf 🐺 | Former middle-school idol, cool exterior / secretly lazy |
-| 3 | Kotone Fujita  | 藤田ことね | Yellow/Gold | Cat 🐱 | Money-loving, fan-praise-driven |
-| 4 | Lilja Katsuragi | 葛城リーリヤ | Light Blue  | Snowflake ❄️ | Swedish exchange student, shy but iron-willed |
-| 5 | Sumika Shiun   | 紫雲清夏   | Green       | Star 🌟 | Cheerful ex-ballerina hiding a knee injury |
-| 6 | Hiro Shinosawa | 篠澤広     | Dark Red    | Moon 🌙 | Eccentric genius, already a university graduate |
-| 7 | Mao Arimura    | 有村麻央   | Royal Purple | Rose 🌹 | Princely 3rd-year, idol dorm leader |
-| 8 | China Kuramoto | 倉本千奈   | Pink        | Diamond 💎 | Sheltered heiress, genuinely earnest |
-| 9 | Rinami Himesaki | 姫崎莉波 | Peach/Cream | Clipboard 📋 | 3rd-year student council secretary, sisterly type |
+| # | Name (English) | Japanese | Theme Color | Personality (one line) |
+|---|----------------|----------|-------------|------------------------|
+| 1 | Saki Hanami    | 花海咲季   | Red/Pink    | Hyper-competitive athlete, top entrance-exam scorer |
+| 2 | Temari Tsukimura | 月村手毬 | Purple/Navy | Former middle-school idol, cool exterior / secretly lazy |
+| 3 | Kotone Fujita  | 藤田ことね | Yellow/Gold | Money-loving, fan-praise-driven |
+| 4 | Lilja Katsuragi | 葛城リーリヤ | Light Blue  | Swedish exchange student, shy but iron-willed |
+| 5 | Sumika Shiun   | 紫雲清夏   | Green       | Cheerful ex-ballerina hiding a knee injury |
+| 6 | Hiro Shinosawa | 篠澤広     | Dark Red    | Eccentric genius, already a university graduate |
+| 7 | Mao Arimura    | 有村麻央   | Royal Purple | Princely 3rd-year, idol dorm leader |
+| 8 | China Kuramoto | 倉本千奈   | Pink        | Sheltered heiress, genuinely earnest |
+| 9 | Rinami Himesaki | 姫崎莉波 | Peach/Cream | 3rd-year student council secretary, sisterly type |
 
 ### New Additions (2024–2025)
 
 | # | Name (English) | Japanese | Theme Color | Implemented | Personality (one line) |
 |---|----------------|----------|-------------|-------------|------------------------|
-| 10 | Ume Hanami    | 花海佑芽   | Coral Orange 🍑 | Nov 2024 | Saki's younger sister; energetic athlete, looks up to her sister as both idol and rival |
-| 11 | Sena Juo      | 十王星南   | Star Gold ⭐  | 2025     | Academy No. 1 idol, the genuine "star" everyone is chasing |
-| 12 | Misuzu Hataya | 秦谷美鈴   | Moonlit Blue 🌙 | May 2025 | Outwardly serene, inwardly arrogant; former *SyngUp!* member alongside Temari |
-| 13 | Tsubame Amaya | 雨夜燕    | Swallow Navy 🐦 | Nov 2025 | Student council vice president; Academy No. 2; childhood friend & self-declared rival of Sena |
+| 10 | Ume Hanami    | 花海佑芽   | Coral Orange | Nov 2024 | Saki's younger sister; energetic athlete, looks up to her sister as both idol and rival |
+| 11 | Sena Juo      | 十王星南   | Star Gold | 2025     | Academy No. 1 idol, the genuine "star" everyone is chasing |
+| 12 | Misuzu Hataya | 秦谷美鈴   | Moonlit Blue | May 2025 | Outwardly serene, inwardly arrogant; former *SyngUp!* member alongside Temari |
+| 13 | Tsubame Amaya | 雨夜燕    | Swallow Navy | Nov 2025 | Student council vice president; Academy No. 2; childhood friend & self-declared rival of Sena |
 
 > 📚 For authentic character dialogue, personality logic, and quotes, **always check the latest Japanese sources** (Pixiv百科事典, ニコニコ大百科, note.com, Game8, AppMedia, and the official site at https://gakuen.idolmaster-official.jp/). The game continues to receive updates, and older English wiki summaries may be out of date.
 
