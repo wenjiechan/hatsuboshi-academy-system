@@ -21,7 +21,6 @@ The Gakumas theme is a creative wrapper — under the hood this is a solid, secu
 - [Database Schema](#-database-schema-overview)
 - [Theming](#-theming)
 - [Security](#-security)
-- [Demo Accounts](#-demo-accounts)
 - [Roadmap](#-roadmap)
 - [Credits & References](#-credits--references)
 - [License](#-license)
@@ -87,7 +86,7 @@ The Gakumas theme is a creative wrapper — under the hood this is a solid, secu
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Yuki8006/gakumas-sms.git
+git clone https://github.com/wenjiechan/hatsuboshi-academy-system.git
 cd gakumas-sms
 ```
 
@@ -334,20 +333,6 @@ This project takes security seriously — graders look for it, and habits formed
 - ✅ Server-side input validation with `filter_var()` and whitelists
 - ✅ File upload checks: extension whitelist, MIME type verification, size limit, randomized filenames
 - ✅ Role + ownership verification on every protected resource (a student can never read another student's messages by guessing IDs)
-
----
-
-## 👤 Demo Accounts
-
-After importing the sample data, these accounts are available for testing:
-
-| Role     | Username        | Password   |
-|----------|-----------------|------------|
-| Producer | `producer_demo` | `demo1234` |
-| Teacher  | `teacher_demo`  | `demo1234` |
-| Student  | `saki_demo`     | `demo1234` |
-
-> ⚠️ **Change these passwords before deploying anywhere public.** They exist purely for grading and demoing.
 
 ---
 

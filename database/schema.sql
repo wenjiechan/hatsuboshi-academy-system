@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2026 at 10:31 AM
+-- Generation Time: May 22, 2026 at 10:52 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -110,8 +110,10 @@ CREATE TABLE `notifications` (
 CREATE TABLE `producer_messages` (
   `id` int(11) DEFAULT NULL,
   `producer_id` int(11) NOT NULL,
-  `body` text NOT NULL,
-  `to_student` varchar(50) NOT NULL
+  `tone` varchar(20) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `message_type` varchar(50) NOT NULL,
+  `message_text` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
