@@ -1,0 +1,40 @@
+# ============================================
+# OS-generated files
+# ============================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================
+# Editor / IDE files
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ============================================
+# User-uploaded content (data, not code)
+# Keep the folder structure via .gitkeep,
+# but ignore actual uploaded files.
+# ============================================
+uploads/profiles/*
+!uploads/profiles/.gitkeep
+
+# ============================================
+# Logs and runtime files
+# ============================================
+*.log
+logs/
+error_log
+php_errorlog
+
+# ============================================
+# Temporary / cache / backup files
+# ============================================
+*.tmp
+*.cache
+*.bak
+cache/
+tmp/
