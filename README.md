@@ -36,6 +36,7 @@ The Gakumas theme is a creative wrapper — under the hood this is a solid, secu
 - 📅 **Schedule system** — weekly/monthly calendar view via FullCalendar.js
 - 📊 **Stat tracking** — Vocal, Dance, Visual with history
 - 💬 **User-to-user messaging** — inbox, sent, compose, reply, soft-delete
+- 🎵 **Song list** — each idol maintains a personal repertoire; songs can be solo or shared between unit members
 - 🔔 **Notification center** — bell icon with unread badge
 
 ### Enhanced
@@ -267,23 +268,37 @@ The original 9 idols who launched the academy in 2024, plus 4 additions through 
 
 ## 🗄 Database Schema (Overview)
 
-Core tables:
+Core tables (see `database/schema.sql` for full DDL):
 
-- **`users`** — authentication for all roles (producer, teacher, student)
-- **`students`** — idol profile, stats (vocal/dance/visual), rank, theme color
-- **`teachers`** — teacher profile with specialty
-- **`schedules`** — calendar entries linked to a student
-- **`lessons`** — lesson catalog (type, stat gain, stamina cost)
-- **`stat_history`** — append-only log of stat changes
-- **`events`** — auditions, concerts, photoshoots with stat requirements
-- **`event_participants`** — many-to-many join with results
-- **`messages`** — user-to-user messages with read tracking & soft delete
-- **`notifications`** — in-app notification feed
-- **`producer_messages`** — pre-written personality-based message pool
+- **`users`** — authentication for all roles (producer, teacher, student). Username is unique; passwords stored as bcrypt hashes via `password_hash()`.
+- **`teachers`** — teacher profile linked 1-to-1 to a user, with specialty (vocal/dance/visual).
+- **`students`** — idol profile: bilingual name (English + Japanese), birthday, blood type, height, hometown, school year, rank, vocal/dance/visual stats, bio, theme color, and assigned producer.
+- **`schedules`** — calendar entries linked to a student: activity type, title, date, start/end time, location, status (scheduled/completed/cancelled).
+- **`lessons`** — lesson catalog: type (vocal/dance/visual), stat gain, description.
+- **`songs`** — catalog of songs in the academy's repertoire: title, artist, duration, release date, notes, lyrics URL. Songs are shared resources — the same song can be linked to one student (solo) or many students (units/duets).
+- **`student_songs`** — many-to-many join between students and songs. Students can add songs to their own list; producers and teachers can add songs to any student's list. A `UNIQUE(student_id, song_id)` constraint prevents duplicate entries.
+- **`stat_history`** — append-only log of every stat change (old value, new value, reason, timestamp).
+- **`events`** — auditions, concerts, and photoshoots with stat requirements per discipline.
+- **`event_participants`** — many-to-many join between events and students, with a `result` field (1st/2nd/3rd/etc.). A student can only be entered into the same event once.
+- **`messages`** — user-to-user messages with read tracking, soft delete per side, and threaded replies via `parent_message_id`.
+- **`notifications`** — in-app notification feed with type, title, body, and read state.
+- **`producer_messages`** — pre-written personality-based message pool, indexed by student + message type for fast random selection.
 
-See `database/schema.sql` for the full DDL with foreign keys and indexes.
+### Referential integrity
 
-> 💡 Use `ON DELETE SET NULL` rather than `CASCADE` for historical tables so you don't lose stat/lesson history when a student is removed.
+The schema uses foreign keys throughout with carefully chosen `ON DELETE` rules:
+
+- **`CASCADE`** where the child record can't exist without its parent — e.g., deleting a `user` drops their `student`/`teacher` profile, deleting a `student` drops their `schedules` and `event_participants`.
+- **`SET NULL`** for history-preserving tables — `stat_history`, `messages.sender_id`/`receiver_id`, `schedules.created_by`, and `students.producer_id` keep their rows even after the referenced user is deleted, so historical records aren't lost.
+
+### Indexes
+
+In addition to primary and unique keys, common query patterns have dedicated indexes:
+
+- `messages (receiver_id, is_read, is_deleted_by_receiver)` — fast unread inbox counts
+- `schedules (student_id, date)` — fast calendar lookups per student
+- `notifications (user_id, is_read)` — fast unread badge counts
+- `producer_messages (student_id, message_type)` — fast random message selection
 
 ---
 
