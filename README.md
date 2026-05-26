@@ -141,7 +141,7 @@ chmod -R 755 uploads/
 
 ### 7. Launch
 
-Visit `http://localhost/gakumas_sms/` and log in with one of the [demo accounts](#-demo-accounts).
+Visit `http://localhost/gakumas-sms/` and log in with one of the [demo accounts](#-demo-accounts).
 
 ---
 
