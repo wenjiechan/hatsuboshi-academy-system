@@ -21,6 +21,7 @@ The Gakumas theme is a creative wrapper — under the hood this is a solid, secu
 - [Database Schema](#-database-schema-overview)
 - [Theming](#-theming)
 - [Security](#-security)
+- [Default Account](#-default-account)
 - [Roadmap](#-roadmap)
 - [Credits & References](#-credits--references)
 - [License](#-license)
@@ -348,6 +349,44 @@ This project takes security seriously — graders look for it, and habits formed
 - ✅ Server-side input validation with `filter_var()` and whitelists
 - ✅ File upload checks: extension whitelist, MIME type verification, size limit, randomized filenames
 - ✅ Role + ownership verification on every protected resource (a student can never read another student's messages by guessing IDs)
+
+---
+
+## 👤 Demo Accounts
+
+17 accounts are seeded by default: 1 producer, 3 teachers, and 13 idol students.
+
+### Producer
+
+| Id | Username | Password    | Role     |
+|----|----------|-------------|----------|
+| 1  | Producer | producer001 | producer |
+
+### Teacher
+
+| Id | Username      | Password  | Role    |
+|----|---------------|-----------|---------|
+| 2  | Vocal Trainer  | vocal001  | teacher |
+| 3  | Dance Trainer  | dance001  | teacher |
+| 4  | Visual Trainer | visual001 | teacher |
+
+### Student
+
+| Id | Username         | Japanese     | Password    | Role    |
+|----|------------------|--------------|-------------|---------|
+| 5  | Saki Hanami      | 花海咲季     | saki0402    | student |
+| 6  | Temari Tsukimura | 月村手毬     | temari0603  | student |
+| 7  | Kotone Fujita    | 藤田ことね   | kotone0429  | student |
+| 8  | Lilja Katsuragi  | 葛城リーリヤ | lilja0724   | student |
+| 9  | Sumika Shiun     | 紫雲清夏     | sumika1111  | student |
+| 10 | Hiro Shinosawa   | 篠澤広       | hiro1221    | student |
+| 11 | Mao Arimura      | 有村麻央     | mao0118     | student |
+| 12 | China Kuramoto   | 倉本千奈     | china0801   | student |
+| 13 | Rinami Himesaki  | 姫崎莉波     | rinami0305  | student |
+| 14 | Ume Hanami       | 花海佑芽     | ume0401     | student |
+| 15 | Sena Juo         | 十王星南     | sena1207    | student |
+| 16 | Misuzu Hataya    | 秦谷美鈴     | misuzu0206  | student |
+| 17 | Tsubame Amaya    | 雨夜燕       | tsubame0520 | student |
 
 ---
 
