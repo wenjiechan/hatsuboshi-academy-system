@@ -100,7 +100,7 @@ For XAMPP, drop the folder into `htdocs/`. For Laragon, into `www/`.
 Open phpMyAdmin (or your MySQL client of choice) and run:
 
 ```sql
-CREATE DATABASE hatsuboshi_gakuen
+CREATE DATABASE gakumas-sms
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 ```
@@ -108,8 +108,8 @@ CREATE DATABASE hatsuboshi_gakuen
 ### 4. Import the schema and seed data
 
 ```bash
-mysql -u root -p hatsuboshi_gakuen < database/schema.sql
-mysql -u root -p hatsuboshi_gakuen < database/sample_data.sql
+mysql -u root -p gakumas-sms < database/schema.sql
+mysql -u root -p gakumas-sms < database/sample_data.sql
 ```
 
 The sample data populates **13 idols**, a few sample teachers, one producer, and example schedule entries.
@@ -122,7 +122,7 @@ The default `config/database.php` is set up for a standard XAMPP/Laragon install
 <?php
 return [
     'host'     => 'localhost',
-    'dbname'   => 'hatsuboshi_gakuen',
+    'dbname'   => 'gakumas-sms',
     'username' => 'root',
     'password' => '',
     'charset'  => 'utf8mb4',
