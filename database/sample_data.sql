@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 26, 2026 at 07:34 AM
+-- Generation Time: May 26, 2026 at 08:47 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -268,7 +268,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`
 (2, 'Vocal Trainer', 'vocal001', 'teacher', NULL, 1, '2026-05-26 13:11:33', '2026-05-26 13:16:21', NULL),
 (3, 'Dance Trainer', 'dance001', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-05-26 13:16:30', NULL),
 (4, 'Visual Trainer', 'visual001', 'teacher', NULL, 1, '2026-05-26 13:12:30', '2026-05-26 13:16:40', NULL),
-(5, 'Saki Hanami', 'hanamisaki0402', 'student', NULL, 1, '2026-05-26 13:13:13', '2026-05-26 13:13:13', NULL);
+(5, 'Saki Hanami', 'saki0402', 'student', NULL, 1, '2026-05-26 13:13:13', '2026-05-26 14:45:18', NULL),
+(6, 'Temari Tsukimura', 'temari0603', 'student', NULL, 1, '2026-05-26 13:13:13', '2026-05-26 14:45:18', NULL);
 
 --
 -- Indexes for dumped tables
@@ -469,7 +470,7 @@ ALTER TABLE `teachers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables

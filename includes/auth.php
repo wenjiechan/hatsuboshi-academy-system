@@ -38,4 +38,4 @@ function verify_csrf(string $submitted): void {     // Check whether the submitt
         exit('Invalid CSRF token');
     }
 }
-?>
+

@@ -21,7 +21,7 @@ The Gakumas theme is a creative wrapper — under the hood this is a solid, secu
 - [Database Schema](#-database-schema-overview)
 - [Theming](#-theming)
 - [Security](#-security)
-- [Default Account](#-default-account)
+- [Demo Accounts](#-demo-accounts)
 - [Roadmap](#-roadmap)
 - [Credits & References](#-credits--references)
 - [License](#-license)
@@ -117,11 +117,11 @@ The sample data populates **13 idols**, a few sample teachers, one producer, and
 
 ### 5. Configure the database connection (if needed)
 
-The default `config/database.php` is set up for a standard XAMPP/Laragon install:
+The default `config/database.php` is set up for a standard XAMPP/Laragon install. It builds a ready-to-use `$pdo` instance from the config array below:
 
 ```php
 <?php
-return [
+$db_config = [
     'host'     => 'localhost',
     'dbname'   => 'gakumas_sms',
     'username' => 'root',
@@ -364,8 +364,8 @@ This project takes security seriously — graders look for it, and habits formed
 
 ### Teacher
 
-| Id | Username      | Password  | Role    |
-|----|---------------|-----------|---------|
+| Id | Username       | Password  | Role    |
+|----|----------------|-----------|---------|
 | 2  | Vocal Trainer  | vocal001  | teacher |
 | 3  | Dance Trainer  | dance001  | teacher |
 | 4  | Visual Trainer | visual001 | teacher |
