@@ -361,3 +361,61 @@
         padding: 18px 16px;
     }
 }
+
+/* ---------- Click sparkle effect ---------- */
+.click-sparkle {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    pointer-events: none;
+    color: var(--primary);
+    font-size: 18px;
+    line-height: 1;
+    text-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent);
+    transform: translate(-50%, -50%);
+    animation: sparkle-pop 650ms ease-out forwards;
+}
+
+.click-sparkle.secondary {
+    color: var(--secondary);
+}
+
+.click-sparkle.gold {
+    color: #FFD700;
+}
+
+@keyframes sparkle-pop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -110%) scale(1.35) rotate(35deg);
+    }
+}
+
+.click-sparkle.small {
+    font-size: 12px;
+}
+
+.click-sparkle.medium {
+    font-size: 16px;
+}
+
+.click-sparkle.large {
+    font-size: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .click-sparkle {
+        animation: none;
+        opacity: 0;
+    }
+}

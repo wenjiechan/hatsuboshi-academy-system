@@ -56,6 +56,7 @@ $role_label = match ($role) {
     <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/dashboard.css">
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="/gakumas-sms/assets/js/click-sparkle.js" defer></script>
 </head>
 
 <body class="<?= htmlspecialchars($full_body_class, ENT_QUOTES, 'UTF-8') ?>" style="<?= $body_style ?>">
