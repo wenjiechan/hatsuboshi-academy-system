@@ -1,13 +1,22 @@
 <?php
+// Make sure PHP has a session
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'httponly' => true,
         'samesite' => 'Lax',
+        'secure' => !empty($_SERVER['HTTPS']),
     ]);
     session_start();
 }
+// Connect to database
 require_once __DIR__ . '/config/database.php';
 
+// Create a random secret token (CSRF token) and store in session
+if (empty($_SESSION['login_csrf_token'])) {
+    $_SESSION['login_csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Redirect already logged-in users
 if(isset($_SESSION['id'])) {
     $role = $_SESSION['role'] ?? 'student';
     if ($role === 'producer') {
@@ -20,47 +29,60 @@ if(isset($_SESSION['id'])) {
     exit();
 }
 
+// Prepare default values
 $error = "";
 $prefill = "";
 
+// User clicks Login
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
+    $submittedToken = $_POST['csrf_token'] ?? '';
 
     $prefill = $username;
 
-    if(!$username) {
-        $error = "Username required";
-    } elseif (!$password) {
-        $error = "Password Required";
+    // Check the CSRF token
+    if (!hash_equals($_SESSION['login_csrf_token'], $submittedToken)) {
+        $error = "Invalid login request";
     } else {
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ? AND is_active = 1');
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
-
-        if ($user && password_verify($password, $user['password'])) {
-            session_regenerate_id(true);
-            $_SESSION['id'] = $user['id'];
-            $_SESSION['user_name'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
-
-            try{
-                $upd = $pdo->prepare('Update users SET last_login = NOW() WHERE id = ?');
-                $upd ->execute([$user['id']]);
-            }catch(PDOException $e){
-                error_log('Failed to update last_login: ' . $e->getMessage());
-            }
-
-            if ($user['role'] === 'producer') {
-                header("Location: /gakumas-sms/admin/dashboard.php");
-            }elseif ($user['role'] === 'teacher') {
-                header("Location: /gakumas-sms/teacher/dashboard.php");
-            } else {
-                header("Location: /gakumas-sms/student/dashboard.php");
-            }
-            exit();
+        // Validate empty fields
+        if(!$username) {
+            $error = "Username required";
+        } elseif (!$password) {
+            $error = "Password Required";
         } else {
-            $error = "Invalid username or password";
+            // Fetches the user
+            $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ? AND is_active = 1');
+            $stmt->execute([$username]);
+            $user = $stmt->fetch();
+
+            //Check the password
+            if ($user && password_verify($password, $user['password'])) {
+                // Give the user a fresh session ID after login
+                session_regenerate_id(true);
+                $_SESSION['id'] = $user['id'];
+                $_SESSION['user_name'] = $user['username'];
+                $_SESSION['role'] = $user['role'];
+
+                try{
+                    $upd = $pdo->prepare('Update users SET last_login = NOW() WHERE id = ?');
+                    $upd ->execute([$user['id']]);
+                }catch(PDOException $e){
+                    error_log('Failed to update last_login: ' . $e->getMessage());
+                }
+
+                unset($_SESSION['login_csrf_token']);
+                if ($user['role'] === 'producer') {
+                    header("Location: /gakumas-sms/admin/dashboard.php");
+                }elseif ($user['role'] === 'teacher') {
+                    header("Location: /gakumas-sms/teacher/dashboard.php");
+                } else {
+                    header("Location: /gakumas-sms/student/dashboard.php");
+                }
+                exit();
+            } else {
+                $error = "Invalid username or password";
+            }
         }
     }
 } 
@@ -84,238 +106,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Hatsuboshi theme -->
     <link rel="stylesheet" href="/gakumas-sms/assets/css/theme.css">
-
-    <style>
-    /* Login-page-specific styling (kept inline so this page works standalone) */
-    body.login-page {
-        min-height: 100vh;
-        background-image: url("/gakumas-sms/assets/images/login_bg.webp");
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        /* push to right */
-        padding-right: 8%;
-        position: relative;
-        overflow: hidden;
-    }
-
-    /* Soft animated petals for login background */
-    .petal {
-        position: absolute;
-        z-index: 3;
-        pointer-events: none;
-        opacity: 0.45;
-        filter: drop-shadow(0 4px 6px rgba(255, 150, 180, 0.18));
-        animation-name: petal-fall-soft;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-    }
-
-    .petal-1 {
-        top: -8%;
-        left: 18%;
-        width: 34px;
-        animation-duration: 26s;
-        animation-delay: 0s;
-    }
-
-    .petal-2 {
-        top: -10%;
-        left: 48%;
-        width: 28px;
-        opacity: 0.35;
-        animation-duration: 32s;
-        animation-delay: 7s;
-    }
-
-    .petal-3 {
-        top: -12%;
-        left: 76%;
-        width: 38px;
-        opacity: 0.4;
-        animation-duration: 29s;
-        animation-delay: 14s;
-    }
-
-    @keyframes petal-fall-soft {
-        0% {
-            transform: translateY(-10vh) translateX(0) rotate(0deg);
-            opacity: 0;
-        }
-
-        12% {
-            opacity: 0.45;
-        }
-
-        30% {
-            transform: translateY(25vh) translateX(16px) rotate(35deg);
-        }
-
-        55% {
-            transform: translateY(55vh) translateX(-12px) rotate(80deg);
-        }
-
-        80% {
-            transform: translateY(85vh) translateX(18px) rotate(125deg);
-        }
-
-        100% {
-            transform: translateY(115vh) translateX(-8px) rotate(170deg);
-            opacity: 0;
-        }
-    }
-
-    .login-card {
-        background: var(--bg-card);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-strong);
-        padding: var(--space-7) var(--space-6);
-        width: 100%;
-        max-width: 420px;
-        position: relative;
-        z-index: 2;
-    }
-
-    .login-logo {
-        text-align: center;
-        margin-bottom: var(--space-5);
-    }
-
-    .login-logo img {
-        width: 220px;
-        max-width: 100%;
-        height: auto;
-    }
-
-    .login-logo .star {
-        color: var(--accent-gold);
-        font-size: 1.5rem;
-        animation: sparkle-pulse 1.5s infinite ease-in-out;
-    }
-
-    .login-subtitle {
-        text-align: center;
-        color: var(--text-secondary);
-        margin-bottom: var(--space-6);
-        font-size: 0.95rem;
-    }
-
-    .login-input-group {
-        position: relative;
-        margin-bottom: var(--space-4);
-    }
-
-    .login-input-group .input-icon {
-        position: absolute;
-        top: 50%;
-        left: 16px;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        pointer-events: none;
-    }
-
-    .login-input-group .form-control {
-        padding-left: 44px;
-    }
-
-    .password-toggle {
-        position: absolute;
-        top: 50%;
-        right: 12px;
-        transform: translateY(-50%);
-        background: transparent;
-        border: none;
-        color: var(--text-muted);
-        cursor: pointer;
-        padding: 4px 8px;
-    }
-
-    .password-toggle:hover {
-        color: var(--primary);
-    }
-
-    .login-btn {
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-        padding: 13px 18px;
-        margin-top: var(--space-2);
-        border: none;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #f7a8c8 0%, #f5c1d8 45%, #f8dca8 100%);
-        color: #ffffff;
-        font-weight: 600;
-        letter-spacing: 0.4px;
-        box-shadow:
-            0 10px 24px rgba(239, 132, 177, 0.32),
-            inset 0 1px 0 rgba(255, 255, 255, 0.55);
-        transition: all 0.25s ease;
-    }
-
-    .login-btn-content {
-        position: relative;
-        z-index: 2;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .login-btn-glow {
-        position: absolute;
-        top: 0;
-        left: -80%;
-        width: 60%;
-        height: 100%;
-        background: linear-gradient(120deg,
-                transparent,
-                rgba(255, 255, 255, 0.55),
-                transparent);
-        transform: skewX(-20deg);
-        transition: 0.6s;
-    }
-
-    .login-btn:hover {
-        color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow:
-            0 14px 30px rgba(239, 132, 177, 0.42),
-            inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    }
-
-    .login-btn:hover .login-btn-glow {
-        left: 130%;
-    }
-
-    .login-btn:active {
-        transform: translateY(0);
-        box-shadow:
-            0 7px 18px rgba(239, 132, 177, 0.3),
-            inset 0 2px 4px rgba(180, 90, 125, 0.2);
-    }
-
-    .login-btn:focus {
-        outline: none;
-        box-shadow:
-            0 0 0 4px rgba(247, 168, 200, 0.28),
-            0 12px 26px rgba(239, 132, 177, 0.35);
-    }
-
-    .login-footer {
-        text-align: center;
-        margin-top: var(--space-5);
-        font-size: 0.875rem;
-        color: var(--text-muted);
-    }
-
-    @media (max-width: 768px) {
-        body.login-page {
-            justify-content: center;
-            padding-right: 0;
-        }
-    }
-    </style>
+    <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/login.css">
 
 </head>
 
@@ -331,28 +122,35 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <p class="login-subtitle">
-            <span class="star">★</span>
+            <span class="star">&#9733;</span>
             Welcome back to Hatsuboshi Academy
-            <span class="star">★</span>
+            <span class="star">&#9733;</span>
         </p>
 
+        // Show an error alert only if $error is not empty
         <?php if($error !== ''): ?>
         <div class="alert alert-danger d-flex align-items-center" role="alert">
             <i class="bi bi-exclamation-circle-fill me-2"></i>
+            // Error escaped here
             <div><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
         </div>
         <?php endif; ?>
 
         <form method="post" action="login.php" novalidate>
+            // CSRF token inside the form
+            <input type="hidden" name="csrf_token"
+                value="<?= htmlspecialchars($_SESSION['login_csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
             <div class="login-input-group">
                 <i class="bi bi-person-fill input-icon"></i>
-                <input type="text" name="username" class="form-control" placeholder="Username"
+                <label for="username" class="visually-hidden">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Username"
                     value="<?= htmlspecialchars($prefill, ENT_QUOTES, "UTF-8") ?>" autocomplete="username" autofocus
                     required>
             </div>
 
             <div class="login-input-group">
                 <i class="bi bi-lock-fill input-icon"></i>
+                <label for="password-field" class="visually-hidden">Password</label>
                 <input type="password" name="password" id="password-field" class="form-control" placeholder="Password"
                     autocomplete="current-password" required>
                 <button type="button" class="password-toggle" id="password-toggle" aria-label="Show password">
@@ -372,7 +170,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <p class="login-footer">
-            ★ Hatsuboshi Gakuen © 2026 ★
+            &#9733; Hatsuboshi Gakuen &copy; 2026 &#9733;
         </p>
 
     </main>
