@@ -1,0 +1,128 @@
+/* ============================================================
+   components.css — Reusable UI elements
+   ============================================================ */
+
+/* ---------- Avatars ---------- */
+.avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-soft);
+    box-shadow: var(--shadow-soft);
+}
+.avatar-sm  { width: 32px;  height: 32px;  }
+.avatar-md  { width: 64px;  height: 64px;  }
+.avatar-lg  { width: 128px; height: 128px; }
+.avatar-xl  { width: 200px; height: 200px; }
+
+/* Avatar with theme-color ring */
+.avatar-ringed {
+    border: 3px solid var(--primary);
+    padding: 2px;
+}
+
+/* ---------- Stat bars ---------- */
+.stat-bar {
+    background: var(--bg-soft);
+    height: 24px;
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    position: relative;
+}
+.stat-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-pill);
+    transition: width 0.6s ease;
+}
+.stat-bar-fill.vocal  { background: linear-gradient(90deg, var(--vocal-color),  #FFCCD9); }
+.stat-bar-fill.dance  { background: linear-gradient(90deg, var(--dance-color),  #B8DCFF); }
+.stat-bar-fill.visual { background: linear-gradient(90deg, var(--visual-color), #FFEDA8); }
+
+.stat-label {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* ---------- Rank badges ---------- */
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    padding: 4px 12px;
+    font-size: 0.875rem;
+}
+.rank-debut { background: #EDEDED; color: #6B6B6B; }
+.rank-c     { background: #FFE9D6; color: #B86B2A; }
+.rank-b     { background: #D6F0FF; color: #2A6BB8; }
+.rank-a     { background: #FFD6F0; color: #B82A8B; }
+.rank-s     { background: #FFE7B5; color: #8B6B1A; }
+.rank-ss    { background: linear-gradient(135deg, #FFD700, #FFB347); color: #6B4A00; }
+
+/* ---------- Idol color circles (default placeholder for avatars) ---------- */
+.idol-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    box-shadow: var(--shadow-soft);
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+    text-align: center;
+    padding: var(--space-7) var(--space-4);
+    color: var(--text-secondary);
+}
+.empty-state img {
+    width: 240px;
+    opacity: 0.75;
+    margin-bottom: var(--space-4);
+}
+
+/* ---------- Notification badge ---------- */
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--error);
+    color: white;
+    border-radius: var(--radius-pill);
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* ---------- Page header ---------- */
+.page-header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: var(--space-6) var(--space-5);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-medium);
+}
+.page-header h1 {
+    color: white;
+    margin: 0;
+}
+
+/* ---------- Sparkle decorations (optional) ---------- */
+.sparkle {
+    display: inline-block;
+    color: var(--accent-gold);
+    animation: sparkle-pulse 1.5s infinite ease-in-out;
+}
+@keyframes sparkle-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.2); }
+}
