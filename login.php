@@ -17,8 +17,8 @@ if (empty($_SESSION['login_csrf_token'])) {
 }
 
 // Redirect already logged-in users
-if(isset($_SESSION['id'])) {
-    $role = $_SESSION['role'] ?? 'student';
+if (isset($_SESSION['id'], $_SESSION['role'])) {
+    $role = $_SESSION['role'];
     if ($role === 'producer') {
         header("Location: /gakumas-sms/admin/dashboard.php");
     }elseif ($role === 'teacher') {
@@ -26,6 +26,13 @@ if(isset($_SESSION['id'])) {
     } else {
         header("Location: /gakumas-sms/student/dashboard.php");
     }
+    exit();
+}
+
+if (isset($_SESSION['id']) && empty($_SESSION['role'])) {
+    $_SESSION = [];
+    session_destroy();
+    header("Location: /gakumas-sms/login.php");
     exit();
 }
 
@@ -151,7 +158,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if($error !== ''): ?>
         <div class="alert alert-danger d-flex align-items-center" role="alert">
             <i class="bi bi-exclamation-circle-fill me-2"></i>
-            // Error escaped here
             <div><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
         </div>
         <?php endif; ?>

@@ -1,5 +1,6 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
+$role = $_SESSION['role'] ?? 'student';
 
 $student_nav = [
     ['label' => 'Home', 'url' => '/gakumas-sms/student/dashboard.php', 'icon' => 'bi-house-heart', 'page' => 'dashboard.php'],
@@ -9,6 +10,12 @@ $student_nav = [
     ['label' => 'Stats', 'url' => '/gakumas-sms/student/stats.php', 'icon' => 'bi-bar-chart-line', 'page' => 'stats.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/student/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
+
+$panel_label = match ($role) {
+    'producer' => 'Producer Panel',
+    'teacher' => 'Teacher Panel',
+    default => 'Student Panel',
+};
 ?>
 
 <aside class="app-sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="mobileSidebar"
@@ -17,7 +24,7 @@ $student_nav = [
         <img src="/gakumas-sms/assets/images/logo_small.png" alt="Hatsuboshi logo" class="sidebar-logo">
         <div>
             <strong id="mobileSidebarLabel">Hatsuboshi</strong>
-            <span>Student Panel</span>
+            <span><?= htmlspecialchars($panel_label, ENT_QUOTES, 'UTF-8') ?></span>
         </div>
         <button type="button" class="btn-close ms-auto d-lg-none" data-bs-dismiss="offcanvas"
             data-bs-target="#mobileSidebar" aria-label="Close navigation"></button>

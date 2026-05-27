@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 26, 2026 at 08:47 AM
+-- Generation Time: May 27, 2026 at 11:36 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -75,7 +75,7 @@ CREATE TABLE `messages` (
   `id` int(11) NOT NULL,
   `sender_id` int(11) DEFAULT NULL,
   `receiver_id` int(11) DEFAULT NULL,
-  `subject` varchar(200) NOT NULL,
+  `subject` varchar(200) DEFAULT NULL,
   `body` text NOT NULL,
   `is_read` tinyint(1) NOT NULL DEFAULT 0,
   `is_deleted_by_sender` tinyint(1) NOT NULL DEFAULT 0,
@@ -147,15 +147,24 @@ CREATE TABLE `schedules` (
 CREATE TABLE `songs` (
   `id` int(11) NOT NULL,
   `title` varchar(150) NOT NULL,
+  `title_jp` varchar(150) DEFAULT NULL,
   `artist` varchar(150) DEFAULT NULL,
   `duration` time DEFAULT NULL,
   `release_date` date DEFAULT NULL,
   `notes` text DEFAULT NULL,
-  `lyrics_url` varchar(255) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `songs`
+--
+
+INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_date`, `notes`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Fighting My Way', 'Fighting My Way', 'Saki Hanami', '00:03:21', '2024-05-16', 'Saki Hanami\'s debut solo song. Lyrics: HIROMI. Composition & arrangement: Giga. Performed in 定期公演『初』.', 1, '2026-05-27 13:20:33', '2026-05-27 13:20:33'),
+(2, 'Luna say maybe', 'Luna say maybe', 'Temari Tsukimura', '00:04:25', '2024-05-16', 'Temari Tsukimura\'s debut solo song and signature track. Lyrics & composition: Minami (美波). Arrangement: Minami & Katsuhiro Mafune. Performed in the produce scenario \"Teiki Kouen Hatsu\" (定期公演『初』). ', 1, '2026-05-27 13:20:33', '2026-05-27 13:20:33'),
+(3, 'Sekai Ichi Kawaii Watashi', '世界一可愛い私', 'Kotone Fujita', '00:03:59', '2024-05-16', 'Kotone Fujita\'s debut solo song. Lyrics, composition, and arrangement all by HoneyWorks — the duo behind the wildly popular \"Kokuhaku Jikkou Iinkai\" (Confession Executive Committee) series. ', 1, '2026-05-27 13:20:33', '2026-05-27 13:20:33');
 
 -- --------------------------------------------------------
 
@@ -194,7 +203,8 @@ CREATE TABLE `students` (
   `dance` int(11) NOT NULL DEFAULT 0,
   `visual` int(11) NOT NULL DEFAULT 0,
   `bio` text DEFAULT NULL,
-  `theme_color` varchar(20) DEFAULT NULL,
+  `theme_primary_color` varchar(20) DEFAULT NULL,
+  `theme_secondary_color` varchar(20) NOT NULL,
   `producer_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -204,8 +214,10 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `user_id`, `name`, `name_jp`, `birthday`, `blood_type`, `height`, `hometown`, `school_year`, `rank`, `vocal`, `dance`, `visual`, `bio`, `theme_color`, `producer_id`, `created_at`, `updated_at`) VALUES
-(1, 5, 'Saki Hanami', '花海咲季', '2008-04-02', 'A', 152, 'Aichi Prefecture', 'Class 1-1', 'Debut', 75, 75, 80, 'The top student on the entrance exam. A highly competitive and sore-losing former athlete. Since childhood, she has been a prodigy with an excellent memory who quickly mastered everything she tried. She is incredibly close with her younger sister, Ume Hanami, and the two are also rivals who have competed against each other in various sports. She recognizes Ume\'s talent more than anyone else—and fears it.', '#E72E42', 1, '2026-05-26 13:13:20', '2026-05-26 13:23:38');
+INSERT INTO `students` (`id`, `user_id`, `name`, `name_jp`, `birthday`, `blood_type`, `height`, `hometown`, `school_year`, `rank`, `vocal`, `dance`, `visual`, `bio`, `theme_primary_color`, `theme_secondary_color`, `producer_id`, `created_at`, `updated_at`) VALUES
+(1, 5, 'Saki Hanami', '花海 咲季', '2000-04-02', 'A', 152, 'Aichi', 'Class 1-1', 'Debut', 75, 75, 80, 'A new student who topped the entrance exam and a fierce ex-athlete with an unshakeable hatred of losing. A child prodigy since youth—quick to learn, skilled at everything she tries. She\'s extremely close with her younger sister Ume Hanami, but they\'re also lifelong rivals who have competed in every sport imaginable. Saki rates Ume\'\'s talent higher than anyone else\'s and fears it.\r\n', '#E30F25', '#FAD0D4', 1, '2026-05-26 13:13:20', '2026-05-27 15:57:18'),
+(2, 6, 'Temari Tsukimura', '月村 手毬', '2000-06-03', 'AB', 162, 'Kyoto', 'Class 1-1', 'Debut', 75, 65, 55, 'A former elite middle-school idol, once called the #1 idol of her grade. Appears cool, stoic, and sarcastic on the surface but is secretly a lazy, spoiled troublemaker—a girl with two sides. She aims for the top to break away from the self she dislikes and learn to love herself. ', '#0C7BBB', '#CEE5F1', 1, '2026-05-26 13:13:20', '2026-05-27 16:43:30'),
+(3, 7, 'Kotone Fujita', '藤田 ことね', '2000-04-29', 'O', 156, 'Saitama', 'Class 1-1', 'Debut', 65, 55, 75, 'A greedy girl who dreams of becoming \"an idol who can make money.\" She sees idol work as her one shot at turning her life around. Her grades are poor and her self-esteem is low overall, but she has full confidence in her cute face. She\'s a little uncomfortable around the student council president Sena, who keeps overestimating her for some reason.\r\n', '#F8C112', '#FEF3CF', 1, '2026-05-26 13:13:20', '2026-05-27 16:47:09');
 
 -- --------------------------------------------------------
 
@@ -220,6 +232,15 @@ CREATE TABLE `student_songs` (
   `added_by` int(11) DEFAULT NULL,
   `added_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `student_songs`
+--
+
+INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_at`) VALUES
+(1, 1, 1, 1, '2026-05-27 13:20:33'),
+(2, 2, 2, 1, '2026-05-27 13:20:33'),
+(3, 3, 3, 1, '2026-05-27 13:20:33');
 
 -- --------------------------------------------------------
 
@@ -239,7 +260,9 @@ CREATE TABLE `teachers` (
 --
 
 INSERT INTO `teachers` (`id`, `user_id`, `name`, `specialty`) VALUES
-(1, 2, 'Vocal Trainer', 'vocal');
+(1, 2, 'Vocal Trainer', 'vocal'),
+(2, 3, 'Dance Trainer', 'dance'),
+(3, 4, 'Visual Trainer', 'visual');
 
 -- --------------------------------------------------------
 
@@ -264,12 +287,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'Producer', 'producer001', 'producer', NULL, 1, '2026-05-26 13:10:43', '2026-05-26 13:16:09', NULL),
-(2, 'Vocal Trainer', 'vocal001', 'teacher', NULL, 1, '2026-05-26 13:11:33', '2026-05-26 13:16:21', NULL),
-(3, 'Dance Trainer', 'dance001', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-05-26 13:16:30', NULL),
-(4, 'Visual Trainer', 'visual001', 'teacher', NULL, 1, '2026-05-26 13:12:30', '2026-05-26 13:16:40', NULL),
-(5, 'Saki Hanami', 'saki0402', 'student', NULL, 1, '2026-05-26 13:13:13', '2026-05-26 14:45:18', NULL),
-(6, 'Temari Tsukimura', 'temari0603', 'student', NULL, 1, '2026-05-26 13:13:13', '2026-05-26 14:45:18', NULL);
+(1, 'Producer', '$2y$10$7BFxM6RgeDvBv6kDTKovuuIdwTzQBM4l1sI2EcNoeHa94mU0y/OM2', 'producer', NULL, 1, '2026-05-26 13:10:43', '2026-05-27 11:39:20', NULL),
+(2, 'Vocal Trainer', '$2y$10$mfACa/WYxB5KtG.u/sz0NOsEavc0F8j7fR.Zf/PF9hcEl7gdLMNdK', 'teacher', NULL, 1, '2026-05-26 13:11:33', '2026-05-27 11:39:47', NULL),
+(3, 'Dance Trainer', '$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-05-27 11:40:17', NULL),
+(4, 'Visual Trainer', '$2y$10$bGNC.jMo6tcO1e0f6A0q5erVt6QZ2LbnR4kS1AD47.vwZW0J3GQV6', 'teacher', NULL, 1, '2026-05-26 13:12:30', '2026-05-27 11:40:41', NULL),
+(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-05-27 15:49:44', '2026-05-27 15:31:21'),
+(6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-05-27 16:15:47', '2026-05-27 16:15:47'),
+(7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-05-27 15:57:51', '2026-05-27 15:57:51');
 
 --
 -- Indexes for dumped tables
@@ -440,7 +464,7 @@ ALTER TABLE `schedules`
 -- AUTO_INCREMENT for table `songs`
 --
 ALTER TABLE `songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `stat_history`
@@ -452,25 +476,25 @@ ALTER TABLE `stat_history`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `student_songs`
 --
 ALTER TABLE `student_songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `teachers`
 --
 ALTER TABLE `teachers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables

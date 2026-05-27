@@ -8,9 +8,29 @@ if (session_status() === PHP_SESSION_NONE) {     // Check the PHP session has al
     session_start();
 }
 
-if(!isset($_SESSION['id'])){
+if (
+    empty($_SESSION['id']) ||
+    empty($_SESSION['user_name']) ||
+    empty($_SESSION['role'])
+) {
+    $_SESSION = [];
+
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(
+            session_name(),
+            '',
+            time() - 42000,
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly']
+        );
+    }
+
+    session_destroy();
     header("Location: /gakumas-sms/login.php");
-    exit();     // If the session does not contain id, redirected the user back to login page
+    exit();     // If the session is missing login data, redirect the user back to login page
 }
 
 $id = $_SESSION['id'];

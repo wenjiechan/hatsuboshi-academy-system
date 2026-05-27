@@ -17,6 +17,21 @@ $body_style = sprintf(
     htmlspecialchars($theme_primary, ENT_QUOTES, 'UTF-8'),
     htmlspecialchars($theme_secondary, ENT_QUOTES, 'UTF-8')
 );
+
+$role = $_SESSION['role'] ?? 'student';
+$username = $_SESSION['user_name'] ?? 'Guest';
+
+$home_url = match ($role) {
+    'producer' => '/gakumas-sms/admin/dashboard.php',
+    'teacher' => '/gakumas-sms/teacher/dashboard.php',
+    default => '/gakumas-sms/student/dashboard.php',
+};
+
+$role_label = match ($role) {
+    'producer' => 'Producer',
+    'teacher' => 'Teacher',
+    default => 'Student',
+};
 ?>
 
 <!DOCTYPE html>
@@ -51,11 +66,40 @@ $body_style = sprintf(
             <i class="bi bi-list"></i>
         </button>
 
-        <a href="/gakumas-sms/student/dashboard.php" class="mobile-brand">
+        <a href="<?= htmlspecialchars($home_url, ENT_QUOTES, 'UTF-8') ?>" class="mobile-brand">
             Hatsuboshi
         </a>
 
         <a href="/gakumas-sms/messages/inbox.php" class="mobile-icon-link" aria-label="Messages">
             <i class="bi bi-envelope"></i>
         </a>
+
+        <a href="/gakumas-sms/notifications.php" class="mobile-icon-link" aria-label="Notifications">
+            <i class="bi bi-bell"></i>
+        </a>
+    </header>
+
+    <header class="app-topbar d-none d-lg-flex">
+        <div>
+            <a href="<?= htmlspecialchars($home_url, ENT_QUOTES, 'UTF-8') ?>" class="app-topbar-brand">
+                Hatsuboshi
+            </a>
+            <h1><?= htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8') ?></h1>
+        </div>
+
+        <div class="app-topbar-actions">
+            <a href="/gakumas-sms/messages/inbox.php" class="topbar-icon-link" aria-label="Messages">
+                <i class="bi bi-envelope"></i>
+            </a>
+
+            <a href="/gakumas-sms/notifications.php" class="topbar-icon-link" aria-label="Notifications">
+                <i class="bi bi-bell"></i>
+            </a>
+
+            <div class="topbar-user">
+                <span class="role-badge"><?= htmlspecialchars($role_label, ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="topbar-username"><?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?></span>
+            </div>
+
+        </div>
     </header>
