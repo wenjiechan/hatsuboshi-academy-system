@@ -309,21 +309,21 @@ The system uses CSS custom properties so themes can be swapped at runtime by add
 
 ```css
 /* Original 9 */
-.theme-saki    { --primary: #FF5485; --secondary: #FFCCD9; }
-.theme-temari  { --primary: #7B6DAA; --secondary: #D6CFE8; }
-.theme-kotone  { --primary: #FFD454; --secondary: #FFF1B8; }
-.theme-lilja   { --primary: #B8D4F0; --secondary: #E5F0F9; }
-.theme-sumika  { --primary: #7DD87D; --secondary: #C5EFC5; }
-.theme-hiro    { --primary: #8B3A4A; --secondary: #D8B8C0; }
-.theme-mao     { --primary: #A594C5; --secondary: #DCD3E8; }
-.theme-china   { --primary: #F5B6C5; --secondary: #FAD9E0; }
-.theme-rinami  { --primary: #F5D0C5; --secondary: #FCE8E0; }
+.theme-saki    { --primary: #e30f25; --secondary: #fad0d4; }
+.theme-temari  { --primary: #0c7bbb; --secondary: #cee5f1; }
+.theme-kotone  { --primary: #f8c112; --secondary: #fef3cf; }
+.theme-lilja   { --primary: #eafdff; --secondary: #7dc4d4; }  
+.theme-sumika  { --primary: #7cfc00; --secondary: #e4febf; }
+.theme-hiro    { --primary: #00afcc; --secondary: #bfeaf2; }
+.theme-mao     { --primary: #7f1184; --secondary: #dcc2de; }
+.theme-china   { --primary: #f68b1f; --secondary: #fce0c5; }
+.theme-rinami  { --primary: #f6adc6; --secondary: #fce6ee; }
 
-/* New 4 (2024–2025) */
-.theme-ume     { --primary: #FF8C42; --secondary: #FFD4B8; }
-.theme-sena    { --primary: #FFE066; --secondary: #FFF4B8; }
-.theme-misuzu  { --primary: #5B8BC4; --secondary: #C5D8EC; }
-.theme-tsubame { --primary: #2E4A6B; --secondary: #B8C5D6; }
+/* New additions (2024–2025) */
+.theme-ume     { --primary: #ea533a; --secondary: #fad4cb; }
+.theme-misuzu  { --primary: #7a99cf; --secondary: #d8e0ef; }
+.theme-sena    { --primary: #f6ae54; --secondary: #fce6cc; }
+.theme-tsubame { --primary: #7b68ee; --secondary: #d8d2fb; }
 ```
 
 On login, the active user's theme class is added to `<body>` and every component re-themes automatically.
