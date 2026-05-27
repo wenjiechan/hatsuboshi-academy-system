@@ -126,3 +126,97 @@
     0%, 100% { opacity: 0.6; transform: scale(1); }
     50%      { opacity: 1;   transform: scale(1.2); }
 }
+
+/* ---------- App sidebar ---------- */
+.app-sidebar {
+    width: 240px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 248, 251, 0.92)),
+        linear-gradient(135deg, var(--secondary), transparent 55%);
+    border-right: 1px solid color-mix(in srgb, var(--primary) 28%, white);
+    padding: 20px 16px;
+    box-shadow: 8px 0 24px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+@media (min-width: 992px) {
+    .app-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1020;
+    }
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--secondary) 36%, white);
+}
+
+.sidebar-logo {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--primary) 25%, transparent));
+}
+
+.sidebar-brand strong {
+    display: block;
+    line-height: 1.1;
+    color: var(--primary);
+}
+
+.sidebar-brand span {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-link i {
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+.sidebar-link:hover {
+    background: color-mix(in srgb, var(--secondary) 45%, white);
+    color: var(--primary);
+    text-decoration: none;
+    transform: translateX(2px);
+}
+
+.sidebar-link.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 24%, transparent);
+}
+
+.sidebar-link.active i {
+    color: white;
+}
+
+.sidebar-link.logout:hover {
+    background: #FFE5E5;
+    color: var(--error);
+}
+
+.sidebar-footer {
+    margin-top: auto;
+}

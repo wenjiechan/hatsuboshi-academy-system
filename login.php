@@ -64,6 +64,26 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_name'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
 
+                $_SESSION['theme_primary_color'] = '#FF6B9D';
+                $_SESSION['theme_secondary_color'] = '#FFB3D1';
+
+                if ($user['role'] === 'student') {
+                    $student_stmt = $pdo->prepare(
+                        'SELECT name, theme_primary_color, theme_secondary_color
+                        FROM students
+                        WHERE user_id = ?
+                        LIMIT 1'
+                    );
+                    $student_stmt->execute([$user['id']]);
+                    $student = $student_stmt->fetch();
+
+                    if ($student) {
+                        $_SESSION['student_name'] = $student['name'];
+                        $_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: '#FF6B9D';
+                        $_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: '#FFB3D1';
+                    }
+                }
+
                 try{
                     $upd = $pdo->prepare('Update users SET last_login = NOW() WHERE id = ?');
                     $upd ->execute([$user['id']]);
@@ -127,7 +147,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span class="star">&#9733;</span>
         </p>
 
-        // Show an error alert only if $error is not empty
+        <!--Show an error alert only if $error is not empty-->
         <?php if($error !== ''): ?>
         <div class="alert alert-danger d-flex align-items-center" role="alert">
             <i class="bi bi-exclamation-circle-fill me-2"></i>
@@ -137,7 +157,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="post" action="login.php" novalidate>
-            // CSRF token inside the form
+            <!--CSRF token inside the form-->
             <input type="hidden" name="csrf_token"
                 value="<?= htmlspecialchars($_SESSION['login_csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
             <div class="login-input-group">
