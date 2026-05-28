@@ -3,6 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+date_default_timezone_set('Asia/Kuala_Lumpur');
+
 $page_title = $page_title ?? 'Hatsuboshi Gakuen';
 $body_class = $body_class ?? '';
 
@@ -20,6 +22,8 @@ $body_style = sprintf(
 
 $role = $_SESSION['role'] ?? 'student';
 $username = $_SESSION['user_name'] ?? 'Guest';
+$student_name = $_SESSION['student_name'] ?? $username;
+$avatar_path = '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student_name) . '.png';
 
 $home_url = match ($role) {
     'producer' => '/gakumas-sms/admin/dashboard.php',
@@ -78,6 +82,19 @@ $role_label = match ($role) {
         <a href="/gakumas-sms/notifications.php" class="mobile-icon-link" aria-label="Notifications">
             <i class="bi bi-bell"></i>
         </a>
+
+        <div class="topbar-user">
+            <img src="<?= htmlspecialchars($avatar_path, ENT_QUOTES, 'UTF-8') ?>"
+                alt="<?= htmlspecialchars($student_name, ENT_QUOTES, 'UTF-8') ?>" class="topbar-avatar">
+            <div class="topbar-user-text">
+                <span class="topbar-username">
+                    <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>
+                </span>
+                <span class="role-badge">
+                    <?= htmlspecialchars($role_label, ENT_QUOTES, 'UTF-8') ?>
+                </span>
+            </div>
+        </div>
     </header>
 
     <header class="app-topbar d-none d-lg-flex">
@@ -98,8 +115,16 @@ $role_label = match ($role) {
             </a>
 
             <div class="topbar-user">
-                <span class="role-badge"><?= htmlspecialchars($role_label, ENT_QUOTES, 'UTF-8') ?></span>
-                <span class="topbar-username"><?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?></span>
+                <img src="<?= htmlspecialchars($avatar_path, ENT_QUOTES, 'UTF-8') ?>"
+                    alt="<?= htmlspecialchars($student_name, ENT_QUOTES, 'UTF-8') ?>" class="topbar-avatar">
+                <div class="topbar-user-text">
+                    <span class="topbar-username">
+                        <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+                    <span class="role-badge">
+                        <?= htmlspecialchars($role_label, ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+                </div>
             </div>
 
         </div>
