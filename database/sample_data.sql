@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 28, 2026 at 10:01 AM
+-- Generation Time: May 28, 2026 at 11:59 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -73,7 +73,27 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (0, 3, '2026-05-28', 65, 55, 75, '2026-05-28 15:59:17', '2026-05-28 15:59:17'),
 (0, 3, '2026-05-28', 65, 55, 75, '2026-05-28 16:00:17', '2026-05-28 16:00:17'),
 (0, 1, '2026-05-28', 75, 75, 80, '2026-05-28 16:00:32', '2026-05-28 16:00:32'),
-(0, 2, '2026-05-28', 75, 65, 55, '2026-05-28 16:01:07', '2026-05-28 16:01:07');
+(0, 2, '2026-05-28', 75, 65, 55, '2026-05-28 16:01:07', '2026-05-28 16:01:07'),
+(0, 2, '2026-05-28', 75, 65, 55, '2026-05-28 16:20:48', '2026-05-28 16:20:48'),
+(0, 1, '2026-05-28', 75, 75, 80, '2026-05-28 16:42:44', '2026-05-28 16:42:44'),
+(0, 1, '2026-05-28', 75, 75, 80, '2026-05-28 17:26:13', '2026-05-28 17:26:13'),
+(0, 1, '2026-05-28', 75, 75, 80, '2026-05-28 17:34:26', '2026-05-28 17:34:26'),
+(0, 4, '2026-05-28', 55, 55, 65, '2026-05-28 17:52:10', '2026-05-28 17:52:10'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:52:58', '2026-05-28 17:52:58'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:54:17', '2026-05-28 17:54:17'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:54:39', '2026-05-28 17:54:39'),
+(0, 4, '2026-05-28', 55, 55, 65, '2026-05-28 17:56:18', '2026-05-28 17:56:18'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:57:19', '2026-05-28 17:57:19'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:57:40', '2026-05-28 17:57:40'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:57:52', '2026-05-28 17:57:52'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:36', '2026-05-28 17:58:36'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:37', '2026-05-28 17:58:37'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:38', '2026-05-28 17:58:38'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:40', '2026-05-28 17:58:40'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:41', '2026-05-28 17:58:41'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:42', '2026-05-28 17:58:42'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:44', '2026-05-28 17:58:44'),
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:54', '2026-05-28 17:58:54');
 
 -- --------------------------------------------------------
 
@@ -453,7 +473,9 @@ CREATE TABLE `students` (
 INSERT INTO `students` (`id`, `user_id`, `name`, `name_jp`, `birthday`, `blood_type`, `height`, `hometown`, `school_year`, `rank`, `vocal`, `dance`, `visual`, `bio`, `theme_primary_color`, `theme_secondary_color`, `producer_id`, `created_at`, `updated_at`) VALUES
 (1, 5, 'Saki Hanami', '花海 咲季', '2000-04-02', 'A', 152, 'Aichi', 'Class 1-1', 'Debut', 75, 75, 80, 'A new student who topped the entrance exam and a fierce ex-athlete with an unshakeable hatred of losing. A child prodigy since youth—quick to learn, skilled at everything she tries. She\'s extremely close with her younger sister Ume Hanami, but they\'re also lifelong rivals who have competed in every sport imaginable. Saki rates Ume\'\'s talent higher than anyone else\'s and fears it.\r\n', '#E30F25', '#FAD0D4', 1, '2026-05-26 13:13:20', '2026-05-27 15:57:18'),
 (2, 6, 'Temari Tsukimura', '月村 手毬', '2000-06-03', 'AB', 162, 'Kyoto', 'Class 1-1', 'Debut', 75, 65, 55, 'A former elite middle-school idol, once called the #1 idol of her grade. Appears cool, stoic, and sarcastic on the surface but is secretly a lazy, spoiled troublemaker—a girl with two sides. She aims for the top to break away from the self she dislikes and learn to love herself. ', '#0C7BBB', '#CEE5F1', 1, '2026-05-26 13:13:20', '2026-05-27 16:43:30'),
-(3, 7, 'Kotone Fujita', '藤田 ことね', '2000-04-29', 'O', 156, 'Saitama', 'Class 1-1', 'Debut', 65, 55, 75, 'A greedy girl who dreams of becoming \"an idol who can make money.\" She sees idol work as her one shot at turning her life around. Her grades are poor and her self-esteem is low overall, but she has full confidence in her cute face. She\'s a little uncomfortable around the student council president Sena, who keeps overestimating her for some reason.\r\n', '#F8C112', '#FEF3CF', 1, '2026-05-26 13:13:20', '2026-05-27 16:47:09');
+(3, 7, 'Kotone Fujita', '藤田 ことね', '2000-04-29', 'O', 156, 'Saitama', 'Class 1-1', 'Debut', 65, 55, 75, 'A greedy girl who dreams of becoming \"an idol who can make money.\" She sees idol work as her one shot at turning her life around. Her grades are poor and her self-esteem is low overall, but she has full confidence in her cute face. She\'s a little uncomfortable around the student council president Sena, who keeps overestimating her for some reason.\r\n', '#F8C112', '#FEF3CF', 1, '2026-05-26 13:13:20', '2026-05-27 16:47:09'),
+(4, 8, 'Lilja Katsuragi', '葛城 リーリヤ', '2000-07-24', 'B', 161, 'Sweden', 'Class 1-1', 'Debut', 55, 55, 65, 'An exchange student from overseas with no prior singing or dancing experience, who is always shrinking back as if she had no confidence. She doesn\'t look talented at first glance, but her admiration for idols is genuine, and she is an incredibly hard worker. Her father is Japanese, so she speaks the language fluently. She has a promise with her best friend Sumika to stand on the same stage together one day—the reason she enrolled at Hatsuboshi Academy. ', '#7DC4D4', '#EAFDFF', 1, '2026-05-28 17:43:41', '2026-05-28 17:56:05'),
+(5, 9, 'Sumika Shiun', '紫雲 清夏', '2000-11-11', 'O', 168, 'Hokkaido', 'Class 1-1', 'Debut', 65, 55, 65, 'A laid-back gyaru who skips class and lessons—a bit of an unserious slacker, but genuinely bright, cheerful, and able to get along with anyone, which is her real charm. She once had a celebrated ballet career and was expected to go far on the world stage, but she has no motivation for it anymore. She wholeheartedly cheers on her best friend Lilja, who is earnestly chasing her idol dream. ', '#7CFC00', '#D6FFB3', 1, '2026-05-28 17:43:41', '2026-05-28 17:58:33');
 
 -- --------------------------------------------------------
 
@@ -523,13 +545,15 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'Producer', '$2y$10$7BFxM6RgeDvBv6kDTKovuuIdwTzQBM4l1sI2EcNoeHa94mU0y/OM2', 'producer', NULL, 1, '2026-05-26 13:10:43', '2026-05-27 11:39:20', NULL),
+(1, 'Producer', '$2y$10$7BFxM6RgeDvBv6kDTKovuuIdwTzQBM4l1sI2EcNoeHa94mU0y/OM2', 'producer', NULL, 1, '2026-05-26 13:10:43', '2026-05-28 16:41:57', '2026-05-28 16:41:57'),
 (2, 'Vocal Trainer', '$2y$10$mfACa/WYxB5KtG.u/sz0NOsEavc0F8j7fR.Zf/PF9hcEl7gdLMNdK', 'teacher', NULL, 1, '2026-05-26 13:11:33', '2026-05-27 11:39:47', NULL),
-(3, 'Dance Trainer', '$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-05-27 11:40:17', NULL),
+(3, 'Dance Trainer', '$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-05-28 16:42:24', '2026-05-28 16:42:24'),
 (4, 'Visual Trainer', '$2y$10$bGNC.jMo6tcO1e0f6A0q5erVt6QZ2LbnR4kS1AD47.vwZW0J3GQV6', 'teacher', NULL, 1, '2026-05-26 13:12:30', '2026-05-27 11:40:41', NULL),
-(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-05-28 16:00:32', '2026-05-28 16:00:32'),
+(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-05-28 16:42:44', '2026-05-28 16:42:44'),
 (6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-05-28 16:01:07', '2026-05-28 16:01:07'),
-(7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-05-28 15:58:24', '2026-05-28 15:58:24');
+(7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-05-28 15:58:24', '2026-05-28 15:58:24'),
+(8, 'Lilja Katsuragi', '$2y$10$U0wQB4kmtvPYWWQX.9oi0OJ60HDhnd/yf.tuf71exJ8MoG8xS0FVa', 'student', 'Lilja Katsuragi.png', 1, '2026-05-26 13:13:13', '2026-05-28 17:56:18', '2026-05-28 17:56:18'),
+(9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-05-28 17:58:54', '2026-05-28 17:58:54');
 
 --
 -- Indexes for dumped tables
@@ -724,7 +748,7 @@ ALTER TABLE `stat_history`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `student_songs`
@@ -742,7 +766,7 @@ ALTER TABLE `teachers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
