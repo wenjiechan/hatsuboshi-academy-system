@@ -65,7 +65,7 @@ $role_label = match ($role) {
 
 <body class="<?= htmlspecialchars($full_body_class, ENT_QUOTES, 'UTF-8') ?>" style="<?= $body_style ?>">
 
-    <header class="mobile-topbar d-lg-none">
+    <header class="mobile-topbar d-xl-none">
         <button class="btn sidebar-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar"
             aria-controls="mobileSidebar" aria-label="Open navigation">
             <i class="bi bi-list"></i>
@@ -97,7 +97,7 @@ $role_label = match ($role) {
         </div>
     </header>
 
-    <header class="app-topbar d-none d-lg-flex">
+    <header class="app-topbar d-none d-xl-flex">
         <div>
             <a href="<?= htmlspecialchars($home_url, ENT_QUOTES, 'UTF-8') ?>" class="app-topbar-brand">
                 Hatsuboshi

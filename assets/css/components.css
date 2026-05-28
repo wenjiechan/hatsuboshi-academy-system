@@ -141,7 +141,7 @@
     box-shadow: 8px 0 24px color-mix(in srgb, var(--primary) 12%, transparent);
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
     .app-sidebar {
         position: fixed;
         top: 0;
@@ -223,7 +223,11 @@
 
 /* ---------- App topbar ---------- */
 .app-topbar {
-    margin-left: 240px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 240px;
+    z-index: 1030;
     min-height: 76px;
     align-items: center;
     justify-content: space-between;
@@ -232,6 +236,10 @@
     background: rgba(255, 255, 255, 0.86);
     border-bottom: 1px solid color-mix(in srgb, var(--primary) 18%, white);
     backdrop-filter: blur(12px);
+}
+
+.app-topbar > div:first-child {
+    min-width: 0;
 }
 
 .app-topbar-brand {
@@ -245,11 +253,15 @@
 
 .app-topbar h1 {
     margin: 0;
+    overflow: hidden;
     font-size: 1.35rem;
     line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .app-topbar-actions {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -286,6 +298,7 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
+    max-width: 240px;
     min-height: 42px;
     padding: 6px 14px;
     border-radius: var(--radius-pill);
@@ -296,6 +309,7 @@
 .role-badge {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     min-height: 24px;
     padding: 2px 10px;
     border-radius: var(--radius-pill);
@@ -303,6 +317,7 @@
     color: var(--primary);
     font-size: 0.75rem;
     font-weight: 700;
+    line-height: 1;
 }
 
 .topbar-username {
@@ -323,6 +338,7 @@
 }
 
 .topbar-user-text {
+    min-width: 0;
     display: grid;
     gap: 2px;
 }
@@ -335,6 +351,11 @@
 
 /* ---------- Mobile topbar ---------- */
 .mobile-topbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
     min-height: 64px;
     align-items: center;
     justify-content: space-between;
@@ -342,16 +363,17 @@
     padding: 10px 16px;
     background: rgba(255, 255, 255, 0.92);
     border-bottom: 1px solid color-mix(in srgb, var(--primary) 18%, white);
-    position: sticky;
-    top: 0;
-    z-index: 1010;
     backdrop-filter: blur(12px);
 }
 
 .mobile-brand {
+    min-width: 0;
+    overflow: hidden;
     color: var(--primary);
     font-weight: 800;
     text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .mobile-brand:hover {
@@ -372,12 +394,101 @@
     font-size: 0.9rem;
 }
 
-@media (max-width: 991.98px) {
+@media (max-width: 1199.98px) {
     .app-footer {
         margin-left: 0;
         flex-direction: column;
         align-items: flex-start;
         padding: 18px 16px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1299.98px) {
+    .app-topbar {
+        gap: 16px;
+        padding: 14px 20px;
+    }
+
+    .app-topbar h1 {
+        font-size: 1.15rem;
+    }
+
+    .app-topbar-actions {
+        gap: 8px;
+    }
+
+    .topbar-icon-link,
+    .mobile-icon-link,
+    .sidebar-toggle {
+        width: 38px;
+        height: 38px;
+    }
+
+    .topbar-user {
+        max-width: 190px;
+        padding-inline: 10px;
+    }
+
+    .topbar-username {
+        max-width: 112px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .mobile-topbar {
+        gap: 8px;
+        padding: 8px 12px;
+    }
+
+    .mobile-brand {
+        font-size: 0.95rem;
+    }
+
+    .mobile-topbar .topbar-user {
+        max-width: none;
+        min-height: 38px;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .mobile-topbar .topbar-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    .mobile-topbar .topbar-user-text {
+        display: none;
+    }
+
+    .mobile-topbar .topbar-icon-link,
+    .mobile-topbar .mobile-icon-link,
+    .mobile-topbar .sidebar-toggle {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+@media (max-width: 374.98px) {
+    .mobile-topbar {
+        gap: 6px;
+        padding-inline: 8px;
+    }
+
+    .mobile-brand {
+        max-width: 92px;
+    }
+
+    .mobile-topbar .topbar-icon-link,
+    .mobile-topbar .mobile-icon-link,
+    .mobile-topbar .sidebar-toggle {
+        width: 34px;
+        height: 34px;
+    }
+
+    .mobile-topbar .topbar-avatar {
+        width: 32px;
+        height: 32px;
     }
 }
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 27, 2026 at 09:13 AM
+-- Generation Time: May 28, 2026 at 10:02 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,6 +20,23 @@ SET time_zone = "+00:00";
 --
 -- Database: `gakumas_sms`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `daily_student_stats`
+--
+
+CREATE TABLE `daily_student_stats` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `stat_date` date NOT NULL,
+  `vocal` int(11) NOT NULL,
+  `dance` int(11) NOT NULL,
+  `visual` int(11) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -115,6 +132,28 @@ CREATE TABLE `producer_messages` (
   `tone` varchar(20) DEFAULT NULL,
   `message_text` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `recurring_schedules`
+--
+
+CREATE TABLE `recurring_schedules` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `weekday` tinyint(4) NOT NULL,
+  `activity_type` varchar(50) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `location` varchar(100) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -303,6 +342,12 @@ ALTER TABLE `producer_messages`
   ADD KEY `idx_producer_messages_lookup` (`student_id`,`message_type`);
 
 --
+-- Indexes for table `recurring_schedules`
+--
+ALTER TABLE `recurring_schedules`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `schedules`
 --
 ALTER TABLE `schedules`
@@ -403,6 +448,12 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `producer_messages`
 --
 ALTER TABLE `producer_messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `recurring_schedules`
+--
+ALTER TABLE `recurring_schedules`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --

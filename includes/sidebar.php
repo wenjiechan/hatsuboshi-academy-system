@@ -18,7 +18,7 @@ $panel_label = match ($role) {
 };
 ?>
 
-<aside class="app-sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="mobileSidebar"
+<aside class="app-sidebar offcanvas-xl offcanvas-start" tabindex="-1" id="mobileSidebar"
     aria-labelledby="mobileSidebarLabel">
     <div class="sidebar-brand">
         <img src="/gakumas-sms/assets/images/logo_small.png" alt="Hatsuboshi logo" class="sidebar-logo">
@@ -26,7 +26,7 @@ $panel_label = match ($role) {
             <strong id="mobileSidebarLabel">Hatsuboshi</strong>
             <span><?= htmlspecialchars($panel_label, ENT_QUOTES, 'UTF-8') ?></span>
         </div>
-        <button type="button" class="btn-close ms-auto d-lg-none" data-bs-dismiss="offcanvas"
+        <button type="button" class="btn-close ms-auto d-xl-none" data-bs-dismiss="offcanvas"
             data-bs-target="#mobileSidebar" aria-label="Close navigation"></button>
     </div>
 

@@ -212,13 +212,12 @@ a:hover {
 ::-webkit-scrollbar {
     width: 10px;
 }
-::-webkit-scrollbar-track {
-    background: var(--bg-soft);
-}
+
 ::-webkit-scrollbar-thumb {
-    background: var(--primary-pink-light);
+    background: var(--primary);
     border-radius: var(--radius-pill);
 }
+
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
+    background: var(--secondary);
 }

@@ -42,12 +42,37 @@ $schedule_stmt = $pdo->prepare(
 $schedule_stmt->execute([$student['id'], $weekday]);
 $today_schedules = $schedule_stmt->fetchAll();
 
+require_once '../includes/stat_chart_helpers.php';
+
+$chart = get_student_weekly_stat_chart($pdo, $student);
+
+$chart_labels = $chart['labels'];
+$chart_data = $chart['data'];
+$has_chart_data = $chart['has_data'];
+$previous_snapshot = $chart['previous_snapshot'];
+
+require_once '../includes/producer_message_helpers.php';
+
+$producer_message = get_producer_message(
+    $pdo,
+    $student,
+    $today_schedules,
+    $previous_snapshot ?: null
+);
+
 $page_title = 'Student Dashboard';
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
 
 <main class="dashboard-main">
+    <section class="producer-message-card">
+        <p class="dashboard-eyebrow">Producer Message</p>
+        <p class="producer-message-text">
+            <?= htmlspecialchars($producer_message, ENT_QUOTES, 'UTF-8') ?>
+        </p>
+    </section>
+
     <section class="dashboard-hero">
         <div class="student-info">
             <p class="dashboard-eyebrow">Student Overview</p>
@@ -106,7 +131,10 @@ require_once '../includes/sidebar.php';
             </div>
 
             <?php if (empty($today_schedules)): ?>
-            <p class="empty-dashboard-text">No fixed schedule for today.</p>
+            <div class="empty-dashboard-state">
+                <strong>No schedule today</strong>
+                <p>There are no fixed lessons or activities planned for this weekday.</p>
+            </div>
             <?php else: ?>
             <div class="schedule-list">
                 <?php $current_time = date('H:i:s'); ?>
@@ -151,6 +179,27 @@ require_once '../includes/sidebar.php';
         </section>
 
         <aside class="dashboard-side-panel">
+            <section class="stats-preview">
+                <div class="section-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">Progress</p>
+                        <h2>Stat Growth</h2>
+                    </div>
+                    <a href="/gakumas-sms/student/stats.php" class="panel-link">View all</a>
+                </div>
+
+                <?php if ($has_chart_data): ?>
+                    <div class="stats-chart-wrap">
+                        <canvas id="statProgressChart"></canvas>
+                    </div>
+                <?php else: ?>
+                    <div class="empty-dashboard-state compact">
+                        <strong>No stat history yet</strong>
+                        <p>Your progress chart will appear after stats are recorded.</p>
+                    </div>
+                <?php endif; ?>
+            </section>
+
             <section class="messages-preview">
                 <div class="section-heading">
                     <div>
@@ -160,12 +209,100 @@ require_once '../includes/sidebar.php';
                     <a href="/gakumas-sms/messages/inbox.php" class="panel-link">View all</a>
                 </div>
 
-                <p class="empty-dashboard-text">
-                    Message preview coming soon.
-                </p>
+                <?php if (empty($recent_messages)): ?>
+                <div class="empty-dashboard-state compact">
+                    <strong>No recent messages</strong>
+                    <p>New producer or teacher messages will appear here.</p>
+                </div>
+                <?php else: ?>
+                <div class="message-preview-list">
+                    <?php foreach ($recent_messages as $message): ?>
+                    <article class="message-preview-item <?= $message['is_read'] ? '' : 'unread' ?>">
+                        <div>
+                            <h3>
+                                <?= htmlspecialchars($message['subject'] ?: 'No subject', ENT_QUOTES, 'UTF-8') ?>
+                            </h3>
+                            <p>
+                                <?= htmlspecialchars($message['body'], ENT_QUOTES, 'UTF-8') ?>
+                            </p>
+                        </div>
+
+                        <footer>
+                            <span><?= htmlspecialchars($message['sender_name'] ?? 'Unknown sender', ENT_QUOTES, 'UTF-8') ?></span>
+                            <time datetime="<?= htmlspecialchars($message['sent_at'], ENT_QUOTES, 'UTF-8') ?>">
+                                <?= htmlspecialchars(date('M j', strtotime($message['sent_at'])), ENT_QUOTES, 'UTF-8') ?>
+                            </time>
+                        </footer>
+                    </article>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
             </section>
         </aside>
     </div>
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const statLabels = <?= json_encode($chart_labels, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+const statData = <?= json_encode($chart_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+
+const allStats = [
+    ...(statData.vocal ?? []),
+    ...(statData.dance ?? []),
+    ...(statData.visual ?? [])
+].filter(value => value !== null && value !== undefined);
+
+const maxStat = allStats.length ? Math.max(...allStats) : 100;
+const yMax = Math.ceil((maxStat + 10) / 10) * 10;
+
+new Chart(document.getElementById('statProgressChart'), {
+    type: 'line',
+    data: {
+        labels: statLabels,
+        datasets: [
+            {
+                label: 'Vocal',
+                data: statData.vocal,
+                borderColor: getComputedStyle(document.body).getPropertyValue('--vocal-color').trim(),
+                tension: 0.35,
+                spanGaps: true
+            },
+            {
+                label: 'Dance',
+                data: statData.dance,
+                borderColor: getComputedStyle(document.body).getPropertyValue('--dance-color').trim(),
+                tension: 0.35,
+                spanGaps: true
+            },
+            {
+                label: 'Visual',
+                data: statData.visual,
+                borderColor: getComputedStyle(document.body).getPropertyValue('--visual-color').trim(),
+                tension: 0.35,
+                spanGaps: true
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        },
+        scales: {
+            y: {
+                min: 40,
+                max: yMax,
+                ticks: {
+                    stepSize: 10
+                }
+            }
+        }
+    }
+});
+</script>
 
 <?php require_once '../includes/footer.php'; ?>
