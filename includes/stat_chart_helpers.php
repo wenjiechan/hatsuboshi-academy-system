@@ -6,6 +6,7 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
 
     ensure_daily_student_stats_table($pdo);
     save_today_student_stats($pdo, $student, $stat_types);
+    delete_old_student_stat_snapshots($pdo, (int) $student['id']);
 
     $today = new DateTimeImmutable('today');
     $start_date = $today->modify('-6 days');
@@ -136,4 +137,15 @@ function get_weekly_stat_snapshots(PDO $pdo, int $student_id, string $start_date
     }
 
     return $snapshots;
+}
+
+function delete_old_student_stat_snapshots(PDO $pdo, int $student_id): void
+{
+    $stmt = $pdo->prepare(
+        'DELETE FROM daily_student_stats
+         WHERE student_id = ?
+           AND stat_date < DATE_SUB(CURDATE(), INTERVAL 6 DAY)'
+    );
+
+    $stmt->execute([$student_id]);
 }
