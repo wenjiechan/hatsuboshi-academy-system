@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 28, 2026 at 11:59 AM
+-- Generation Time: May 29, 2026 at 04:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,23 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `gakumas_sms`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `daily_student_stats`
---
-
-CREATE TABLE `daily_student_stats` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `stat_date` date NOT NULL,
-  `vocal` int(11) NOT NULL,
-  `dance` int(11) NOT NULL,
-  `visual` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `daily_student_stats`
@@ -93,102 +76,9 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:41', '2026-05-28 17:58:41'),
 (0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:42', '2026-05-28 17:58:42'),
 (0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:44', '2026-05-28 17:58:44'),
-(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:54', '2026-05-28 17:58:54');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `events`
---
-
-CREATE TABLE `events` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `type` enum('audition','concert','photoshoot') NOT NULL,
-  `date` datetime NOT NULL,
-  `required_vocal` int(11) NOT NULL DEFAULT 0,
-  `required_dance` int(11) NOT NULL DEFAULT 0,
-  `required_visual` int(11) NOT NULL DEFAULT 0,
-  `location` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `event_participants`
---
-
-CREATE TABLE `event_participants` (
-  `id` int(11) NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `result` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `lessons`
---
-
-CREATE TABLE `lessons` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `type` enum('vocal','dance','visual') NOT NULL,
-  `stat_gain` int(11) NOT NULL DEFAULT 0,
-  `description` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `messages`
---
-
-CREATE TABLE `messages` (
-  `id` int(11) NOT NULL,
-  `sender_id` int(11) DEFAULT NULL,
-  `receiver_id` int(11) DEFAULT NULL,
-  `subject` varchar(200) DEFAULT NULL,
-  `body` text NOT NULL,
-  `is_read` tinyint(1) NOT NULL DEFAULT 0,
-  `is_deleted_by_sender` tinyint(1) NOT NULL DEFAULT 0,
-  `is_deleted_by_receiver` tinyint(1) NOT NULL DEFAULT 0,
-  `parent_message_id` int(11) DEFAULT NULL,
-  `sent_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `read_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `notifications`
---
-
-CREATE TABLE `notifications` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `type` varchar(50) NOT NULL,
-  `title` varchar(200) NOT NULL,
-  `body` text DEFAULT NULL,
-  `is_read` tinyint(1) NOT NULL DEFAULT 0,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `producer_messages`
---
-
-CREATE TABLE `producer_messages` (
-  `id` int(11) NOT NULL,
-  `producer_id` int(11) DEFAULT NULL,
-  `student_id` int(11) DEFAULT NULL,
-  `message_type` varchar(50) NOT NULL,
-  `tone` varchar(20) DEFAULT NULL,
-  `message_text` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+(0, 5, '2026-05-28', 65, 55, 65, '2026-05-28 17:58:54', '2026-05-28 17:58:54'),
+(0, 4, '2026-05-29', 55, 55, 65, '2026-05-29 09:11:38', '2026-05-29 09:11:38'),
+(0, 5, '2026-05-29', 65, 55, 65, '2026-05-29 09:12:01', '2026-05-29 09:12:01');
 
 --
 -- Dumping data for table `producer_messages`
@@ -275,29 +165,61 @@ INSERT INTO `producer_messages` (`id`, `producer_id`, `student_id`, `message_typ
 (78, 1, 3, 'rest_day', 'warm', 'Day off, Kotone. Treat yourself to something nice with what you\'ve saved. You deserve it.'),
 (79, 1, 3, 'good_progress', 'warm', 'Your progress is fantastic, and yes — there\'s a reward for it. You earned every bit of it.'),
 (80, 1, 3, 'good_progress', 'playful', 'Numbers are up across the board. At this rate the sponsors will be fighting over you. Love it.'),
-(81, 1, 3, 'good_progress', 'gentle', 'You\'re growing so much. Whatever goal that money is for, you\'re getting closer every week.');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `recurring_schedules`
---
-
-CREATE TABLE `recurring_schedules` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `weekday` tinyint(4) NOT NULL,
-  `activity_type` varchar(50) NOT NULL,
-  `title` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
-  `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
-  `location` varchar(100) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(81, 1, 3, 'good_progress', 'gentle', 'You\'re growing so much. Whatever goal that money is for, you\'re getting closer every week.'),
+(82, 1, 4, 'morning', 'gentle', 'Good morning, Lilja. Take your time waking up — there\'s no rush. I\'m here when you\'re ready.'),
+(83, 1, 4, 'morning', 'warm', 'Morning. You looked nervous yesterday, so today let\'s start small and easy together.'),
+(84, 1, 4, 'morning', 'gentle', 'Hyvää huomenta, Lilja. Whichever language wakes you up gentler — both work for me.'),
+(85, 1, 4, 'afternoon', 'warm', 'Afternoon check-in. You\'ve done well so far. Breathe — the hard part is already behind you.'),
+(86, 1, 4, 'afternoon', 'gentle', 'How are you holding up? If anything\'s overwhelming you, please tell me. We can adjust.'),
+(87, 1, 4, 'afternoon', 'warm', 'You\'re halfway through the day. Quietly proud of how you\'re handling everything.'),
+(88, 1, 4, 'evening', 'gentle', 'Evening, Lilja. You worked hard today. Don\'t replay the small mistakes — just rest.'),
+(89, 1, 4, 'evening', 'warm', 'Day\'s done, and you got through it. That itself is something to feel good about.'),
+(90, 1, 4, 'evening', 'gentle', 'Sleep well tonight. Tomorrow\'s a new day, and you don\'t have to be perfect for it.'),
+(91, 1, 4, 'low_vocal', 'gentle', 'Your voice was a little quiet today. Not bad — just shy. Let\'s find that volume together.'),
+(92, 1, 4, 'low_vocal', 'warm', 'Vocals will come with confidence, and confidence comes with time. We\'re in no hurry.'),
+(93, 1, 4, 'low_vocal', 'serious', 'Your singing has potential people don\'t see yet because you hold back. Let\'s work on letting go.'),
+(94, 1, 4, 'low_dance', 'gentle', 'Dance felt uncertain today. That\'s okay — your movements get prettier when you stop overthinking.'),
+(95, 1, 4, 'low_dance', 'warm', 'Tough dance session, hm? Don\'t apologize. We just keep practicing until it feels natural.'),
+(96, 1, 4, 'low_dance', 'gentle', 'You hesitated a lot on the floor today. Trust your body — it knows more than you think.'),
+(97, 1, 4, 'low_visual', 'warm', 'Visual was a little tense today. You\'re beautiful when you\'re relaxed — just breathe and smile.'),
+(98, 1, 4, 'low_visual', 'gentle', 'The camera caught some stiffness today. It happens. We\'ll do a softer set tomorrow.'),
+(99, 1, 4, 'low_visual', 'serious', 'You have everything a top idol needs visually. The only thing missing is believing it yourself.'),
+(100, 1, 4, 'audition_day', 'gentle', 'Audition day. Nervous is normal. Whatever happens out there, I\'m proud of you for going.'),
+(101, 1, 4, 'audition_day', 'warm', 'Today\'s the day. Remember — you don\'t have to be perfect. You just have to be yourself.'),
+(102, 1, 4, 'audition_day', 'firm', 'Audition day. You\'ve trained for this. You belong on that stage as much as anyone — go show them.'),
+(103, 1, 4, 'rest_day', 'gentle', 'Rest day. Take it slow, read, call home — whatever makes you feel calm. You\'ve earned it.'),
+(104, 1, 4, 'rest_day', 'warm', 'Day off today. Please rest properly — no quietly practicing in your room thinking I won\'t notice.'),
+(105, 1, 4, 'rest_day', 'gentle', 'A full rest day, Lilja. The world won\'t end if you take care of yourself for one day. Promise.'),
+(106, 1, 4, 'good_progress', 'warm', 'Your progress this week was real, and visible. I hope you can see it the way I do.'),
+(107, 1, 4, 'good_progress', 'gentle', 'You\'re growing, Lilja. Quietly, steadily — exactly the way that lasts. Very proud.'),
+(108, 1, 4, 'good_progress', 'serious', 'The numbers don\'t lie. You\'re improving fast. Now it\'s time to believe what the results say.'),
+(109, 1, 5, 'morning', 'warm', 'Morning, Sumika! You sound ready to take on the world already. Channel it into the lessons today.'),
+(110, 1, 5, 'morning', 'playful', 'Good morning, captain. Pre-game pep talk: stretch, eat, smile — in that order. Let\'s go.'),
+(111, 1, 5, 'morning', 'firm', 'Morning. I know you\'re fired up, but pace yourself — full day ahead, not a sprint.'),
+(112, 1, 5, 'afternoon', 'warm', 'Afternoon, and you\'re still going strong. That sports background really shows in your stamina.'),
+(113, 1, 5, 'afternoon', 'playful', 'Halftime, Sumika. Grab water, catch your breath, then we\'re back on the court.'),
+(114, 1, 5, 'afternoon', 'firm', 'Good work this morning. Stay sharp — afternoon lessons are where your focus tends to slip.'),
+(115, 1, 5, 'evening', 'gentle', 'Evening, Sumika. You went full speed all day. Now actually slow down — cooldown counts too.'),
+(116, 1, 5, 'evening', 'warm', 'Long day, well played. Stretch properly tonight or your legs will hate you tomorrow.'),
+(117, 1, 5, 'evening', 'firm', 'Day\'s over. No extra training tonight — recovery is part of the program, not a bonus.'),
+(118, 1, 5, 'low_vocal', 'warm', 'Vocals dipped today — probably out of breath from putting your whole body into it. Let\'s pace it.'),
+(119, 1, 5, 'low_vocal', 'serious', 'Singing isn\'t a sprint, Sumika. Less power, more control — your vocals will climb fast that way.'),
+(120, 1, 5, 'low_vocal', 'gentle', 'A little off-key today, but the energy was there. We just need to tune the instrument now.'),
+(121, 1, 5, 'low_dance', 'firm', 'Dance was below your level today. The athleticism is there — focus on hitting the counts cleanly.'),
+(122, 1, 5, 'low_dance', 'serious', 'You moved fast but messy in dance. Precision over speed — that\'s the next step for you.'),
+(123, 1, 5, 'low_dance', 'warm', 'Tougher dance session than usual. Don\'t take it to heart — your fundamentals are still solid.'),
+(124, 1, 5, 'low_visual', 'gentle', 'Visual scores were lower today. Sometimes that big smile needs a moment of softness too. We\'ll practice.'),
+(125, 1, 5, 'low_visual', 'serious', 'Visual needs work. You\'ve got the bright presence — now we add expression range to go with it.'),
+(126, 1, 5, 'low_visual', 'playful', 'Your \"game face\" was a little too game today. Let\'s find some other expressions to add to the lineup.'),
+(127, 1, 5, 'audition_day', 'firm', 'Audition day. Treat it like a final match — leave it all on the stage. You\'ve got this, Sumika.'),
+(128, 1, 5, 'audition_day', 'warm', 'Today\'s your game day. All that training, all that sweat — go show them what you can do.'),
+(129, 1, 5, 'audition_day', 'playful', 'Big match today. Pre-game ritual: deep breath, big smile, then knock \'em flat. Go!'),
+(130, 1, 5, 'rest_day', 'firm', 'Rest day, Sumika. I know that\'s harder for you than training. Sit still. That\'s the assignment.'),
+(131, 1, 5, 'rest_day', 'gentle', 'Day off today. Even athletes have recovery days — your body grows stronger when you actually rest.'),
+(132, 1, 5, 'rest_day', 'warm', 'Full rest day. Do something fun, see friends, whatever\'s NOT a workout. You\'ve earned it.'),
+(133, 1, 5, 'good_progress', 'warm', 'Your numbers are up, your energy is up — you\'re in great form right now. Keep this rhythm going.'),
+(134, 1, 5, 'good_progress', 'firm', 'Strong week, Sumika. The effort is showing on the scoreboard. This is how champions train.'),
+(135, 1, 5, 'good_progress', 'playful', 'Look at you climbing the rankings. The whole team is going to have to catch up to you at this rate.');
 
 --
 -- Dumping data for table `recurring_schedules`
@@ -310,9 +232,9 @@ INSERT INTO `recurring_schedules` (`id`, `student_id`, `weekday`, `activity_type
 (4, 1, 1, 'dance', 'Academy Dance Lesson', 'Group dance training class.', '14:00:00', '16:00:00', 'Dance Studio 1', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (5, 2, 1, 'dance', 'Academy Dance Lesson', 'Group dance training class.', '14:00:00', '16:00:00', 'Dance Studio 1', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (6, 3, 1, 'dance', 'Academy Dance Lesson', 'Group dance training class.', '14:00:00', '16:00:00', 'Dance Studio 1', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
-(7, 1, 2, 'class', 'Academic Class', 'Regular shared school lessons.', '09:00:00', '12:00:00', 'Classroom 1-A', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
-(8, 2, 2, 'class', 'Academic Class', 'Regular shared school lessons.', '09:00:00', '12:00:00', 'Classroom 1-A', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
-(9, 3, 2, 'class', 'Academic Class', 'Regular shared school lessons.', '09:00:00', '12:00:00', 'Classroom 1-A', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
+(7, 1, 2, 'class', 'Academic Class', 'Regular shared school lessons.', '09:00:00', '12:00:00', 'Classroom 1-1', 1, 1, '2026-05-28 14:59:05', '2026-05-29 08:04:10'),
+(8, 2, 2, 'class', 'Academic Class', 'Regular shared school lessons.', '09:00:00', '12:00:00', 'Classroom 1-1', 1, 1, '2026-05-28 14:59:05', '2026-05-29 08:04:10'),
+(9, 3, 2, 'class', 'Academic Class', 'Regular shared school lessons.', '09:00:00', '12:00:00', 'Classroom 1-1', 1, 1, '2026-05-28 14:59:05', '2026-05-29 08:04:10'),
 (10, 1, 2, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '14:00:00', '16:00:00', 'Visual Studio', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (11, 2, 2, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '14:00:00', '16:00:00', 'Visual Studio', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (12, 3, 2, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '14:00:00', '16:00:00', 'Visual Studio', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
@@ -325,9 +247,9 @@ INSERT INTO `recurring_schedules` (`id`, `student_id`, `weekday`, `activity_type
 (19, 1, 5, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '10:00:00', '12:00:00', 'Visual Studio', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (20, 2, 5, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '10:00:00', '12:00:00', 'Visual Studio', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (21, 3, 5, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '10:00:00', '12:00:00', 'Visual Studio', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
-(22, 1, 5, 'class', 'Academic Class', 'Regular shared school lessons.', '13:00:00', '15:00:00', 'Classroom 1-A', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
-(23, 2, 5, 'class', 'Academic Class', 'Regular shared school lessons.', '13:00:00', '15:00:00', 'Classroom 1-A', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
-(24, 3, 5, 'class', 'Academic Class', 'Regular shared school lessons.', '13:00:00', '15:00:00', 'Classroom 1-A', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
+(22, 1, 5, 'class', 'Academic Class', 'Regular shared school lessons.', '13:00:00', '15:00:00', 'Classroom 1-1', 1, 1, '2026-05-28 14:59:05', '2026-05-29 08:04:10'),
+(23, 2, 5, 'class', 'Academic Class', 'Regular shared school lessons.', '13:00:00', '15:00:00', 'Classroom 1-1', 1, 1, '2026-05-28 14:59:05', '2026-05-29 08:04:10'),
+(24, 3, 5, 'class', 'Academic Class', 'Regular shared school lessons.', '13:00:00', '15:00:00', 'Classroom 1-1', 1, 1, '2026-05-28 14:59:05', '2026-05-29 08:04:10'),
 (25, 1, 1, 'training', 'Morning Run', 'Daily 5km run. Never skipped.', '06:00:00', '07:00:00', 'Academy Grounds', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (26, 1, 1, 'training', 'Evening Conditioning', 'Stamina cooldown after dance.', '16:30:00', '17:30:00', 'Gym', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (27, 1, 2, 'training', 'Morning Run', 'Daily 5km run.', '06:00:00', '07:00:00', 'Academy Grounds', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
@@ -370,48 +292,48 @@ INSERT INTO `recurring_schedules` (`id`, `student_id`, `weekday`, `activity_type
 (64, 3, 6, 'photoshoot', 'Photoshoot', 'Sponsor photoshoot. Bonus pay = great mood.', '11:00:00', '15:00:00', 'Studio C', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (65, 3, 6, 'dance', 'Solo Dance Practice', 'Extra optional dance practice. She insists.', '16:00:00', '17:30:00', 'Practice Room 3', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
 (66, 3, 6, 'work', 'Part-Time Job', 'Evening shift.', '18:30:00', '22:00:00', 'Off-campus', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
-(67, 3, 7, 'rest', 'Rest Day', 'Producer-enforced rest.', '00:00:00', '23:59:59', '-', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `schedules`
---
-
-CREATE TABLE `schedules` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `activity_type` varchar(50) NOT NULL,
-  `title` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
-  `date` date NOT NULL,
-  `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
-  `location` varchar(100) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `status` enum('scheduled','completed','cancelled') NOT NULL DEFAULT 'scheduled',
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `songs`
---
-
-CREATE TABLE `songs` (
-  `id` int(11) NOT NULL,
-  `title` varchar(150) NOT NULL,
-  `title_jp` varchar(150) DEFAULT NULL,
-  `artist` varchar(150) DEFAULT NULL,
-  `duration` time DEFAULT NULL,
-  `release_date` date DEFAULT NULL,
-  `notes` text DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+(67, 3, 7, 'rest', 'Rest Day', 'Producer-enforced rest.', '00:00:00', '23:59:59', '-', 1, 1, '2026-05-28 14:59:05', '2026-05-28 14:59:05'),
+(68, 4, 1, 'vocal', 'Academy Vocal Lesson', 'Group vocal training class.', '10:00:00', '12:00:00', 'Vocal Studio A', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(69, 5, 1, 'vocal', 'Academy Vocal Lesson', 'Group vocal training class.', '10:00:00', '12:00:00', 'Vocal Studio A', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(70, 4, 1, 'dance', 'Academy Dance Lesson', 'Group dance training class.', '14:00:00', '16:00:00', 'Dance Studio 1', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(71, 5, 1, 'dance', 'Academy Dance Lesson', 'Group dance training class.', '14:00:00', '16:00:00', 'Dance Studio 1', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(72, 4, 2, 'class', 'Academic Class', 'Class 1-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 1-1', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(73, 5, 2, 'class', 'Academic Class', 'Class 1-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 1-1', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(74, 4, 2, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '14:00:00', '16:00:00', 'Visual Studio', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(75, 5, 2, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '14:00:00', '16:00:00', 'Visual Studio', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(76, 4, 3, 'dance', 'Academy Dance Lesson', 'Group dance training class.', '10:00:00', '12:00:00', 'Dance Studio 1', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(77, 5, 3, 'dance', 'Academy Dance Lesson', 'Group dance training class.', '10:00:00', '12:00:00', 'Dance Studio 1', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(78, 4, 4, 'vocal', 'Academy Vocal Lesson', 'Group vocal training class.', '14:00:00', '16:00:00', 'Vocal Studio A', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(79, 5, 4, 'vocal', 'Academy Vocal Lesson', 'Group vocal training class.', '14:00:00', '16:00:00', 'Vocal Studio A', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(80, 4, 5, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '10:00:00', '12:00:00', 'Visual Studio', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(81, 5, 5, 'visual', 'Academy Visual Lesson', 'Group visual expression class.', '10:00:00', '12:00:00', 'Visual Studio', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(82, 4, 5, 'class', 'Academic Class', 'Class 1-1 regular school lessons.', '13:00:00', '15:00:00', 'Classroom 1-1', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(83, 5, 5, 'class', 'Academic Class', 'Class 1-1 regular school lessons.', '13:00:00', '15:00:00', 'Classroom 1-1', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(84, 4, 1, 'rest', 'Morning Quiet Time', 'Solo reading or meditation before lessons start.', '07:00:00', '08:30:00', 'Library', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(85, 4, 1, 'vocal', 'Solo Vocal Practice', 'Quiet personal warmups. Builds confidence gradually.', '16:30:00', '17:30:00', 'Practice Room 4', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(86, 4, 2, 'rest', 'Call Home', 'Weekly video call with family in Finland.', '07:30:00', '08:30:00', 'Dormitory', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(87, 4, 2, 'visual', 'Solo Visual Practice', 'Self-recorded posing practice. Reviews her own film.', '16:30:00', '18:00:00', 'Practice Room 4', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(88, 4, 3, 'rest', 'Self-Study', 'Quiet study session. Catching up on Japanese reading.', '08:00:00', '09:30:00', 'Library', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(89, 4, 3, 'photoshoot', 'Magazine Modeling', 'Modeling work from her pre-academy career.', '13:30:00', '17:00:00', 'Studio C', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(90, 4, 4, 'visual', 'Solo Visual Practice', 'Mirror practice for expression and softness.', '09:30:00', '11:30:00', 'Practice Room 4', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(91, 4, 4, 'rest', 'Confidence Session', 'One-on-one talk with Producer. Gentle encouragement.', '16:30:00', '17:30:00', 'Meeting Room', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(92, 4, 5, 'vocal', 'Solo Vocal Practice', 'Personal practice with the door closed.', '15:30:00', '16:30:00', 'Practice Room 4', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(93, 4, 6, 'photoshoot', 'Modeling Job', 'Scheduled modeling shoot. Familiar territory for her.', '10:00:00', '14:00:00', 'Studio C', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(94, 4, 6, 'dance', 'Solo Dance Practice', 'Gentle choreography review. Works best when alone.', '15:30:00', '17:00:00', 'Practice Room 4', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(95, 4, 7, 'rest', 'Rest Day', 'Full rest. Reading, calls home, quiet hobbies.', '00:00:00', '23:59:59', '-', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(96, 5, 1, 'training', 'Morning Tennis', 'Solo tennis practice. Keeps her sports edge sharp.', '06:30:00', '07:45:00', 'Tennis Court', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(97, 5, 1, 'training', 'Cooldown Stretches', 'Post-dance recovery stretches.', '16:30:00', '17:15:00', 'Gym', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(98, 5, 2, 'training', 'Morning Run', 'Light morning jog around the academy.', '06:30:00', '07:30:00', 'Academy Grounds', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(99, 5, 2, 'dance', 'Solo Dance Practice', 'Working on choreography precision.', '16:30:00', '18:00:00', 'Practice Room 5', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(100, 5, 3, 'training', 'Morning Tennis', 'Solo tennis drills.', '06:30:00', '07:45:00', 'Tennis Court', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(101, 5, 3, 'training', 'Strength Training', 'Light gym workout. Keeps her stamina up.', '13:00:00', '14:30:00', 'Gym', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(102, 5, 4, 'training', 'Morning Run', 'Sprint intervals around the grounds.', '06:30:00', '07:30:00', 'Academy Grounds', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(103, 5, 4, 'dance', 'Solo Dance Practice', 'Working on expression alongside the moves.', '09:30:00', '11:30:00', 'Practice Room 5', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(104, 5, 5, 'training', 'Morning Tennis', 'Solo tennis practice.', '06:30:00', '07:45:00', 'Tennis Court', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(105, 5, 5, 'training', 'Cooldown Stretches', 'Post-week recovery routine.', '15:30:00', '16:30:00', 'Gym', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(106, 5, 6, 'training', 'Tennis Match', 'Friendly weekend tennis match with old teammates.', '09:00:00', '12:00:00', 'Tennis Court', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(107, 5, 6, 'vocal', 'Solo Vocal Practice', 'Working on breath control — sports lungs help.', '14:00:00', '15:30:00', 'Practice Room 5', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10'),
+(108, 5, 7, 'rest', 'Rest Day', 'Full rest. Tries to actually sit still. Tries.', '00:00:00', '23:59:59', '-', 1, 1, '2026-05-29 08:04:10', '2026-05-29 08:04:10');
 
 --
 -- Dumping data for table `songs`
@@ -421,50 +343,6 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (1, 'Fighting My Way', 'Fighting My Way', 'Saki Hanami', '00:03:21', '2024-05-16', 'Saki Hanami\'s debut solo song. Lyrics: HIROMI. Composition & arrangement: Giga. Performed in 定期公演『初』.', 1, '2026-05-27 13:20:33', '2026-05-27 13:20:33'),
 (2, 'Luna say maybe', 'Luna say maybe', 'Temari Tsukimura', '00:04:25', '2024-05-16', 'Temari Tsukimura\'s debut solo song and signature track. Lyrics & composition: Minami (美波). Arrangement: Minami & Katsuhiro Mafune. Performed in the produce scenario \"Teiki Kouen Hatsu\" (定期公演『初』). ', 1, '2026-05-27 13:20:33', '2026-05-27 13:20:33'),
 (3, 'Sekai Ichi Kawaii Watashi', '世界一可愛い私', 'Kotone Fujita', '00:03:59', '2024-05-16', 'Kotone Fujita\'s debut solo song. Lyrics, composition, and arrangement all by HoneyWorks — the duo behind the wildly popular \"Kokuhaku Jikkou Iinkai\" (Confession Executive Committee) series. ', 1, '2026-05-27 13:20:33', '2026-05-27 13:20:33');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `stat_history`
---
-
-CREATE TABLE `stat_history` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) DEFAULT NULL,
-  `stat_type` enum('vocal','dance','visual') NOT NULL,
-  `old_value` int(11) NOT NULL,
-  `new_value` int(11) NOT NULL,
-  `reason` varchar(200) DEFAULT NULL,
-  `recorded_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `students`
---
-
-CREATE TABLE `students` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `name_jp` varchar(100) DEFAULT NULL,
-  `birthday` date DEFAULT NULL,
-  `blood_type` char(2) DEFAULT NULL,
-  `height` int(11) DEFAULT NULL,
-  `hometown` varchar(50) DEFAULT NULL,
-  `school_year` varchar(20) DEFAULT NULL,
-  `rank` varchar(10) NOT NULL DEFAULT 'Debut',
-  `vocal` int(11) NOT NULL DEFAULT 0,
-  `dance` int(11) NOT NULL DEFAULT 0,
-  `visual` int(11) NOT NULL DEFAULT 0,
-  `bio` text DEFAULT NULL,
-  `theme_primary_color` varchar(20) DEFAULT NULL,
-  `theme_secondary_color` varchar(20) NOT NULL,
-  `producer_id` int(11) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `students`
@@ -477,20 +355,6 @@ INSERT INTO `students` (`id`, `user_id`, `name`, `name_jp`, `birthday`, `blood_t
 (4, 8, 'Lilja Katsuragi', '葛城 リーリヤ', '2000-07-24', 'B', 161, 'Sweden', 'Class 1-1', 'Debut', 55, 55, 65, 'An exchange student from overseas with no prior singing or dancing experience, who is always shrinking back as if she had no confidence. She doesn\'t look talented at first glance, but her admiration for idols is genuine, and she is an incredibly hard worker. Her father is Japanese, so she speaks the language fluently. She has a promise with her best friend Sumika to stand on the same stage together one day—the reason she enrolled at Hatsuboshi Academy. ', '#7DC4D4', '#EAFDFF', 1, '2026-05-28 17:43:41', '2026-05-28 17:56:05'),
 (5, 9, 'Sumika Shiun', '紫雲 清夏', '2000-11-11', 'O', 168, 'Hokkaido', 'Class 1-1', 'Debut', 65, 55, 65, 'A laid-back gyaru who skips class and lessons—a bit of an unserious slacker, but genuinely bright, cheerful, and able to get along with anyone, which is her real charm. She once had a celebrated ballet career and was expected to go far on the world stage, but she has no motivation for it anymore. She wholeheartedly cheers on her best friend Lilja, who is earnestly chasing her idol dream. ', '#7CFC00', '#D6FFB3', 1, '2026-05-28 17:43:41', '2026-05-28 17:58:33');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `student_songs`
---
-
-CREATE TABLE `student_songs` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `song_id` int(11) NOT NULL,
-  `added_by` int(11) DEFAULT NULL,
-  `added_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 --
 -- Dumping data for table `student_songs`
 --
@@ -500,19 +364,6 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (2, 2, 2, 1, '2026-05-27 13:20:33'),
 (3, 3, 3, 1, '2026-05-27 13:20:33');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `teachers`
---
-
-CREATE TABLE `teachers` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `specialty` enum('vocal','dance','visual') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 --
 -- Dumping data for table `teachers`
 --
@@ -521,24 +372,6 @@ INSERT INTO `teachers` (`id`, `user_id`, `name`, `specialty`) VALUES
 (1, 2, 'Vocal Trainer', 'vocal'),
 (2, 3, 'Dance Trainer', 'dance'),
 (3, 4, 'Visual Trainer', 'visual');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` enum('producer','teacher','student') NOT NULL,
-  `avatar` varchar(255) DEFAULT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `last_login` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
@@ -552,293 +385,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`
 (5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-05-28 16:42:44', '2026-05-28 16:42:44'),
 (6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-05-28 16:01:07', '2026-05-28 16:01:07'),
 (7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-05-28 15:58:24', '2026-05-28 15:58:24'),
-(8, 'Lilja Katsuragi', '$2y$10$U0wQB4kmtvPYWWQX.9oi0OJ60HDhnd/yf.tuf71exJ8MoG8xS0FVa', 'student', 'Lilja Katsuragi.png', 1, '2026-05-26 13:13:13', '2026-05-28 17:56:18', '2026-05-28 17:56:18'),
-(9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-05-28 17:58:54', '2026-05-28 17:58:54');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `events`
---
-ALTER TABLE `events`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_events_date` (`date`),
-  ADD KEY `idx_events_type` (`type`);
-
---
--- Indexes for table `event_participants`
---
-ALTER TABLE `event_participants`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_event_student` (`event_id`,`student_id`),
-  ADD KEY `idx_event_participants_student_id` (`student_id`);
-
---
--- Indexes for table `lessons`
---
-ALTER TABLE `lessons`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_lessons_type` (`type`);
-
---
--- Indexes for table `messages`
---
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_messages_sender_id` (`sender_id`),
-  ADD KEY `idx_messages_receiver_id` (`receiver_id`),
-  ADD KEY `idx_messages_receiver_unread` (`receiver_id`,`is_read`,`is_deleted_by_receiver`),
-  ADD KEY `idx_messages_parent` (`parent_message_id`),
-  ADD KEY `idx_messages_sent_at` (`sent_at`);
-
---
--- Indexes for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_notifications_user_id` (`user_id`),
-  ADD KEY `idx_notifications_user_unread` (`user_id`,`is_read`),
-  ADD KEY `idx_notifications_created_at` (`created_at`);
-
---
--- Indexes for table `producer_messages`
---
-ALTER TABLE `producer_messages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_producer_messages_producer_id` (`producer_id`),
-  ADD KEY `idx_producer_messages_student_id` (`student_id`),
-  ADD KEY `idx_producer_messages_lookup` (`student_id`,`message_type`);
-
---
--- Indexes for table `recurring_schedules`
---
-ALTER TABLE `recurring_schedules`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `schedules`
---
-ALTER TABLE `schedules`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_schedules_student_id` (`student_id`),
-  ADD KEY `idx_schedules_date` (`date`),
-  ADD KEY `idx_schedules_student_date` (`student_id`,`date`),
-  ADD KEY `idx_schedules_created_by` (`created_by`),
-  ADD KEY `idx_schedules_status` (`status`);
-
---
--- Indexes for table `songs`
---
-ALTER TABLE `songs`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_songs_title` (`title`),
-  ADD KEY `idx_songs_release_date` (`release_date`),
-  ADD KEY `idx_songs_created_by` (`created_by`);
-
---
--- Indexes for table `stat_history`
---
-ALTER TABLE `stat_history`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_stat_history_student_id` (`student_id`),
-  ADD KEY `idx_stat_history_recorded_at` (`recorded_at`);
-
---
--- Indexes for table `students`
---
-ALTER TABLE `students`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_students_user_id` (`user_id`),
-  ADD KEY `idx_students_producer_id` (`producer_id`),
-  ADD KEY `idx_students_rank` (`rank`);
-
---
--- Indexes for table `student_songs`
---
-ALTER TABLE `student_songs`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_student_song` (`student_id`,`song_id`),
-  ADD KEY `idx_student_songs_song_id` (`song_id`),
-  ADD KEY `idx_student_songs_added_by` (`added_by`);
-
---
--- Indexes for table `teachers`
---
-ALTER TABLE `teachers`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_teachers_user_id` (`user_id`),
-  ADD KEY `idx_teachers_specialty` (`specialty`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_users_username` (`username`),
-  ADD KEY `idx_users_role` (`role`),
-  ADD KEY `idx_users_is_active` (`is_active`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `events`
---
-ALTER TABLE `events`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `event_participants`
---
-ALTER TABLE `event_participants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `lessons`
---
-ALTER TABLE `lessons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `messages`
---
-ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `notifications`
---
-ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `producer_messages`
---
-ALTER TABLE `producer_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
-
---
--- AUTO_INCREMENT for table `recurring_schedules`
---
-ALTER TABLE `recurring_schedules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
-
---
--- AUTO_INCREMENT for table `schedules`
---
-ALTER TABLE `schedules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `songs`
---
-ALTER TABLE `songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `stat_history`
---
-ALTER TABLE `stat_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `students`
---
-ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `student_songs`
---
-ALTER TABLE `student_songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `teachers`
---
-ALTER TABLE `teachers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `event_participants`
---
-ALTER TABLE `event_participants`
-  ADD CONSTRAINT `fk_event_participants_event` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_event_participants_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `messages`
---
-ALTER TABLE `messages`
-  ADD CONSTRAINT `fk_messages_parent` FOREIGN KEY (`parent_message_id`) REFERENCES `messages` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_messages_receiver` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_messages_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- Constraints for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD CONSTRAINT `fk_notifications_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `producer_messages`
---
-ALTER TABLE `producer_messages`
-  ADD CONSTRAINT `fk_producer_messages_producer` FOREIGN KEY (`producer_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_producer_messages_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `schedules`
---
-ALTER TABLE `schedules`
-  ADD CONSTRAINT `fk_schedules_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_schedules_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `songs`
---
-ALTER TABLE `songs`
-  ADD CONSTRAINT `fk_songs_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- Constraints for table `stat_history`
---
-ALTER TABLE `stat_history`
-  ADD CONSTRAINT `fk_stat_history_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- Constraints for table `students`
---
-ALTER TABLE `students`
-  ADD CONSTRAINT `fk_students_producer` FOREIGN KEY (`producer_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_students_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `student_songs`
---
-ALTER TABLE `student_songs`
-  ADD CONSTRAINT `fk_student_songs_added_by` FOREIGN KEY (`added_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_student_songs_song` FOREIGN KEY (`song_id`) REFERENCES `songs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_student_songs_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `teachers`
---
-ALTER TABLE `teachers`
-  ADD CONSTRAINT `fk_teachers_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+(8, 'Lilja Katsuragi', '$2y$10$U0wQB4kmtvPYWWQX.9oi0OJ60HDhnd/yf.tuf71exJ8MoG8xS0FVa', 'student', 'Lilja Katsuragi.png', 1, '2026-05-26 13:13:13', '2026-05-29 09:11:38', '2026-05-29 09:11:38'),
+(9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-05-29 09:12:01', '2026-05-29 09:12:01');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
