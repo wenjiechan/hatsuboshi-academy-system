@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 01, 2026 at 05:37 PM
+-- Generation Time: Jun 02, 2026 at 07:27 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -111,7 +111,9 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (0, 6, '2026-06-01', 55, 55, 60, '2026-06-01 23:24:22', '2026-06-01 23:24:22'),
 (0, 7, '2026-06-01', 55, 55, 60, '2026-06-01 23:24:44', '2026-06-01 23:24:44'),
 (0, 9, '2026-06-01', 65, 70, 80, '2026-06-01 23:35:39', '2026-06-01 23:35:39'),
-(0, 8, '2026-06-01', 50, 60, 60, '2026-06-01 23:36:09', '2026-06-01 23:36:09');
+(0, 8, '2026-06-01', 50, 60, 60, '2026-06-01 23:36:09', '2026-06-01 23:36:09'),
+(0, 8, '2026-06-02', 50, 60, 60, '2026-06-02 09:16:05', '2026-06-02 09:16:05'),
+(0, 9, '2026-06-02', 65, 70, 80, '2026-06-02 09:16:31', '2026-06-02 09:16:31');
 
 -- --------------------------------------------------------
 
@@ -401,7 +403,61 @@ INSERT INTO `producer_messages` (`id`, `producer_id`, `student_id`, `message_typ
 (186, 1, 7, 'rest_day', 'warm', 'Rest day. Family time is fine, but no council work please. Recharge properly.'),
 (187, 1, 7, 'good_progress', 'warm', 'Your progress is real — and somehow you\'re doing it while running the council. Genuinely impressive.'),
 (188, 1, 7, 'good_progress', 'gentle', 'You\'ve grown so much this week, in lessons and as a leader. Very proud of you.'),
-(189, 1, 7, 'good_progress', 'firm', 'Numbers are up across the board. This is what disciplined balance looks like. Keep going.');
+(189, 1, 7, 'good_progress', 'firm', 'Numbers are up across the board. This is what disciplined balance looks like. Keep going.'),
+(190, 1, 8, 'morning', 'playful', 'Morning, Ume. Yes, Saki was already out running before you. No, it\'s not a race — but I know that won\'t stop you.'),
+(191, 1, 8, 'morning', 'warm', 'Good morning. Channel that competitive fire into lessons today, not just the running.'),
+(192, 1, 8, 'morning', 'firm', 'Morning. Run, eat, then lessons — in that order. You don\'t have to outpace Saki today.'),
+(193, 1, 8, 'afternoon', 'playful', 'Afternoon check-in. You\'re glowing — already beat your morning run time? Of course you did.'),
+(194, 1, 8, 'afternoon', 'warm', 'Halfway through. You\'ve kept your energy up all day, which is exactly what idols need.'),
+(195, 1, 8, 'afternoon', 'firm', 'Afternoon. Stay focused through the next lesson — competing isn\'t always about the obvious thing.'),
+(196, 1, 8, 'evening', 'gentle', 'Evening, Ume. You worked twice as hard as anyone today. Now actually let yourself wind down.'),
+(197, 1, 8, 'evening', 'warm', 'Day\'s done. Your sister would be proud — even if she\'d never say it. I\'ll say it for her.'),
+(198, 1, 8, 'evening', 'playful', 'Evening. The day is over. Saki is NOT secretly doing extra training in her room right now. Probably. Go rest.'),
+(199, 1, 8, 'low_vocal', 'warm', 'Vocals were a bit off today. Less power, more feeling — it\'s not a contest to hit notes the hardest.'),
+(200, 1, 8, 'low_vocal', 'gentle', 'Singing slipped today. Don\'t let one rough session shake you — you bounce back fast.'),
+(201, 1, 8, 'low_vocal', 'firm', 'Vocals weren\'t your best, Ume. You don\'t have to match Saki on every stat — improve your own pace.'),
+(202, 1, 8, 'low_dance', 'firm', 'Dance was below your level today. Stop trying to dance bigger than her and dance like YOU.'),
+(203, 1, 8, 'low_dance', 'serious', 'Today\'s dance felt rushed. You have stamina for days — you don\'t need to prove it in the first lesson.'),
+(204, 1, 8, 'low_dance', 'gentle', 'Dance was tired today. Tiring yourself out doesn\'t impress anyone — not even Saki, and that\'s saying something.'),
+(205, 1, 8, 'low_visual', 'gentle', 'Visual scores dipped today. Your cute smile is your weapon — use it instead of borrowing Saki\'s intense look.'),
+(206, 1, 8, 'low_visual', 'warm', 'Visual was off today. You light up best when you\'re being playful Ume, not serious Saki-clone.'),
+(207, 1, 8, 'low_visual', 'playful', 'Visual scores low? That serious face was 100% your sister\'s. Bring back your own grin tomorrow.'),
+(208, 1, 8, 'audition_day', 'firm', 'Audition day, Ume. This isn\'t about beating Saki. Show the judges who YOU are.'),
+(209, 1, 8, 'audition_day', 'warm', 'Today\'s the stage. All those runs, all that practice — go give them the bright Ume only YOU can be.'),
+(210, 1, 8, 'audition_day', 'playful', 'Big day, little Hanami. Beat your own record, not anyone else\'s. Now go shine.'),
+(211, 1, 8, 'rest_day', 'firm', 'Rest day. I know Saki tries to sneak training in too — don\'t follow her example today. Actually rest.'),
+(212, 1, 8, 'rest_day', 'gentle', 'Day off. Whatever Saki\'s doing, you don\'t have to copy it. Be a person, not a competition.'),
+(213, 1, 8, 'rest_day', 'playful', 'Rest day. Mandatory relaxing, no sister-sparring allowed. Saki has the same orders.'),
+(214, 1, 8, 'good_progress', 'warm', 'Your progress this week is wonderful. And it\'s all YOU — not because of anyone else. Proud of you.'),
+(215, 1, 8, 'good_progress', 'firm', 'Solid week, Ume. Numbers are up and you did it your way — not by copying. Keep that.'),
+(216, 1, 8, 'good_progress', 'playful', 'Look at you climbing the rankings. Saki may actually start worrying — I won\'t tell her you\'re catching up.'),
+(217, 1, 9, 'morning', 'playful', 'Good morning. I know — five more minutes. You\'ve used those five minutes seven times already.'),
+(218, 1, 9, 'morning', 'gentle', 'Morning, Misuzu. Up, please. Council meeting in 20 minutes. Yes, you have to be awake for that one.'),
+(219, 1, 9, 'morning', 'firm', 'Morning. I\'m not coming back in ten minutes. Get up. Lessons don\'t pause for nap protests.'),
+(220, 1, 9, 'afternoon', 'playful', 'Afternoon check-in. You\'re surprisingly awake today — what happened? Did the nap actually work?'),
+(221, 1, 9, 'afternoon', 'warm', 'Halfway through the day. You did well this morning — try to stay conscious through the next lesson.'),
+(222, 1, 9, 'afternoon', 'gentle', 'Afternoon, Misuzu. A quick break before the next session is fine. A four-hour break is not.'),
+(223, 1, 9, 'evening', 'playful', 'Evening. The day is over. Yes, you can sleep now. I know it\'s been on your mind since 9 AM.'),
+(224, 1, 9, 'evening', 'warm', 'Day\'s done. You stayed awake for most of it today — that\'s real progress. Sleep properly tonight.'),
+(225, 1, 9, 'evening', 'gentle', 'Evening, Misuzu. Don\'t nap so late it ruins your night sleep. We\'ve been here before.'),
+(226, 1, 9, 'low_vocal', 'gentle', 'Vocals were sleepy today. When you actually wake up, you sing beautifully — let\'s find that more often.'),
+(227, 1, 9, 'low_vocal', 'playful', 'Singing while half-asleep is a niche skill, but the judges prefer fully awake idols. Just a tip.'),
+(228, 1, 9, 'low_vocal', 'serious', 'Your vocals dropped today because you weren\'t really there. Talent is wasted on naps, Misuzu.'),
+(229, 1, 9, 'low_dance', 'firm', 'Dance was slow today. And not stylish-slow — sleepy-slow. We need actual movement, please.'),
+(230, 1, 9, 'low_dance', 'playful', 'Your dance today had the energy of a yawn. Charming, but not what we\'re going for.'),
+(231, 1, 9, 'low_dance', 'gentle', 'Dance scores dipped. You move beautifully when awake — let\'s get you there BEFORE lessons next time.'),
+(232, 1, 9, 'low_visual', 'playful', 'Visual scores low? Half-closed eyes are a vibe, but apparently not THE vibe. Try open ones tomorrow.'),
+(233, 1, 9, 'low_visual', 'gentle', 'Visual was tired today. A nap BEFORE the lesson, not during — that\'s the rule.'),
+(234, 1, 9, 'low_visual', 'warm', 'Your expressions were soft today, almost dreamy. Pretty in the right context, but we need range.'),
+(235, 1, 9, 'audition_day', 'firm', 'Audition day, Misuzu. No napping. I MEAN IT. We\'ve prepared too much for you to sleep through your slot.'),
+(236, 1, 9, 'audition_day', 'warm', 'Today\'s the stage. You\'re more talented than you let on — show them the version of you that wakes up for it.'),
+(237, 1, 9, 'audition_day', 'playful', 'Audition day. Coffee? Tea? Light shake? Whatever wakes you up — pick one and let\'s go.'),
+(238, 1, 9, 'rest_day', 'warm', 'Rest day. Your favorite. Enjoy it — this is the one day I won\'t complain about the napping.'),
+(239, 1, 9, 'rest_day', 'playful', 'Rest day, Misuzu. Today, the napping is officially endorsed. Don\'t get used to it.'),
+(240, 1, 9, 'rest_day', 'gentle', 'Day off. You\'ve earned the sleep this week. Recharge properly so we can have you AWAKE tomorrow.'),
+(241, 1, 9, 'good_progress', 'warm', 'Your numbers are up — and you didn\'t miss many lessons this week. That\'s huge for you.'),
+(242, 1, 9, 'good_progress', 'playful', 'Look who stayed awake long enough to actually improve. I see you, Misuzu. Genuinely proud.'),
+(243, 1, 9, 'good_progress', 'gentle', 'You\'re growing steadily, even with all the naps. Imagine what you\'d do if you slept normally at night.');
 
 -- --------------------------------------------------------
 
@@ -820,8 +876,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`
 (9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-06-01 19:44:53', '2026-06-01 19:44:53'),
 (10, 'Hiro Shinosawa', '$2y$10$yw50phXBAJaDziCBQu8ul.P/V5GmB5qKyObADsMOiw5nMBEfly4o2', 'student', 'Hiro Shinosawa.png', 1, '2026-05-26 13:13:13', '2026-06-01 22:56:19', '2026-06-01 22:56:19'),
 (11, 'China Kuramoto', '$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy', 'student', 'China Kuramoto.png', 1, '2026-05-26 13:13:13', '2026-06-01 23:24:44', '2026-06-01 23:24:44'),
-(12, 'Ume Hanami', '$2y$10$v48vl/ymkgldjh/sUGwPHusiC7iBAahdLG4ynPeWTGjI.MCfn2Wvq', 'student', 'Ume Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-01 23:36:09', '2026-06-01 23:36:09'),
-(13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-06-01 23:35:39', '2026-06-01 23:35:39'),
+(12, 'Ume Hanami', '$2y$10$v48vl/ymkgldjh/sUGwPHusiC7iBAahdLG4ynPeWTGjI.MCfn2Wvq', 'student', 'Ume Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-02 09:16:05', '2026-06-02 09:16:05'),
+(13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-06-02 09:16:31', '2026-06-02 09:16:31'),
 (14, 'Mao Arimura', '$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO', 'student', 'Mao Arimura.png', 1, '2026-05-26 13:13:13', '2026-06-01 22:59:58', '2026-06-01 19:44:53'),
 (15, 'Rinami Himesaki', '$2y$10$Mc/amUU4R6ORKAqyn6WMt.S3EcLbF5jxjIq8c83h6D0kElQpB/XZW', 'student', 'Rinami Himesaki.png', 1, '2026-05-26 13:13:13', '2026-06-01 23:00:21', '2026-06-01 19:44:53'),
 (16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-06-01 23:00:42', '2026-06-01 19:44:53'),
@@ -990,7 +1046,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `producer_messages`
 --
 ALTER TABLE `producer_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=190;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=244;
 
 --
 -- AUTO_INCREMENT for table `recurring_schedules`
