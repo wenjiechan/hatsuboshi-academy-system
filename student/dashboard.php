@@ -14,6 +14,8 @@ $stmt = $pdo->prepare(
         s.vocal,
         s.dance,
         s.visual,
+        s.theme_primary_color,
+        s.theme_secondary_color,
         u.username AS producer_name
      FROM students s
      LEFT JOIN users u ON u.id = s.producer_id
@@ -28,6 +30,10 @@ if (!$student) {
     http_response_code(404);
     exit('Student profile not found');
 }
+
+$_SESSION['student_name'] = $student['name'];
+$_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: '#FF6B9D';
+$_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: '#FFB3D1';
 
 $weekday = (int) date('N');
 
@@ -53,6 +59,7 @@ $has_chart_data = $chart['has_data'];
 $previous_snapshot = $chart['previous_snapshot'];
 
 require_once '../includes/producer_message_helpers.php';
+require_once '../includes/birthday_banner_helpers.php';
 
 $producer_message = get_producer_message(
     $pdo,
@@ -61,6 +68,7 @@ $producer_message = get_producer_message(
     $previous_snapshot ?: null
 );
 $is_birthday = is_student_birthday_today($student);
+$birthday_students = get_dashboard_birthday_students($pdo);
 
 $page_title = 'Student Dashboard';
 require_once '../includes/header.php';
@@ -68,6 +76,8 @@ require_once '../includes/sidebar.php';
 ?>
 
 <main class="dashboard-main">
+    <?php require '../includes/birthday_banner.php'; ?>
+
     <section class="producer-message-card <?= $is_birthday ? 'birthday-message-card' : '' ?>">
         <p class="dashboard-eyebrow">
             <?= $is_birthday ? 'Birthday Producer Message' : 'Producer Message' ?>

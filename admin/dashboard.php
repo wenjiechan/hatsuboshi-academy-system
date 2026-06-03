@@ -1,0 +1,26 @@
+<?php
+require_once '../includes/auth.php';
+require_role('producer');
+
+require_once '../config/database.php';
+require_once '../includes/birthday_banner_helpers.php';
+
+$birthday_students = get_dashboard_birthday_students($pdo);
+
+$page_title = 'Producer Dashboard';
+require_once '../includes/header.php';
+require_once '../includes/sidebar.php';
+?>
+
+<main class="dashboard-main">
+    <?php require '../includes/birthday_banner.php'; ?>
+
+    <?php if (empty($birthday_students)): ?>
+    <section class="empty-dashboard-state">
+        <strong>No idol birthdays today</strong>
+        <p>The birthday banner will appear here automatically on each idol's birthday.</p>
+    </section>
+    <?php endif; ?>
+</main>
+
+<?php require_once '../includes/footer.php'; ?>

@@ -5,6 +5,7 @@
 }
 
 .dashboard-hero,
+.birthday-banner,
 .producer-message-card,
 .today-schedule,
 .stats-preview,
@@ -13,6 +14,139 @@
     border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-soft);
+}
+
+.birthday-banner {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, auto) auto;
+    width: min(100%, 760px);
+    min-height: 76px;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    padding: 14px 18px;
+    overflow: hidden;
+    border-color: color-mix(in srgb, var(--birthday-primary) 28%, white);
+    background:
+        radial-gradient(circle at 16% 22%, color-mix(in srgb, var(--birthday-secondary) 34%, transparent), transparent 32%),
+        linear-gradient(135deg, color-mix(in srgb, var(--birthday-primary) 12%, white), rgba(255, 255, 255, 0.97) 62%);
+}
+
+.birthday-avatar-stack {
+    display: flex;
+    align-items: center;
+    min-width: 52px;
+}
+
+.birthday-avatar {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    object-position: top center;
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    border-radius: 50%;
+    box-shadow: 0 6px 14px color-mix(in srgb, var(--birthday-primary) 18%, transparent);
+}
+
+.birthday-avatar + .birthday-avatar {
+    margin-left: -14px;
+}
+
+.birthday-banner-copy {
+    min-width: 0;
+    text-align: center;
+}
+
+.birthday-banner .dashboard-eyebrow {
+    margin-bottom: 2px;
+    font-size: 0.68rem;
+}
+
+.birthday-banner h2 {
+    margin: 0;
+    font-size: 1.08rem;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.birthday-banner-copy p:last-child {
+    margin: 2px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.birthday-banner-icon {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    color: var(--birthday-primary);
+    font-size: 1rem;
+    opacity: 0.82;
+    text-shadow: 0 0 12px color-mix(in srgb, var(--birthday-primary) 45%, transparent);
+}
+
+.birthday-sparkles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.birthday-sparkles span {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--birthday-primary);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--birthday-primary) 65%, transparent);
+    animation: birthday-sparkle 3.2s ease-in-out infinite;
+}
+
+.birthday-sparkles span:nth-child(1) {
+    top: 18%;
+    left: 20%;
+}
+
+.birthday-sparkles span:nth-child(2) {
+    top: 26%;
+    right: 24%;
+    width: 4px;
+    height: 4px;
+    animation-delay: 0.7s;
+}
+
+.birthday-sparkles span:nth-child(3) {
+    right: 17%;
+    bottom: 22%;
+    animation-delay: 1.3s;
+}
+
+.birthday-sparkles span:nth-child(4) {
+    left: 42%;
+    bottom: 16%;
+    width: 4px;
+    height: 4px;
+    animation-delay: 1.9s;
+}
+
+@keyframes birthday-sparkle {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: translateY(0) scale(0.82);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(-5px) scale(1.12);
+    }
 }
 
 .producer-message-card {
@@ -458,11 +592,33 @@
     }
 
     .dashboard-hero,
+    .birthday-banner,
     .producer-message-card,
     .today-schedule,
     .stats-preview,
     .messages-preview {
         padding: 18px;
+    }
+
+    .birthday-banner {
+        grid-template-columns: auto minmax(0, 1fr);
+        width: 100%;
+        min-height: 70px;
+        gap: 12px;
+        justify-content: stretch;
+        margin-bottom: 14px;
+    }
+
+    .birthday-banner-icon {
+        display: none;
+    }
+
+    .birthday-banner-copy {
+        text-align: left;
+    }
+
+    .birthday-banner h2 {
+        font-size: 1rem;
     }
 
     .dashboard-hero,

@@ -71,6 +71,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_name'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
 
+                unset($_SESSION['student_name']);
                 $_SESSION['theme_primary_color'] = '#FF6B9D';
                 $_SESSION['theme_secondary_color'] = '#FFB3D1';
 
