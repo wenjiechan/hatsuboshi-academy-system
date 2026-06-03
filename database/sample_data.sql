@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 02, 2026 at 07:27 AM
+-- Generation Time: Jun 03, 2026 at 02:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -97,7 +97,14 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (0, 9, '2026-06-01', 65, 70, 80, '2026-06-01 23:35:39', '2026-06-01 23:35:39'),
 (0, 8, '2026-06-01', 50, 60, 60, '2026-06-01 23:36:09', '2026-06-01 23:36:09'),
 (0, 8, '2026-06-02', 50, 60, 60, '2026-06-02 09:16:05', '2026-06-02 09:16:05'),
-(0, 9, '2026-06-02', 65, 70, 80, '2026-06-02 09:16:31', '2026-06-02 09:16:31');
+(0, 9, '2026-06-02', 65, 70, 80, '2026-06-02 09:16:31', '2026-06-02 09:16:31'),
+(0, 2, '2026-06-03', 75, 65, 55, '2026-06-03 07:40:36', '2026-06-03 07:40:36'),
+(0, 2, '2026-06-03', 75, 65, 55, '2026-06-03 08:04:28', '2026-06-03 08:04:28'),
+(0, 2, '2026-06-03', 75, 65, 55, '2026-06-03 08:05:44', '2026-06-03 08:05:44'),
+(0, 2, '2026-06-03', 75, 65, 55, '2026-06-03 08:05:49', '2026-06-03 08:05:49'),
+(0, 2, '2026-06-03', 75, 65, 55, '2026-06-03 08:05:50', '2026-06-03 08:05:50'),
+(0, 1, '2026-06-03', 75, 75, 80, '2026-06-03 08:06:06', '2026-06-03 08:06:06'),
+(0, 2, '2026-06-03', 75, 65, 55, '2026-06-03 08:06:26', '2026-06-03 08:06:26');
 
 --
 -- Dumping data for table `producer_messages`
@@ -346,7 +353,34 @@ INSERT INTO `producer_messages` (`id`, `producer_id`, `student_id`, `message_typ
 (240, 1, 9, 'rest_day', 'gentle', 'Day off. You\'ve earned the sleep this week. Recharge properly so we can have you AWAKE tomorrow.'),
 (241, 1, 9, 'good_progress', 'warm', 'Your numbers are up — and you didn\'t miss many lessons this week. That\'s huge for you.'),
 (242, 1, 9, 'good_progress', 'playful', 'Look who stayed awake long enough to actually improve. I see you, Misuzu. Genuinely proud.'),
-(243, 1, 9, 'good_progress', 'gentle', 'You\'re growing steadily, even with all the naps. Imagine what you\'d do if you slept normally at night.');
+(243, 1, 9, 'good_progress', 'gentle', 'You\'re growing steadily, even with all the naps. Imagine what you\'d do if you slept normally at night.'),
+(244, 1, 1, 'birthday', 'firm', 'Happy birthday, Saki. Today is the ONE day I\'m ordering you to rest — and yes, I\'ll enforce it.'),
+(245, 1, 1, 'birthday', 'warm', 'Happy birthday. Another year of being the most driven person in this academy. Proud of how far you\'ve pushed yourself.'),
+(246, 1, 1, 'birthday', 'playful', 'Happy birthday! Let me guess — you still went for the morning run today. Of course you did. The REST of the day, please rest.'),
+(247, 1, 2, 'birthday', 'playful', 'Happy birthday, Temari. Today only — yes, you can have the cake. The whole slice. I\'ll allow it.'),
+(248, 1, 2, 'birthday', 'warm', 'Happy birthday. Another year, and you\'re still the most effortlessly cool person in this academy. Enjoy your day.'),
+(249, 1, 2, 'birthday', 'gentle', 'Happy birthday, Temari. Take the day completely off — no diet management, no schedule. Today is yours, sweets included.'),
+(250, 1, 3, 'birthday', 'warm', 'Happy birthday, Kotone. Today there is no shift, no overtime, no bargaining. Your present is mandatory time off.'),
+(251, 1, 3, 'birthday', 'playful', 'Happy birthday! And yes, there\'s a bonus envelope in it for you. Don\'t say I never gave you anything.'),
+(252, 1, 3, 'birthday', 'firm', 'Happy birthday. I checked — I know you tried to schedule a shift today. Cancel it. We\'re celebrating you, not your hustle.'),
+(253, 1, 4, 'birthday', 'gentle', 'Happy birthday, Lilja. Hyvää syntymäpäivää. May this year bring you the confidence I already see in you.'),
+(254, 1, 4, 'birthday', 'warm', 'Happy birthday. You\'ve grown so much this year — quietly, beautifully. Today, please let everyone celebrate you.'),
+(255, 1, 4, 'birthday', 'gentle', 'Happy birthday, Lilja. No pressure today, no lessons — just whatever makes you feel calm and happy. You deserve it.'),
+(256, 1, 5, 'birthday', 'playful', 'Happy birthday, Sumika! Today\'s match has only one rule: NO TRAINING. Yes, that\'s the hard part for you.'),
+(257, 1, 5, 'birthday', 'warm', 'Happy birthday. The energy you bring to every day is contagious — today, let everyone bring it back to you.'),
+(258, 1, 5, 'birthday', 'firm', 'Happy birthday. I see you eyeing the tennis court. The court is closed for you today, captain. REST.'),
+(259, 1, 6, 'birthday', 'playful', 'Happy birthday, Hiro. The library is officially closed to you today. I have the keys. Don\'t try me.'),
+(260, 1, 6, 'birthday', 'warm', 'Happy birthday. Another year of being the brightest mind in the academy. Today, you\'re allowed to feel before you think.'),
+(261, 1, 6, 'birthday', 'firm', 'Happy birthday, Hiro. No research, no studying, no productive learning today. That IS the celebration.'),
+(262, 1, 7, 'birthday', 'warm', 'Happy birthday, China. Today, no council duties, no event planning. You get to be CELEBRATED, not the celebrator.'),
+(263, 1, 7, 'birthday', 'gentle', 'Happy birthday, China. Enjoy your family\'s celebrations today — and remember, we\'re celebrating you here too.'),
+(264, 1, 7, 'birthday', 'playful', 'Happy birthday! I\'ve informed the Student Council that their finest member gets the day off. They\'ll manage without you.'),
+(265, 1, 8, 'birthday', 'playful', 'Happy birthday, Ume! And yes, your birthday is entirely YOURS today — Saki doesn\'t get to compete on this one.'),
+(266, 1, 8, 'birthday', 'warm', 'Happy birthday. Another year of being your own bright, energetic self — not anyone\'s shadow. Today, especially, shine.'),
+(267, 1, 8, 'birthday', 'gentle', 'Happy birthday, Ume. The morning run can wait. The training can wait. Today, just be celebrated. You earned it.'),
+(268, 1, 9, 'birthday', 'playful', 'Happy birthday, Misuzu! Today\'s gift: official permission to nap as much as you want. Use it wisely.'),
+(269, 1, 9, 'birthday', 'warm', 'Happy birthday. Another year, and somehow you keep proving you\'re more capable than the napping suggests. Proud of you.'),
+(270, 1, 9, 'birthday', 'gentle', 'Happy birthday, Misuzu. We\'ll wake you up for cake. Otherwise, the bed is yours all day.');
 
 --
 -- Dumping data for table `recurring_schedules`
@@ -606,8 +640,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`
 (2, 'Vocal Trainer', '$2y$10$mfACa/WYxB5KtG.u/sz0NOsEavc0F8j7fR.Zf/PF9hcEl7gdLMNdK', 'teacher', NULL, 1, '2026-05-26 13:11:33', '2026-05-27 11:39:47', NULL),
 (3, 'Dance Trainer', '$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-05-28 16:42:24', '2026-05-28 16:42:24'),
 (4, 'Visual Trainer', '$2y$10$bGNC.jMo6tcO1e0f6A0q5erVt6QZ2LbnR4kS1AD47.vwZW0J3GQV6', 'teacher', NULL, 1, '2026-05-26 13:12:30', '2026-05-27 11:40:41', NULL),
-(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-05-28 16:42:44', '2026-05-28 16:42:44'),
-(6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-06-01 22:54:32', '2026-06-01 22:54:32'),
+(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-03 08:06:06', '2026-06-03 08:06:06'),
+(6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-06-03 08:06:26', '2026-06-03 08:06:26'),
 (7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-05-28 15:58:24', '2026-05-28 15:58:24'),
 (8, 'Lilja Katsuragi', '$2y$10$U0wQB4kmtvPYWWQX.9oi0OJ60HDhnd/yf.tuf71exJ8MoG8xS0FVa', 'student', 'Lilja Katsuragi.png', 1, '2026-05-26 13:13:13', '2026-05-29 22:19:17', '2026-05-29 22:19:17'),
 (9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-06-01 19:44:53', '2026-06-01 19:44:53'),

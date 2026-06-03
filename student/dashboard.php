@@ -8,6 +8,7 @@ $stmt = $pdo->prepare(
     'SELECT
         s.id,
         s.name,
+        s.birthday,
         s.rank,
         s.school_year,
         s.vocal,
@@ -59,6 +60,7 @@ $producer_message = get_producer_message(
     $today_schedules,
     $previous_snapshot ?: null
 );
+$is_birthday = is_student_birthday_today($student);
 
 $page_title = 'Student Dashboard';
 require_once '../includes/header.php';
@@ -66,8 +68,10 @@ require_once '../includes/sidebar.php';
 ?>
 
 <main class="dashboard-main">
-    <section class="producer-message-card">
-        <p class="dashboard-eyebrow">Producer Message</p>
+    <section class="producer-message-card <?= $is_birthday ? 'birthday-message-card' : '' ?>">
+        <p class="dashboard-eyebrow">
+            <?= $is_birthday ? 'Birthday Producer Message' : 'Producer Message' ?>
+        </p>
         <p class="producer-message-text">
             <?= htmlspecialchars($producer_message, ENT_QUOTES, 'UTF-8') ?>
         </p>

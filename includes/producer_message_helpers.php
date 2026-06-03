@@ -4,6 +4,11 @@ date_default_timezone_set('Asia/Kuala_Lumpur');
 
 function get_producer_message(PDO $pdo, array $student, array $today_schedules, ?array $previous_snapshot): string
 {
+    if (is_student_birthday_today($student)) {
+        return get_random_producer_message($pdo, (int) $student['id'], 'birthday')
+            ?: 'Happy birthday. Today is yours, so let yourself enjoy it.';
+    }
+
     $stat_types = ['vocal', 'dance', 'visual'];
     $message_weights = [
         get_time_based_message_type() => 20,
@@ -29,6 +34,12 @@ function get_producer_message(PDO $pdo, array $student, array $today_schedules, 
 
     $message_type = pick_weighted_message_type($message_weights);
 
+    return get_random_producer_message($pdo, (int) $student['id'], $message_type)
+        ?: 'Keep your pace steady today. Small progress still counts.';
+}
+
+function get_random_producer_message(PDO $pdo, int $student_id, string $message_type): ?string
+{
     $stmt = $pdo->prepare(
         'SELECT message_text
          FROM producer_messages
@@ -38,10 +49,20 @@ function get_producer_message(PDO $pdo, array $student, array $today_schedules, 
          LIMIT 1'
     );
 
-    $stmt->execute([$student['id'], $message_type]);
+    $stmt->execute([$student_id, $message_type]);
 
-    return $stmt->fetchColumn()
-        ?: 'Keep your pace steady today. Small progress still counts.';
+    return $stmt->fetchColumn() ?: null;
+}
+
+function is_student_birthday_today(array $student): bool
+{
+    if (empty($student['birthday'])) {
+        return false;
+    }
+
+    $birthday_time = strtotime((string) $student['birthday']);
+
+    return $birthday_time !== false && date('m-d', $birthday_time) === date('m-d');
 }
 
 function get_time_based_message_type(): string

@@ -22,6 +22,13 @@
         linear-gradient(135deg, color-mix(in srgb, var(--secondary) 36%, white), rgba(255, 255, 255, 0.94));
 }
 
+.birthday-message-card {
+    border-color: color-mix(in srgb, var(--primary) 34%, white);
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--primary) 14%, white), rgba(255, 255, 255, 0.96)),
+        linear-gradient(90deg, color-mix(in srgb, var(--secondary) 48%, white), rgba(255, 255, 255, 0));
+}
+
 .producer-message-text {
     max-width: 920px;
     margin: 0;
