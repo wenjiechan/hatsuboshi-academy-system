@@ -4,40 +4,50 @@ date_default_timezone_set('Asia/Kuala_Lumpur');
 
 function get_producer_message(PDO $pdo, array $student, array $today_schedules, ?array $previous_snapshot): string
 {
+    // Check if today is the student birthday, birthday messages have the highest priority
     if (is_student_birthday_today($student)) {
         return get_random_producer_message($pdo, (int) $student['id'], 'birthday')
             ?: 'Happy birthday. Today is yours, so let yourself enjoy it.';
     }
 
     $stat_types = ['vocal', 'dance', 'visual'];
+
+    //Create messaage weights
     $message_weights = [
         get_time_based_message_type() => 20,
     ];
 
+    // Audition day
     if (has_audition_today($today_schedules)) {
         $message_weights['audition_day'] = 50;
     }
 
+    // No schedule
     if (empty($today_schedules)) {
         $message_weights['rest_day'] = 45;
     }
 
+    //Check if any stat decreased
     $decreased_stat_type = get_decreased_stat_type($student, $previous_snapshot, $stat_types);
 
     if ($decreased_stat_type !== null) {
         $message_weights['low_' . $decreased_stat_type] = 40;
     }
 
+    //Check if the student made good progress
     if (has_good_progress($student, $previous_snapshot, $stat_types)) {
         $message_weights['good_progress'] = 30;
     }
 
+    // Pick one message type using weight
     $message_type = pick_weighted_message_type($message_weights);
 
+    // Get random message from database
     return get_random_producer_message($pdo, (int) $student['id'], $message_type)
         ?: 'Keep your pace steady today. Small progress still counts.';
 }
 
+//Gets one random message from the database
 function get_random_producer_message(PDO $pdo, int $student_id, string $message_type): ?string
 {
     $stmt = $pdo->prepare(
@@ -54,6 +64,7 @@ function get_random_producer_message(PDO $pdo, int $student_id, string $message_
     return $stmt->fetchColumn() ?: null;
 }
 
+// Check whether today is the student's birthday
 function is_student_birthday_today(array $student): bool
 {
     if (empty($student['birthday'])) {
@@ -65,6 +76,7 @@ function is_student_birthday_today(array $student): bool
     return $birthday_time !== false && date('m-d', $birthday_time) === date('m-d');
 }
 
+// Return the message type based on current hour
 function get_time_based_message_type(): string
 {
     $hour = (int) date('G');
@@ -80,6 +92,7 @@ function get_time_based_message_type(): string
     return 'evening';
 }
 
+// Check today's schedule list
 function has_audition_today(array $today_schedules): bool
 {
     foreach ($today_schedules as $schedule) {
@@ -94,6 +107,7 @@ function has_audition_today(array $today_schedules): bool
     return false;
 }
 
+//Check whether the student's total stats increased
 function has_good_progress(array $student, ?array $previous_snapshot, array $stat_types): bool
 {
     if (!$previous_snapshot) {
@@ -108,9 +122,11 @@ function has_good_progress(array $student, ?array $previous_snapshot, array $sta
         $current_total += (int) ($student[$type] ?? 0);
     }
 
+    //If added current stats > previous stats. returb true
     return $current_total > $previous_total;
 }
 
+//Finds which stat dropped the most
 function get_decreased_stat_type(array $student, ?array $previous_snapshot, array $stat_types): ?string
 {
     if (!$previous_snapshot) {
@@ -134,6 +150,7 @@ function get_decreased_stat_type(array $student, ?array $previous_snapshot, arra
     return $largest_drop_type;
 }
 
+//Randomly selects a message type based on weight
 function pick_weighted_message_type(array $weights): string
 {
     $weights = array_filter(

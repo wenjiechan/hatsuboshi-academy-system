@@ -5,12 +5,15 @@ if (session_status() === PHP_SESSION_NONE) {
 
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
+//Set title and body class
 $page_title = $page_title ?? 'Hatsuboshi Gakuen';
 $body_class = $body_class ?? '';
 
+//Apply student theme class
 $student_theme = $_SESSION['theme_class'] ?? '';
 $full_body_class = trim($body_class . ' ' . $student_theme);
 
+//Set theme colors
 $theme_primary = $_SESSION['theme_primary_color'] ?? '#FF6B9D';
 $theme_secondary = $_SESSION['theme_secondary_color'] ?? '#FFB3D1';
 
@@ -20,17 +23,20 @@ $body_style = sprintf(
     htmlspecialchars($theme_secondary, ENT_QUOTES, 'UTF-8')
 );
 
+//Get user information from session and create avatar path
 $role = $_SESSION['role'] ?? 'student';
 $username = $_SESSION['user_name'] ?? 'Guest';
 $student_name = $_SESSION['student_name'] ?? $username;
 $avatar_path = '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student_name) . '.png';
 
+// Choose home URL based on role
 $home_url = match ($role) {
     'producer' => '/gakumas-sms/admin/dashboard.php',
     'teacher' => '/gakumas-sms/teacher/dashboard.php',
     default => '/gakumas-sms/student/dashboard.php',
 };
 
+//Choose role label
 $role_label = match ($role) {
     'producer' => 'Producer',
     'teacher' => 'Teacher',

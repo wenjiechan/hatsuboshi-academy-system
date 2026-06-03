@@ -2,6 +2,7 @@
 $current_page = basename($_SERVER['PHP_SELF']);
 $role = $_SESSION['role'] ?? 'student';
 
+//List of sidebar navigation, with label, url. icon and page
 $student_nav = [
     ['label' => 'Home', 'url' => '/gakumas-sms/student/dashboard.php', 'icon' => 'bi-house-heart', 'page' => 'dashboard.php'],
     ['label' => 'Lessons', 'url' => '/gakumas-sms/student/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],
@@ -31,6 +32,7 @@ $panel_label = match ($role) {
             data-bs-target="#mobileSidebar" aria-label="Close navigation"></button>
     </div>
 
+    <!--Sidebar navigation-->
     <nav class="sidebar-nav">
         <?php foreach ($student_nav as $item): ?>
         <a href="<?= htmlspecialchars($item['url']) ?>"

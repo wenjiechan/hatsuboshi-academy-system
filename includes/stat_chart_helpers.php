@@ -18,18 +18,22 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
     // Reuse the latest known stat if no snapshot for a certain day
     $carry_values = [];
 
+    // Creates the starting values
     foreach ($stat_types as $type) {
         $carry_values[$type] = (int) ($student[$type] ?? 0);
     }
 
+    // Checks whether the student has any stat record before the 7-day chart starts
     $previous_snapshot = get_previous_stat_snapshot($pdo, (int) $student['id'], $start_date_sql);
 
+    // Use the old value as the starting value
     if ($previous_snapshot) {
         foreach ($stat_types as $type) {
             $carry_values[$type] = (int) $previous_snapshot[$type];
         }
     }
 
+    // Gets the latest stat record for each day inside the 7 day range
     $weekly_snapshots = get_weekly_stat_snapshots(
         $pdo,
         (int) $student['id'],
@@ -37,24 +41,31 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
         $end_date_sql
     );
 
+    // Prepare the final chart arrays
     $chart_labels = [];
     $chart_data = array_fill_keys($stat_types, []);
 
+    //Each loop represents 1 day in the chart
     for ($day = 0; $day < 7; $day++) {
         $date = $start_date->modify('+' . $day . ' days');
         $date_key = $date->format('Y-m-d');
 
+        //If that day has a snapshot , update the current values
+        // If that day has no snapshot, continue using the previous value
         if (isset($weekly_snapshots[$date_key])) {
             $carry_values = $weekly_snapshots[$date_key];
         }
 
+        //Create labels for chart's x-axis
         $chart_labels[] = $date->format('M j');
 
+        // Adds the stat value for each day
         foreach ($stat_types as $type) {
             $chart_data[$type][] = $carry_values[$type];
         }
     }
 
+    //Return the result ready to use in a chart
     return [
         'labels' => $chart_labels,
         'data' => $chart_data,

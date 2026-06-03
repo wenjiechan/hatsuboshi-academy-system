@@ -2,6 +2,7 @@
 
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
+//Get all students whose birthday is today
 function get_dashboard_birthday_students(PDO $pdo): array
 {
     $stmt = $pdo->prepare(
@@ -18,11 +19,13 @@ function get_dashboard_birthday_students(PDO $pdo): array
          ORDER BY s.name'
     );
 
+    // Ignore the year and compare only month and date
     $stmt->execute([date('m-d')]);
 
     return $stmt->fetchAll();
 }
 
+//Checks whether a color is vaild
 function birthday_banner_color(?string $color, string $fallback): string
 {
     $color = trim((string) $color);

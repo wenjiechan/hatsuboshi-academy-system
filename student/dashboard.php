@@ -4,6 +4,7 @@ require_role('student');
 
 require_once '../config/database.php';
 
+//Get current student profile
 $stmt = $pdo->prepare(
     'SELECT
         s.id,
@@ -31,12 +32,14 @@ if (!$student) {
     exit('Student profile not found');
 }
 
+//Save student theme into session
 $_SESSION['student_name'] = $student['name'];
 $_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: '#FF6B9D';
 $_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: '#FFB3D1';
 
 $weekday = (int) date('N');
 
+//Get today's schedule
 $schedule_stmt = $pdo->prepare(
     'SELECT activity_type, title, description, start_time, end_time, location
      FROM recurring_schedules
@@ -49,35 +52,44 @@ $schedule_stmt = $pdo->prepare(
 $schedule_stmt->execute([$student['id'], $weekday]);
 $today_schedules = $schedule_stmt->fetchAll();
 
+// Load weekly stat chart
 require_once '../includes/stat_chart_helpers.php';
 
 $chart = get_student_weekly_stat_chart($pdo, $student);
 
+//Separates the result
 $chart_labels = $chart['labels'];
 $chart_data = $chart['data'];
 $has_chart_data = $chart['has_data'];
 $previous_snapshot = $chart['previous_snapshot'];
 
+//Load producer message and birthday helpers
 require_once '../includes/producer_message_helpers.php';
 require_once '../includes/birthday_banner_helpers.php';
 
+//Generate producer message
 $producer_message = get_producer_message(
     $pdo,
     $student,
     $today_schedules,
     $previous_snapshot ?: null
 );
+
+//Check birthday
 $is_birthday = is_student_birthday_today($student);
 $birthday_students = get_dashboard_birthday_students($pdo);
 
+//Load header and sidebar
 $page_title = 'Student Dashboard';
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
 
 <main class="dashboard-main">
+    //Show birthday banner
     <?php require '../includes/birthday_banner.php'; ?>
 
+    //Producer message card
     <section class="producer-message-card <?= $is_birthday ? 'birthday-message-card' : '' ?>">
         <p class="dashboard-eyebrow">
             <?= $is_birthday ? 'Birthday Producer Message' : 'Producer Message' ?>
@@ -256,11 +268,14 @@ require_once '../includes/sidebar.php';
     </div>
 </main>
 
+//Load Chart.js
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+//Pass PHP chart data to JavaScript
 const statLabels = <?= json_encode($chart_labels, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
 const statData = <?= json_encode($chart_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
 
+//Find the highest stat value
 const allStats = [
     ...(statData.vocal ?? []),
     ...(statData.dance ?? []),
@@ -270,6 +285,7 @@ const allStats = [
 const maxStat = allStats.length ? Math.max(...allStats) : 100;
 const yMax = Math.ceil((maxStat + 10) / 10) * 10;
 
+//Create the line chart
 new Chart(document.getElementById('statProgressChart'), {
     type: 'line',
     data: {
@@ -298,6 +314,7 @@ new Chart(document.getElementById('statProgressChart'), {
             }
         ]
     },
+    //Chart option
     options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -319,4 +336,5 @@ new Chart(document.getElementById('statProgressChart'), {
 });
 </script>
 
+//Load Footer
 <?php require_once '../includes/footer.php'; ?>
