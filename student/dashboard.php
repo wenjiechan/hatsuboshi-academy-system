@@ -268,7 +268,7 @@ require_once '../includes/sidebar.php';
     </div>
 </main>
 
-//Load Chart.js
+<!--Load Chart.js-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 //Pass PHP chart data to JavaScript
@@ -336,5 +336,5 @@ new Chart(document.getElementById('statProgressChart'), {
 });
 </script>
 
-//Load Footer
+<!--Load Footer-->
 <?php require_once '../includes/footer.php'; ?>
