@@ -86,10 +86,10 @@ require_once '../includes/sidebar.php';
 ?>
 
 <main class="dashboard-main">
-    //Show birthday banner
+    <!--Show birthday banner-->
     <?php require '../includes/birthday_banner.php'; ?>
 
-    //Producer message card
+    <!--Producer message card-->
     <section class="producer-message-card <?= $is_birthday ? 'birthday-message-card' : '' ?>">
         <p class="dashboard-eyebrow">
             <?= $is_birthday ? 'Birthday Producer Message' : 'Producer Message' ?>

@@ -30,7 +30,7 @@ if (!empty($birthday_students)):
 ?>
 <section class="birthday-banner"
     style="--birthday-primary: <?= htmlspecialchars($birthday_primary, ENT_QUOTES, 'UTF-8') ?>; --birthday-secondary: <?= htmlspecialchars($birthday_secondary, ENT_QUOTES, 'UTF-8') ?>;">
-    // Sparkles decoration
+    <!--Sparkles decoration-->
     <div class="birthday-sparkles" aria-hidden="true">
         <span></span>
         <span></span>
@@ -38,7 +38,7 @@ if (!empty($birthday_students)):
         <span></span>
     </div>
 
-    // Birthday avatar stack
+    <!--Birthday avatar stack-->
     <div class="birthday-avatar-stack" aria-hidden="true">
         <?php foreach ($birthday_students as $birthday_student): ?>
         <img src="/gakumas-sms/assets/images/avatars/idols/<?= rawurlencode($birthday_student['name'] ?? 'Idol') ?>1.png"
