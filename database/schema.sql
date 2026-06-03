@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 03, 2026 at 02:10 AM
+-- Generation Time: Jun 03, 2026 at 09:53 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -290,6 +290,14 @@ CREATE TABLE `users` (
 --
 
 --
+-- Indexes for table `daily_student_stats`
+--
+ALTER TABLE `daily_student_stats`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_daily_student_stats_student_date` (`student_id`,`stat_date`),
+  ADD KEY `idx_daily_student_stats_date` (`stat_date`);
+
+--
 -- Indexes for table `events`
 --
 ALTER TABLE `events`
@@ -413,6 +421,12 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `daily_student_stats`
+--
+ALTER TABLE `daily_student_stats`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `events`

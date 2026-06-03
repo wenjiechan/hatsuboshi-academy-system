@@ -2,17 +2,20 @@
 
 function get_student_weekly_stat_chart(PDO $pdo, array $student): array
 {
+    // Define tracked stats
     $stat_types = ['vocal', 'dance', 'visual'];
 
     ensure_daily_student_stats_table($pdo);
-    save_today_student_stats($pdo, $student, $stat_types);
+    save_today_student_stats($pdo, $student);
     delete_old_student_stat_snapshots($pdo, (int) $student['id']);
 
+    // Creates a 7 day range
     $today = new DateTimeImmutable('today');
     $start_date = $today->modify('-6 days');
     $start_date_sql = $start_date->format('Y-m-d');
     $end_date_sql = $today->format('Y-m-d');
 
+    // Reuse the latest known stat if no snapshot for a certain day
     $carry_values = [];
 
     foreach ($stat_types as $type) {
@@ -60,6 +63,7 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
     ];
 }
 
+//Ensures the snapshot table exists
 function ensure_daily_student_stats_table(PDO $pdo): void
 {
     $pdo->exec(
@@ -73,21 +77,18 @@ function ensure_daily_student_stats_table(PDO $pdo): void
             created_at datetime NOT NULL DEFAULT current_timestamp(),
             updated_at datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
             PRIMARY KEY (id),
-            UNIQUE KEY uniq_daily_student_stats_student_date (student_id, stat_date),
+            KEY idx_daily_student_stats_student_date (student_id, stat_date),
             KEY idx_daily_student_stats_date (stat_date)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
     );
 }
 
-function save_today_student_stats(PDO $pdo, array $student, array $stat_types): void
+//Inserts a new snapshot every time it is called
+function save_today_student_stats(PDO $pdo, array $student): void
 {
     $stmt = $pdo->prepare(
         'INSERT INTO daily_student_stats (student_id, stat_date, vocal, dance, visual)
-         VALUES (?, CURDATE(), ?, ?, ?)
-         ON DUPLICATE KEY UPDATE
-            vocal = VALUES(vocal),
-            dance = VALUES(dance),
-            visual = VALUES(visual)'
+         VALUES (?, CURDATE(), ?, ?, ?)'
     );
 
     $stmt->execute([
@@ -98,6 +99,7 @@ function save_today_student_stats(PDO $pdo, array $student, array $stat_types): 
     ]);
 }
 
+//Finds the latest snapshot before the 7-day window
 function get_previous_stat_snapshot(PDO $pdo, int $student_id, string $start_date_sql): ?array
 {
     $stmt = $pdo->prepare(
@@ -105,7 +107,7 @@ function get_previous_stat_snapshot(PDO $pdo, int $student_id, string $start_dat
          FROM daily_student_stats
          WHERE student_id = ?
            AND stat_date < ?
-         ORDER BY stat_date DESC
+         ORDER BY stat_date DESC, id DESC
          LIMIT 1'
     );
 
@@ -114,14 +116,20 @@ function get_previous_stat_snapshot(PDO $pdo, int $student_id, string $start_dat
     return $stmt->fetch() ?: null;
 }
 
+//Gets the latest snapshot for each day in the 7-day chart range
 function get_weekly_stat_snapshots(PDO $pdo, int $student_id, string $start_date_sql, string $end_date_sql): array
 {
     $stmt = $pdo->prepare(
-        'SELECT stat_date, vocal, dance, visual
-         FROM daily_student_stats
-         WHERE student_id = ?
-           AND stat_date BETWEEN ? AND ?
-         ORDER BY stat_date ASC'
+        'SELECT d.stat_date, d.vocal, d.dance, d.visual
+         FROM daily_student_stats d
+         INNER JOIN (
+            SELECT stat_date, MAX(id) AS latest_id
+            FROM daily_student_stats
+            WHERE student_id = ?
+              AND stat_date BETWEEN ? AND ?
+            GROUP BY stat_date
+         ) latest ON latest.latest_id = d.id
+         ORDER BY d.stat_date ASC'
     );
 
     $stmt->execute([$student_id, $start_date_sql, $end_date_sql]);
@@ -139,8 +147,34 @@ function get_weekly_stat_snapshots(PDO $pdo, int $student_id, string $start_date
     return $snapshots;
 }
 
+//Delete old snapshots but keeps one latest old snapshot
 function delete_old_student_stat_snapshots(PDO $pdo, int $student_id): void
 {
+    $keep_stmt = $pdo->prepare(
+        'SELECT id
+         FROM daily_student_stats
+         WHERE student_id = ?
+           AND stat_date < DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+         ORDER BY stat_date DESC, id DESC
+         LIMIT 1'
+    );
+
+    $keep_stmt->execute([$student_id]);
+    $keep_id = $keep_stmt->fetchColumn();
+
+    if ($keep_id) {
+        $stmt = $pdo->prepare(
+            'DELETE FROM daily_student_stats
+             WHERE student_id = ?
+               AND stat_date < DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+               AND id <> ?'
+        );
+
+        $stmt->execute([$student_id, (int) $keep_id]);
+
+        return;
+    }
+
     $stmt = $pdo->prepare(
         'DELETE FROM daily_student_stats
          WHERE student_id = ?

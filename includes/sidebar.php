@@ -7,6 +7,7 @@ $student_nav = [
     ['label' => 'Lessons', 'url' => '/gakumas-sms/student/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],
     ['label' => 'Schedule', 'url' => '/gakumas-sms/student/schedule.php', 'icon' => 'bi-calendar-event', 'page' => 'schedule.php'],
     ['label' => 'Profile', 'url' => '/gakumas-sms/student/profile.php', 'icon' => 'bi-person-circle', 'page' => 'profile.php'],
+    ['label' => 'Song', 'url' => '/gakumas-sms/student/song.php', 'icon' => 'bi-music-note-list', 'page' => 'song.php'],
     ['label' => 'Stats', 'url' => '/gakumas-sms/student/stats.php', 'icon' => 'bi-bar-chart-line', 'page' => 'stats.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/student/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
