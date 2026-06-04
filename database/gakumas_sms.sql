@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 03, 2026 at 09:53 AM
+-- Generation Time: Jun 04, 2026 at 08:57 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -176,7 +176,25 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (139, 12, '2026-06-03', 55, 55, 55, '2026-06-03 15:30:37', '2026-06-03 15:30:37'),
 (140, 13, '2026-06-03', 55, 55, 55, '2026-06-03 15:30:37', '2026-06-03 15:30:37'),
 (141, 2, '2026-06-03', 85, 75, 65, '2026-06-03 15:31:36', '2026-06-03 15:31:36'),
-(142, 2, '2026-06-03', 75, 65, 55, '2026-06-03 15:32:26', '2026-06-03 15:32:26');
+(142, 2, '2026-06-03', 75, 65, 55, '2026-06-03 15:32:26', '2026-06-03 15:32:26'),
+(143, 2, '2026-06-03', 75, 65, 55, '2026-06-03 16:18:38', '2026-06-03 16:18:38'),
+(144, 2, '2026-06-03', 75, 65, 55, '2026-06-03 16:19:24', '2026-06-03 16:19:24'),
+(145, 2, '2026-06-03', 75, 65, 55, '2026-06-03 16:19:27', '2026-06-03 16:19:27'),
+(146, 2, '2026-06-03', 75, 65, 55, '2026-06-03 17:18:29', '2026-06-03 17:18:29'),
+(147, 2, '2026-06-03', 75, 65, 55, '2026-06-03 17:18:31', '2026-06-03 17:18:31'),
+(148, 2, '2026-06-03', 75, 65, 55, '2026-06-03 17:53:57', '2026-06-03 17:53:57'),
+(149, 2, '2026-06-03', 75, 65, 55, '2026-06-03 17:55:17', '2026-06-03 17:55:17'),
+(150, 2, '2026-06-03', 75, 65, 55, '2026-06-03 17:55:57', '2026-06-03 17:55:57'),
+(151, 2, '2026-06-03', 75, 65, 55, '2026-06-03 17:57:00', '2026-06-03 17:57:00'),
+(152, 10, '2026-06-04', 75, 65, 55, '2026-06-04 11:41:05', '2026-06-04 11:41:05'),
+(153, 11, '2026-06-04', 60, 70, 55, '2026-06-04 11:41:46', '2026-06-04 11:41:46'),
+(154, 12, '2026-06-04', 130, 100, 105, '2026-06-04 11:42:20', '2026-06-04 11:42:20'),
+(155, 12, '2026-06-04', 130, 100, 105, '2026-06-04 11:42:38', '2026-06-04 11:42:38'),
+(156, 13, '2026-06-04', 80, 90, 70, '2026-06-04 11:43:00', '2026-06-04 11:43:00'),
+(157, 12, '2026-06-04', 130, 100, 105, '2026-06-04 12:15:10', '2026-06-04 12:15:10'),
+(158, 12, '2026-06-04', 130, 100, 105, '2026-06-04 12:15:22', '2026-06-04 12:15:22'),
+(159, 12, '2026-06-04', 130, 100, 105, '2026-06-04 12:15:24', '2026-06-04 12:15:24'),
+(160, 11, '2026-06-04', 60, 70, 55, '2026-06-04 12:15:44', '2026-06-04 12:15:44');
 
 -- --------------------------------------------------------
 
@@ -547,7 +565,128 @@ INSERT INTO `producer_messages` (`id`, `producer_id`, `student_id`, `message_typ
 (267, 1, 8, 'birthday', 'gentle', 'Happy birthday, Ume. The morning run can wait. The training can wait. Today, just be celebrated. You earned it.'),
 (268, 1, 9, 'birthday', 'playful', 'Happy birthday, Misuzu! Today\'s gift: official permission to nap as much as you want. Use it wisely.'),
 (269, 1, 9, 'birthday', 'warm', 'Happy birthday. Another year, and somehow you keep proving you\'re more capable than the napping suggests. Proud of you.'),
-(270, 1, 9, 'birthday', 'gentle', 'Happy birthday, Misuzu. We\'ll wake you up for cake. Otherwise, the bed is yours all day.');
+(270, 1, 9, 'birthday', 'gentle', 'Happy birthday, Misuzu. We\'ll wake you up for cake. Otherwise, the bed is yours all day.'),
+(298, 1, 10, 'birthday', 'warm', 'Happy birthday, Mao. The dormitory\'s \"Little Prince\" deserves a day where someone takes care of HER for once. Let us.'),
+(299, 1, 10, 'birthday', 'playful', 'Happy birthday! I booked you a hot spring trip for the weekend — figured the dorm\'s favorite capybara would appreciate it.'),
+(300, 1, 10, 'birthday', 'firm', 'Happy birthday, Mao. Today you\'re not the dorm supervisor and not the older sister figure. You\'re just Mao. Enjoy it.'),
+(301, 1, 11, 'birthday', 'warm', 'Happy birthday, Rinami. The \"onee-sama\" of the dorm gets to be spoiled today, not the one doing the spoiling. Sushi\'s on me.'),
+(302, 1, 11, 'birthday', 'playful', 'Happy birthday! I made reservations at the sushi place you\'ve been eyeing for months. Yes, all-you-can-eat. Don\'t hold back.'),
+(303, 1, 11, 'birthday', 'gentle', 'Happy birthday, Rinami. Today, please let everyone return all the kindness you constantly give us. You deserve every bit of it.'),
+(304, 1, 12, 'birthday', 'warm', 'Happy birthday, Sena. Today the Prima Stella is just a girl turning a year older — and that\'s a wonderful thing. Enjoy your day.'),
+(305, 1, 12, 'birthday', 'gentle', 'Happy birthday. Even the Academy\'s Top Idol gets a day off from being perfect. Relax, eat cake, be ordinary for a few hours.'),
+(306, 1, 12, 'birthday', 'playful', 'Happy birthday, Sena. I\'ve forbidden you from approaching Kotone today — let her enjoy your birthday in peace. We can try again tomorrow.'),
+(307, 1, 13, 'birthday', 'warm', 'Happy birthday, Tsubame. Even No.2 deserves to be the center of attention for one day. Today\'s yours, not Sena\'s.'),
+(308, 1, 13, 'birthday', 'playful', 'Happy birthday! I got you the latest mecha figure you\'ve been pretending you don\'t want. Don\'t try to play it cool — I see you.'),
+(309, 1, 13, 'birthday', 'firm', 'Happy birthday, Tsubame. Today, the rivalry with Sena is on pause. Even future Prima Stellas need to rest before the next campaign.'),
+(310, 1, 10, 'morning', 'warm', 'Good morning, Mao. I know you were up early checking on the dorms. Eat your own breakfast before you start mothering everyone.'),
+(311, 1, 10, 'morning', 'gentle', 'Morning. The \"little prince\" has a full day ahead — but please take a moment for yourself first.'),
+(312, 1, 10, 'morning', 'firm', 'Morning, Mao. The first-years can fend for themselves at breakfast. Take care of YOU first today.'),
+(313, 1, 10, 'afternoon', 'warm', 'Afternoon check-in. You\'ve been running between lessons and dorm duties all morning — water break, please.'),
+(314, 1, 10, 'afternoon', 'firm', 'Halfway through. Don\'t let dorm supervisor duties bleed into your own practice time.'),
+(315, 1, 10, 'afternoon', 'gentle', 'Afternoon, Mao. If you\'re tired, it\'s okay to admit it. The younger ones won\'t think less of you.'),
+(316, 1, 10, 'evening', 'warm', 'Evening. The dorm\'s \"little prince\" earned her crown today. Now please, rest.'),
+(317, 1, 10, 'evening', 'gentle', 'Day\'s done. Stop checking on everyone else and check on yourself for once.'),
+(318, 1, 10, 'evening', 'firm', 'It\'s evening, Mao. No more \"just one more thing\" for the dorm. Your room is your room — actually use it.'),
+(319, 1, 10, 'low_vocal', 'gentle', 'Vocals slipped a little today. You may be wearing yourself thin between practice and dorm duties. Let\'s recalibrate.'),
+(320, 1, 10, 'low_vocal', 'warm', 'Today\'s singing wasn\'t your best. You\'ve been giving so much to others — give some of that energy back to yourself.'),
+(321, 1, 10, 'low_vocal', 'serious', 'Your vocals dipped today. As a senior, you set the example — but the example shouldn\'t be \"work yourself dry.\"'),
+(322, 1, 10, 'low_dance', 'firm', 'Dance was below your level today. Your cool style needs energy behind it, and you\'re running low.'),
+(323, 1, 10, 'low_dance', 'warm', 'Dance wasn\'t sharp today. The \"cool\" image only works when you\'re not exhausted. Rest more.'),
+(324, 1, 10, 'low_dance', 'serious', 'Your dance was tired. You\'ve earned the cool reputation — don\'t let upkeep on the dorm cost you it.'),
+(325, 1, 10, 'low_visual', 'gentle', 'Visual scores dipped today. Your \"prince\" presence needs you to actually be present — not running dorm checklists in your head.'),
+(326, 1, 10, 'low_visual', 'warm', 'Visual was a bit soft today. When you\'re fully there, that cool charm is unbeatable. Let\'s get you back to it.'),
+(327, 1, 10, 'low_visual', 'firm', 'Visual was off. Stop mentally running dorm duties during your photoshoots — I can tell when you\'re doing it.'),
+(328, 1, 10, 'audition_day', 'firm', 'Audition day, Mao. The dorm is fine without you for a few hours. Be the cool idol you\'ve been working toward.'),
+(329, 1, 10, 'audition_day', 'warm', 'Today\'s the stage. All those years of pursuing the cool idol you wanted to be — show them THAT Mao.'),
+(330, 1, 10, 'audition_day', 'serious', 'Audition day. You\'ve been waiting a long time to be seen as cool, not assigned-cute. This is the moment.'),
+(331, 1, 10, 'rest_day', 'firm', 'Rest day. The dorm runs without you for one day. I\'ve told the first-years not to bother you. Actually rest.'),
+(332, 1, 10, 'rest_day', 'warm', 'Day off today. Go to the hot springs, soak like the capybara you secretly are. You\'ve earned it.'),
+(333, 1, 10, 'rest_day', 'gentle', 'Rest day, Mao. Stop checking on the younger ones. Today, someone else takes care of them. Let them.'),
+(334, 1, 10, 'good_progress', 'warm', 'Your progress is excellent — and you\'re doing it while running the entire dorm. Quietly amazed by you.'),
+(335, 1, 10, 'good_progress', 'serious', 'Numbers up across the board. The cool idol image is coming together. Years of work are paying off.'),
+(336, 1, 10, 'good_progress', 'gentle', 'You\'re growing into exactly the idol you wanted to be — the cool one, not the assigned-cute one. Very proud.'),
+(337, 1, 11, 'morning', 'warm', 'Good morning, Rinami. I know you already woke the first-years for breakfast. Now please eat yours.'),
+(338, 1, 11, 'morning', 'playful', 'Morning, onee-sama. The dorm runs because of you — but please don\'t forget breakfast for yourself again.'),
+(339, 1, 11, 'morning', 'gentle', 'Good morning. Today\'s first thought: take care of YOURSELF before everyone else. Promise me.'),
+(340, 1, 11, 'afternoon', 'warm', 'Afternoon. You\'ve been looking after everyone all morning. Take a break with actual food, not bites stolen between things.'),
+(341, 1, 11, 'afternoon', 'playful', 'Halfway through the day. I know you packed enough lunch for three people. Eat all of it. Don\'t share.'),
+(342, 1, 11, 'afternoon', 'gentle', 'Afternoon check-in. If you\'re feeling stretched between caring for others and your own work, please tell me.'),
+(343, 1, 11, 'evening', 'warm', 'Evening, Rinami. The \"onee-sama\" of the dorm worked hard today. Now let yourself wind down.'),
+(344, 1, 11, 'evening', 'gentle', 'Day\'s done. Stop tidying up after everyone tonight. The dorm survives one messy evening, I promise.'),
+(345, 1, 11, 'evening', 'playful', 'Evening. Yes, the sushi place is open. Yes, you can go. You\'ve earned it ten times over.'),
+(346, 1, 11, 'low_vocal', 'gentle', 'Vocals dipped today. You may be tired from looking after everyone — please put yourself first sometimes.'),
+(347, 1, 11, 'low_vocal', 'warm', 'Today\'s singing wasn\'t your best. Even the most reliable onee-sama needs rest. We\'ll catch up tomorrow.'),
+(348, 1, 11, 'low_vocal', 'serious', 'Your vocals slipped today. You give so much energy to others — there\'s none left for your own performance.'),
+(349, 1, 11, 'low_dance', 'warm', 'Dance felt heavy today. You might be carrying everyone else\'s load. Let it go for a few hours.'),
+(350, 1, 11, 'low_dance', 'gentle', 'Today\'s dance was a bit off. Your stamina is amazing, but not infinite — even you need rest.'),
+(351, 1, 11, 'low_dance', 'firm', 'Dance below your level today. Stop solving dorm drama during practice — focus is yours, not theirs.'),
+(352, 1, 11, 'low_visual', 'gentle', 'Visual was a bit dull today. Your warmth is your best feature on camera — let it through, don\'t mute it.'),
+(353, 1, 11, 'low_visual', 'warm', 'Today\'s visual scores dipped. You light up rooms naturally — bring that to the lens, not just to the dorm.'),
+(354, 1, 11, 'low_visual', 'playful', 'Visual was sleepy today. Onee-sama tired? Even you deserve a nap. Try one before tomorrow\'s session.'),
+(355, 1, 11, 'audition_day', 'firm', 'Audition day, Rinami. Today is YOUR stage, not anyone else\'s. Be the idol, not the caretaker.'),
+(356, 1, 11, 'audition_day', 'warm', 'Today\'s the day. Show the judges the same warmth and care you give everyone — but make it about YOU this time.'),
+(357, 1, 11, 'audition_day', 'gentle', 'Audition day. Whatever happens, your kindness shines through everything you do. Trust it on stage.'),
+(358, 1, 11, 'rest_day', 'firm', 'Rest day. You don\'t cook for anyone today. You don\'t tidy up after anyone today. You rest. Period.'),
+(359, 1, 11, 'rest_day', 'warm', 'Day off, Rinami. Go eat sushi, take a long bath, do nothing productive. The dorm runs itself for one day.'),
+(360, 1, 11, 'rest_day', 'gentle', 'Rest day. Even the kindest onee-sama deserves to be looked after. Today, please let yourself just BE.'),
+(361, 1, 11, 'good_progress', 'warm', 'Your progress is wonderful — and you\'re doing it while basically raising half the dorm. You\'re extraordinary.'),
+(362, 1, 11, 'good_progress', 'gentle', 'Real growth this week, Rinami. The talent shines through when you let yourself focus. Very proud.'),
+(363, 1, 11, 'good_progress', 'playful', 'Numbers are up, and you\'re still doing it all with that warm smile. You\'re showing off, onee-sama. Keep it up.'),
+(364, 1, 12, 'morning', 'warm', 'Good morning, Sena. Today the Prima Stella starts with breakfast — the ordinary kind. No elite training schedule before lessons.'),
+(365, 1, 12, 'morning', 'serious', 'Morning. Stage presence starts now, not at the lesson. Carry that posture through the whole day.'),
+(366, 1, 12, 'morning', 'playful', 'Good morning, Prima Stella. Yes, I saw your phone wallpaper of Kotone. We\'re talking about that later.'),
+(367, 1, 12, 'afternoon', 'warm', 'Afternoon check-in. You handled the morning beautifully — keep that grace into the afternoon.'),
+(368, 1, 12, 'afternoon', 'firm', 'Halfway through. The throne doesn\'t carry itself — stay focused through the next lesson.'),
+(369, 1, 12, 'afternoon', 'gentle', 'Afternoon, Sena. If anything off-stage is on your mind, set it aside until practice ends. We can talk after.'),
+(370, 1, 12, 'evening', 'warm', 'Evening, Sena. The Prima Stella worked hard today. Now please let her rest like a normal person.'),
+(371, 1, 12, 'evening', 'gentle', 'Day\'s done. The crown comes off in the evening — be Sena tonight, not the title.'),
+(372, 1, 12, 'evening', 'firm', 'It\'s evening. No more \"should I message Kotone\" overthinking tonight. Phone away. Sleep.'),
+(373, 1, 12, 'low_vocal', 'serious', 'Your vocals dipped today. I know you feel like you\'ve peaked — but the ceiling moves when you push. Push.'),
+(374, 1, 12, 'low_vocal', 'gentle', 'Vocals weren\'t your best today. Even Prima Stella has off days. It doesn\'t dethrone you — it just makes you human.'),
+(375, 1, 12, 'low_vocal', 'warm', 'Today\'s singing slipped a touch. Don\'t read it as plateau panic. Read it as a signal to try something new tomorrow.'),
+(376, 1, 12, 'low_dance', 'firm', 'Dance was below your level today. You\'re moving like someone defending a title, not climbing past it. Climb.'),
+(377, 1, 12, 'low_dance', 'serious', 'Dance felt static today. The Prima Stella who plays it safe gets caught from behind. Push your range.'),
+(378, 1, 12, 'low_dance', 'warm', 'Dance wasn\'t sharp today. You\'ve been at the top so long the muscles forget what climbing feels like. Let\'s rebuild that.'),
+(379, 1, 12, 'low_visual', 'gentle', 'Visual scores dipped today. The polished idol routine is showing its seams — let some real Sena through.'),
+(380, 1, 12, 'low_visual', 'warm', 'Today\'s visual was very controlled. Too controlled. Loosen up — perfection is less interesting than presence.'),
+(381, 1, 12, 'low_visual', 'firm', 'Visual was off today. Stop performing the Prima Stella role and just BE her. There\'s a difference, and you know it.'),
+(382, 1, 12, 'audition_day', 'firm', 'Audition day, Sena. You\'re the Prima Stella — but today, treat yourself like a challenger again. That\'s where growth lives.'),
+(383, 1, 12, 'audition_day', 'warm', 'Today\'s the stage. The throne is yours to defend, but lead with curiosity, not duty. Show them something new.'),
+(384, 1, 12, 'audition_day', 'serious', 'Audition day. Years of elite training, the title, the legacy — none of it matters if you don\'t show up hungry today.'),
+(385, 1, 12, 'rest_day', 'gentle', 'Rest day, Sena. No scouting Kotone today. No council follow-ups. Be a teenage girl for a day.'),
+(386, 1, 12, 'rest_day', 'firm', 'Rest day. The crown stays in the drawer. Yes, I\'ll check that you didn\'t try to schedule extra practice.'),
+(387, 1, 12, 'rest_day', 'playful', 'Rest day. I\'ve put a \"do not approach\" sign on Kotone for your protection AND hers. You\'re welcome.'),
+(388, 1, 12, 'good_progress', 'warm', 'Your progress is real this week — and you actually let yourself try new things. That\'s the harder kind of growth.'),
+(389, 1, 12, 'good_progress', 'serious', 'Numbers up across the board. You broke the plateau by treating yourself like a student again. Keep that mindset.'),
+(390, 1, 12, 'good_progress', 'gentle', 'You\'ve grown this week, Sena — not just as an idol but as a person. Both matter. Proud of you.'),
+(391, 1, 13, 'morning', 'firm', 'Morning, Tsubame. Today\'s training starts now. No coasting on yesterday\'s results — Sena isn\'t coasting either.'),
+(392, 1, 13, 'morning', 'warm', 'Good morning. The No.2 idol is ready to climb. Today, focus on YOUR improvement, not Sena\'s distance.'),
+(393, 1, 13, 'morning', 'playful', 'Morning, vice president. I won\'t tell anyone about the new mecha figure on your shelf if you stretch first.'),
+(394, 1, 13, 'afternoon', 'firm', 'Afternoon. The morning was solid — don\'t ease off now. Climbers don\'t get to rest mid-mountain.'),
+(395, 1, 13, 'afternoon', 'serious', 'Halfway through. Sena\'s stats today are exactly the number you should be targeting. Aim higher.'),
+(396, 1, 13, 'afternoon', 'warm', 'Afternoon check-in. You\'re holding pace well today. The path past her starts with days like this.'),
+(397, 1, 13, 'evening', 'gentle', 'Evening, Tsubame. The crown isn\'t given by training alone — but you\'ve earned tonight\'s rest. Take it.'),
+(398, 1, 13, 'evening', 'firm', 'It\'s evening. Stop replaying every count from today\'s dance. The work is done — recovery is part of training.');
+INSERT INTO `producer_messages` (`id`, `producer_id`, `student_id`, `message_type`, `tone`, `message_text`) VALUES
+(399, 1, 13, 'evening', 'warm', 'Day\'s done. You moved closer to her today, even if you can\'t measure it. Sleep on that and start fresh tomorrow.'),
+(400, 1, 13, 'low_vocal', 'firm', 'Vocals were below your level today. The path to Prima Stella doesn\'t allow these slip-ups. Sharpen up.'),
+(401, 1, 13, 'low_vocal', 'serious', 'Today\'s singing slipped. Misuzu beat you once because complacency snuck in — don\'t let it back.'),
+(402, 1, 13, 'low_vocal', 'warm', 'Vocals weren\'t your best today. Even the most disciplined idol has rough days. Tomorrow we reset.'),
+(403, 1, 13, 'low_dance', 'firm', 'Dance was below your level today. Pride doesn\'t compensate for sloppy footwork. Tomorrow you fix it.'),
+(404, 1, 13, 'low_dance', 'serious', 'Today\'s dance was tense. You\'re trying to outdo Sena instead of perform — those are different things.'),
+(405, 1, 13, 'low_dance', 'gentle', 'Dance wasn\'t sharp today. You don\'t have to fight every count — sometimes the movement comes when you stop forcing it.'),
+(406, 1, 13, 'low_visual', 'firm', 'Visual was off today. The pompous attitude works on stage; the camera needs more than just attitude.'),
+(407, 1, 13, 'low_visual', 'serious', 'Visual scores dipped today. You compose your face like you\'re entering a council meeting. Loosen up.'),
+(408, 1, 13, 'low_visual', 'playful', 'Visual today was very \"future Prima Stella declaring war.\" Try \"person who actually enjoys being on camera\" next time.'),
+(409, 1, 13, 'audition_day', 'firm', 'Audition day, Tsubame. Forget the rivalry for three hours. Show them YOUR idol, not Sena\'s shadow\'s idol.'),
+(410, 1, 13, 'audition_day', 'warm', 'Today\'s the stage. All those years of climbing toward the top — show the judges you belong there now.'),
+(411, 1, 13, 'audition_day', 'serious', 'Audition day. This is where the gap closes. Not in talk, not in training — here, in front of them.'),
+(412, 1, 13, 'rest_day', 'firm', 'Rest day. No extra training. Yes, I checked your schedule. Yes, I\'ll be checking again.'),
+(413, 1, 13, 'rest_day', 'gentle', 'Day off, Tsubame. Even rivals rest. Sena is resting too — you don\'t lose ground by sleeping.'),
+(414, 1, 13, 'rest_day', 'playful', 'Rest day. Permission granted to watch mecha all day. I\'ll pretend not to know about the figure collection.'),
+(415, 1, 13, 'good_progress', 'warm', 'Your progress this week was real. The gap to Sena is smaller — and not because she dropped, because you climbed.'),
+(416, 1, 13, 'good_progress', 'firm', 'Numbers up across the board. This is what disciplined climbing looks like. Hold this pace.'),
+(417, 1, 13, 'good_progress', 'serious', 'You broke through something this week. The complacency is gone. The Prima Stella seat is in reach if you keep this up.');
 
 -- --------------------------------------------------------
 
@@ -776,7 +915,119 @@ INSERT INTO `recurring_schedules` (`id`, `student_id`, `weekday`, `activity_type
 (198, 9, 5, 'practice', 'Late Morning Practice', 'Reluctant solo practice before lunch.', '11:00:00', '12:00:00', 'Practice Room 9', 1, 1, '2026-06-01 23:19:17', '2026-06-01 23:19:17'),
 (199, 9, 5, 'rest', 'Evening Nap', 'End-of-week nap. Earned, in her opinion.', '17:30:00', '19:00:00', 'Dormitory', 1, 1, '2026-06-01 23:19:17', '2026-06-01 23:19:17'),
 (200, 9, 6, 'rest', 'Afternoon Nap', 'Post-charity-event nap. The volunteering wore her out.', '13:30:00', '16:00:00', 'Dormitory', 1, 1, '2026-06-01 23:19:17', '2026-06-01 23:19:17'),
-(201, 9, 7, 'rest', 'Rest Day', 'Full rest day. The one day everyone agrees she should be sleeping.', '00:00:00', '23:59:59', '-', 1, 1, '2026-06-01 23:19:17', '2026-06-01 23:19:17');
+(201, 9, 7, 'rest', 'Rest Day', 'Full rest day. The one day everyone agrees she should be sleeping.', '00:00:00', '23:59:59', '-', 1, 1, '2026-06-01 23:19:17', '2026-06-01 23:19:17'),
+(202, 10, 1, 'vocal', 'Academy Vocal Lesson', 'Senior vocal class (3-1).', '09:00:00', '11:00:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(203, 11, 1, 'vocal', 'Academy Vocal Lesson', 'Senior vocal class (3-1).', '09:00:00', '11:00:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(204, 10, 1, 'visual', 'Academy Visual Lesson', 'Senior visual class (3-1).', '13:00:00', '15:00:00', 'Visual Studio C', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(205, 11, 1, 'visual', 'Academy Visual Lesson', 'Senior visual class (3-1).', '13:00:00', '15:00:00', 'Visual Studio C', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(206, 10, 2, 'dance', 'Academy Dance Lesson', 'Senior dance class (3-1).', '13:00:00', '15:00:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(207, 11, 2, 'dance', 'Academy Dance Lesson', 'Senior dance class (3-1).', '13:00:00', '15:00:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(208, 10, 3, 'class', 'Academic Class', 'Class 3-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 3-1', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(209, 11, 3, 'class', 'Academic Class', 'Class 3-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 3-1', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(210, 10, 3, 'vocal', 'Academy Vocal Lesson', 'Senior vocal class (3-1).', '15:00:00', '17:00:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(211, 11, 3, 'vocal', 'Academy Vocal Lesson', 'Senior vocal class (3-1).', '15:00:00', '17:00:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(212, 10, 4, 'visual', 'Academy Visual Lesson', 'Senior visual class (3-1).', '09:00:00', '11:00:00', 'Visual Studio C', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(213, 11, 4, 'visual', 'Academy Visual Lesson', 'Senior visual class (3-1).', '09:00:00', '11:00:00', 'Visual Studio C', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(214, 10, 4, 'dance', 'Academy Dance Lesson', 'Senior dance class (3-1).', '13:00:00', '15:00:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(215, 11, 4, 'dance', 'Academy Dance Lesson', 'Senior dance class (3-1).', '13:00:00', '15:00:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(216, 10, 5, 'class', 'Academic Class', 'Class 3-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 3-1', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(217, 11, 5, 'class', 'Academic Class', 'Class 3-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 3-1', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(218, 11, 1, 'meeting', 'Student Council Meeting', 'Weekly Monday morning council briefing.', '07:30:00', '08:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(219, 11, 3, 'meeting', 'Student Council Lunch', 'Lunch meeting with council.', '12:30:00', '13:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(220, 11, 4, 'meeting', 'Student Council Event Prep', 'Event planning and council paperwork.', '16:30:00', '18:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(221, 11, 6, 'meeting', 'Council Charity Event', 'Volunteer/charity event organized by Student Council.', '10:00:00', '13:00:00', 'Off-campus', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(222, 10, 1, 'meeting', 'Morning Dorm Check', 'Daily morning round of the dormitories.', '06:30:00', '07:30:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(223, 10, 1, 'dance', 'Solo Dance Practice', 'Working toward her cool-style image.', '15:30:00', '17:00:00', 'Practice Room 10', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(224, 10, 1, 'meeting', 'Evening Dorm Check', 'Nightly round. Lights out, all accounted for.', '21:00:00', '22:00:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(225, 10, 2, 'meeting', 'Morning Dorm Check', 'Daily morning round of the dormitories.', '06:30:00', '07:30:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(226, 10, 2, 'vocal', 'Solo Vocal Practice', 'Personal vocal training. Tone-controlled and cool.', '09:30:00', '11:30:00', 'Practice Room 10', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(227, 10, 2, 'practice', 'Acting Practice', 'Drama/stage acting drills — leftover from her opera dreams.', '15:30:00', '17:00:00', 'Drama Room', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(228, 10, 2, 'meeting', 'Evening Dorm Check', 'Nightly round.', '21:00:00', '22:00:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(229, 10, 3, 'meeting', 'Morning Dorm Check', 'Daily morning round.', '06:30:00', '07:30:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(230, 10, 3, 'meeting', 'Dorm Supervisor Meeting', 'Weekly meeting with academy staff about dorm matters.', '17:30:00', '18:30:00', 'Staff Room', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(231, 10, 3, 'meeting', 'Evening Dorm Check', 'Nightly round.', '21:00:00', '22:00:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(232, 10, 4, 'meeting', 'Morning Dorm Check', 'Daily morning round.', '06:30:00', '07:30:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(233, 10, 4, 'visual', 'Solo Visual Practice', 'Cool-pose practice. Camera presence training.', '15:30:00', '17:00:00', 'Practice Room 10', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(234, 10, 4, 'meeting', 'Evening Dorm Check', 'Nightly round.', '21:00:00', '22:00:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(235, 10, 5, 'meeting', 'Morning Dorm Check', 'Daily morning round.', '06:30:00', '07:30:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(236, 10, 5, 'practice', 'Solo Practice', 'General solo practice across all areas.', '14:00:00', '16:00:00', 'Practice Room 10', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(237, 10, 5, 'meeting', 'Weekly Dorm Meeting', 'Friday meeting with all dorm residents. Updates & issues.', '17:00:00', '18:00:00', 'Dormitory Lounge', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(238, 10, 5, 'meeting', 'Evening Dorm Check', 'Nightly round.', '21:00:00', '22:00:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(239, 10, 6, 'meeting', 'Light Morning Dorm Check', 'Weekend check-in. Lighter than weekday rounds.', '07:30:00', '08:30:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(240, 10, 6, 'rest', 'Hot Springs Visit', 'Weekly hot springs trip. Her favorite recharge.', '10:00:00', '14:00:00', 'Off-campus', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(241, 10, 6, 'dance', 'Solo Dance Practice', 'Weekend dance training.', '16:00:00', '17:30:00', 'Practice Room 10', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(242, 10, 7, 'meeting', 'Sunday Light Dorm Check', 'Brief Sunday morning check-in.', '09:00:00', '10:00:00', 'Dormitory', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(243, 10, 7, 'rest', 'Rest Day', 'Rest day after the morning check. Reading or napping.', '10:30:00', '23:59:59', '-', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(244, 11, 1, 'meeting', 'Dorm Lunch Prep', 'Prepping lunch for younger dorm residents.', '11:30:00', '12:30:00', 'Dormitory Kitchen', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(245, 11, 1, 'vocal', 'Solo Vocal Practice', 'Personal vocal practice. Warm, mature tone.', '17:00:00', '18:30:00', 'Practice Room 11', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(246, 11, 2, 'meeting', 'Council Secretary Work', 'Secretary paperwork — meeting minutes, schedules, etc.', '08:00:00', '09:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(247, 11, 2, 'dance', 'Solo Dance Practice', 'Personal dance practice.', '15:30:00', '17:00:00', 'Practice Room 11', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(248, 11, 3, 'meeting', 'Dorm Dinner Prep', 'Cooking dinner for the dorm residents.', '18:30:00', '20:00:00', 'Dormitory Kitchen', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(249, 11, 4, 'vocal', 'Solo Vocal Practice', 'Mid-morning vocal practice between lessons.', '11:30:00', '12:30:00', 'Practice Room 11', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(250, 11, 5, 'meeting', 'Council Filing', 'Filing the week\'s council notes and documents.', '08:00:00', '09:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(251, 11, 5, 'visual', 'Solo Visual Practice', 'Personal posing practice.', '13:00:00', '14:30:00', 'Practice Room 11', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(252, 11, 5, 'rest', 'Sushi Night', 'Weekly sushi outing. Her sacred Friday ritual.', '18:30:00', '21:00:00', 'Off-campus', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(253, 11, 6, 'dance', 'Solo Dance Practice', 'Weekend dance training after council event.', '15:00:00', '17:00:00', 'Practice Room 11', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(254, 11, 7, 'meeting', 'Sunday Dorm Brunch', 'Weekly brunch she cooks for the whole dorm. Big event.', '09:00:00', '12:00:00', 'Dormitory Kitchen', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(255, 11, 7, 'rest', 'Rest Day', 'Rest day after brunch. Earned downtime.', '12:30:00', '23:59:59', '-', 1, 1, '2026-06-04 12:08:56', '2026-06-04 12:08:56'),
+(256, 12, 1, 'vocal', 'Academy Vocal Lesson', 'Senior vocal class (3-1).', '09:00:00', '11:00:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(257, 13, 1, 'vocal', 'Academy Vocal Lesson', 'Senior vocal class (3-1).', '09:00:00', '11:00:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(258, 12, 1, 'visual', 'Academy Visual Lesson', 'Senior visual class (3-1).', '13:00:00', '15:00:00', 'Visual Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(259, 13, 1, 'visual', 'Academy Visual Lesson', 'Senior visual class (3-1).', '13:00:00', '15:00:00', 'Visual Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(260, 12, 2, 'dance', 'Academy Dance Lesson', 'Senior dance class (3-1).', '13:00:00', '15:00:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(261, 13, 2, 'dance', 'Academy Dance Lesson', 'Senior dance class (3-1).', '13:00:00', '15:00:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(262, 12, 3, 'class', 'Academic Class', 'Class 3-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 3-1', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(263, 13, 3, 'class', 'Academic Class', 'Class 3-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 3-1', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(264, 12, 3, 'vocal', 'Academy Vocal Lesson', 'Senior vocal class (3-1).', '15:00:00', '17:00:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(265, 13, 3, 'vocal', 'Academy Vocal Lesson', 'Senior vocal class (3-1).', '15:00:00', '17:00:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(266, 12, 4, 'visual', 'Academy Visual Lesson', 'Senior visual class (3-1).', '09:00:00', '11:00:00', 'Visual Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(267, 13, 4, 'visual', 'Academy Visual Lesson', 'Senior visual class (3-1).', '09:00:00', '11:00:00', 'Visual Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(268, 12, 4, 'dance', 'Academy Dance Lesson', 'Senior dance class (3-1).', '13:00:00', '15:00:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(269, 13, 4, 'dance', 'Academy Dance Lesson', 'Senior dance class (3-1).', '13:00:00', '15:00:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(270, 12, 5, 'class', 'Academic Class', 'Class 3-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 3-1', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(271, 13, 5, 'class', 'Academic Class', 'Class 3-1 regular school lessons.', '09:00:00', '12:00:00', 'Classroom 3-1', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(272, 12, 1, 'meeting', 'Pre-Meeting Briefing', 'President & VP align on the council agenda before the full meeting.', '06:30:00', '07:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(273, 13, 1, 'meeting', 'Pre-Meeting Briefing', 'President & VP align on the council agenda before the full meeting.', '06:30:00', '07:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(274, 12, 1, 'meeting', 'Student Council Meeting', 'Weekly Monday morning council briefing.', '07:30:00', '08:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(275, 13, 1, 'meeting', 'Student Council Meeting', 'Weekly Monday morning council briefing.', '07:30:00', '08:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(276, 12, 3, 'meeting', 'Student Council Lunch', 'Lunch meeting with council.', '12:30:00', '13:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(277, 13, 3, 'meeting', 'Student Council Lunch', 'Lunch meeting with council.', '12:30:00', '13:30:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(278, 12, 4, 'meeting', 'Student Council Event Prep', 'Event planning and council paperwork.', '16:30:00', '18:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(279, 13, 4, 'meeting', 'Student Council Event Prep', 'Event planning and council paperwork.', '16:30:00', '18:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(280, 12, 5, 'meeting', 'President-VP Sync', 'Weekly one-on-one between President and VP. Plans the next week.', '17:00:00', '18:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(281, 13, 5, 'meeting', 'President-VP Sync', 'Weekly one-on-one between President and VP. Plans the next week.', '17:00:00', '18:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(282, 12, 6, 'meeting', 'Council Charity Event', 'Volunteer/charity event organized by Student Council.', '10:00:00', '13:00:00', 'Off-campus', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(283, 13, 6, 'meeting', 'Council Charity Event', 'Volunteer/charity event organized by Student Council.', '10:00:00', '13:00:00', 'Off-campus', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(284, 12, 1, 'dance', 'Solo Dance Practice', 'Trying new movement styles to break past plateau.', '15:30:00', '17:00:00', 'Practice Room 12', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(285, 12, 1, 'vocal', 'Elite Vocal Training', 'Private training session arranged by her family.', '19:00:00', '20:30:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(286, 12, 2, 'meeting', 'President\'s Office Hours', 'Open hour for any council member to bring issues to her.', '08:00:00', '09:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01');
+INSERT INTO `recurring_schedules` (`id`, `student_id`, `weekday`, `activity_type`, `title`, `description`, `start_time`, `end_time`, `location`, `created_by`, `is_active`, `created_at`, `updated_at`) VALUES
+(287, 12, 2, 'visual', 'Solo Visual Practice', 'Working on expression range — less polish, more presence.', '09:30:00', '11:30:00', 'Practice Room 12', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(288, 12, 2, 'vocal', 'Solo Vocal Practice', 'Personal vocal training between lessons.', '15:30:00', '17:00:00', 'Practice Room 12', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(289, 12, 3, 'meeting', 'Council Strategic Planning', 'Long-term planning session. President-only work.', '17:30:00', '19:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(290, 12, 3, 'rest', 'Family Dinner', 'Weekly dinner with her grandfather, the academy principal.', '19:30:00', '21:00:00', 'Off-campus', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(291, 12, 4, 'vocal', 'Solo Vocal Practice', 'Mid-day vocal practice between lessons.', '11:30:00', '12:30:00', 'Practice Room 12', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(292, 12, 4, 'dance', 'Elite Dance Training', 'Private high-level training. Family-arranged.', '19:00:00', '20:30:00', 'Dance Studio 3', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(293, 12, 5, 'visual', 'Solo Visual Practice', 'Camera work — trying to find what she calls \"real\" Sena.', '13:00:00', '14:30:00', 'Practice Room 12', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(294, 12, 5, 'dance', 'Solo Dance Practice', 'Personal dance practice.', '15:00:00', '16:30:00', 'Practice Room 12', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(295, 12, 5, 'vocal', 'Elite Vocal Training', 'Friday evening private vocal session.', '19:00:00', '20:30:00', 'Vocal Studio C', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(296, 12, 6, 'dance', 'Solo Dance Practice', 'Weekend dance practice after council event.', '14:00:00', '16:00:00', 'Practice Room 12', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(297, 12, 7, 'rest', 'Rest Day', 'Full rest day. The crown comes off.', '00:00:00', '23:59:59', '-', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(298, 13, 1, 'dance', 'Solo Dance Practice', 'Climbing toward Sena\'s level. Drilling counts hard.', '15:30:00', '17:00:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(299, 13, 1, 'practice', 'Self-Imposed Extra Training', 'Late-night solo session. Not assigned — chosen.', '19:00:00', '20:30:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(300, 13, 2, 'meeting', 'VP Planning Session', 'Vice president detail work — organizing meeting logistics.', '08:00:00', '09:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(301, 13, 2, 'vocal', 'Solo Vocal Practice', 'Pre-lesson vocal warmups.', '09:30:00', '11:30:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(302, 13, 2, 'visual', 'Solo Visual Practice', 'Camera presence drills.', '15:30:00', '17:00:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(303, 13, 3, 'meeting', 'Council Documentation', 'Detailed paperwork & minutes — her favorite VP task.', '17:30:00', '19:00:00', 'Student Council Room', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(304, 13, 3, 'practice', 'Solo Practice', 'Evening general practice across areas.', '19:30:00', '21:00:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(305, 13, 4, 'dance', 'Solo Dance Practice', 'Mid-day dance practice.', '11:30:00', '12:30:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(306, 13, 4, 'practice', 'Strict Self-Training', 'Evening session. Strict pace, no slack.', '19:00:00', '20:30:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(307, 13, 5, 'vocal', 'Solo Vocal Practice', 'Afternoon vocal work.', '13:00:00', '14:30:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(308, 13, 5, 'visual', 'Solo Visual Practice', 'Pre-sync visual practice.', '15:00:00', '16:30:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(309, 13, 5, 'rest', 'Mecha Anime Time', 'Her one indulgence. Secret hobby — dorm room, door closed.', '20:00:00', '21:30:00', 'Dormitory', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(310, 13, 6, 'dance', 'Solo Dance Practice', 'Weekend dance training.', '14:00:00', '16:00:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(311, 13, 7, 'practice', 'Sunday Self-Training', 'Refuses to fully rest. Light morning session, still strict.', '09:00:00', '11:00:00', 'Practice Room 13', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01'),
+(312, 13, 7, 'rest', 'Rest Day', 'Reluctant rest day after morning training.', '11:30:00', '23:59:59', '-', 1, 1, '2026-06-04 12:14:01', '2026-06-04 12:14:01');
 
 -- --------------------------------------------------------
 
@@ -886,10 +1137,10 @@ INSERT INTO `students` (`id`, `user_id`, `name`, `name_jp`, `birthday`, `blood_t
 (7, 11, 'China Kuramoto', '倉本 千奈', '2000-08-01', 'O', 148, 'Kanagawa', 'Class 1-2', 'Debut', 55, 55, 60, 'A genuine, spoiled-rotten young lady (お嬢様) raised with every privilege. A cheerful, innocent girl who enrolled at Hatsuboshi dreaming of becoming \"a proper, splendid idol.\" Her actual ability level, by her own admission, is \"definitely dead last among the entire student body!\" Her sheltered upbringing has left her sweet, polite, and earnest—but completely behind her classmates in raw skill, which she takes in stride with her trademark \"Well then, I\'ll just have to do my best, won\'t I!\" attitude.\r\n', '#F68B1F', '#FCE0C5', 1, '2026-05-28 17:43:41', '2026-06-03 11:45:32'),
 (8, 12, 'Ume Hanami', '花海 佑芽', '2000-04-01', 'AB', 158, 'Aichi', 'Class 1-2', 'Debut', 50, 60, 60, '\'A supplementary-entry new student. Energetic to the core, with exceptional physical ability from her background as a former athlete. She absolutely adores her older sister Saki — she respects her with all her heart, treats her as her ultimate rival, and holds her up as the goal she\'s aiming for. Through Saki\'s devoted support, Ume gradually blossoms her own idol talent. \r\n', '#EA533A', '#FAD4CB', 1, '2026-05-28 17:43:41', '2026-05-28 17:58:33'),
 (9, 13, 'Misuzu Hataya', '秦谷 美鈴', '2000-02-06', 'B', 160, 'Kyoto', 'Class 1-2', 'Debut', 65, 70, 80, 'A languid, easygoing girl who moves at her own pace. Sweet and indulgent to both herself and others, she loves taking care of people and spoiling them. Her childhood friend Temari Tsukimura — whom she calls \"Mari-chan\" — she treats like a little sister or daughter she needs to cherish and protect. A Kyoto native and former member of the elite middle-school unit \"SyngUp!\" alongside Temari. Sleeps constantly — at every opportunity.\r\n', '#7A99CF', '#D8E0EF', 1, '2026-05-28 17:43:41', '2026-05-28 17:58:33'),
-(10, 14, 'Mao Arimura', NULL, NULL, NULL, NULL, NULL, 'Class 1-2', 'Debut', 55, 55, 55, NULL, '#E85A9B', '#F8CFE2', 1, '2026-06-03 13:03:10', '2026-06-03 13:03:10'),
-(11, 15, 'Rinami Himesaki', NULL, NULL, NULL, NULL, NULL, 'Class 1-2', 'Debut', 55, 55, 55, NULL, '#D76AA6', '#F4D4E6', 1, '2026-06-03 13:03:10', '2026-06-03 13:03:10'),
-(12, 16, 'Sena Juo', NULL, NULL, NULL, NULL, NULL, 'Class 1-2', 'Debut', 55, 55, 55, NULL, '#8B64D8', '#DED4F6', 1, '2026-06-03 13:03:10', '2026-06-03 13:03:10'),
-(13, 17, 'Tsubame Amaya', NULL, NULL, NULL, NULL, NULL, 'Class 1-2', 'Debut', 55, 55, 55, NULL, '#43A7A5', '#CDEDEA', 1, '2026-06-03 13:03:10', '2026-06-03 13:03:10');
+(10, 14, 'Mao Arimura', '有村 麻央', '2000-01-18', 'A', 157, 'Hyogo', 'Class 3-1', 'Debut', 75, 65, 55, 'A 3rd-year girl aiming to be a cool idol. She serves as the dormitory leader of Hatsuboshi Academy\'s idol department and is very caring. She is adored by her juniors as the \"Little Prince.\" She has a past of aspiring to be a stage musical star since childhood and working as a child actress.', '#7F1184', '#DCC2DE', 1, '2026-06-03 13:03:10', '2026-06-04 09:53:18'),
+(11, 15, 'Rinami Himesaki', '姫崎 莉波', '2000-03-05', 'A', 166, 'Fukuoka', 'Class 3-1', 'Debut', 60, 70, 55, 'A mature-feeling 3rd-year student. Reliable, gentle, and caring—the big sister of everyone in the dorm. She was once part of a unit, but the results were not great. She is a member of the student council, serving as secretary.', '#F6ADC6', '#FCE6EE', 1, '2026-06-03 13:03:10', '2026-06-04 09:53:06'),
+(12, 16, 'Sena Juo', '十王 星南', '2000-12-07', 'A', 170, 'Tokyo', 'Class 3-1', 'Debut', 130, 100, 105, 'Student council president of Hatsuboshi Academy. Known as \"the academy\'s top idol,\" admired by many students. The granddaughter of the academy principal, she was raised with elite idol education from a young age. She has a special ability to spot idol talent and immediately takes a liking to Kotone—but for some reason, Kotone keeps her distance.', '#F6AE54', '#FCE6CC', 1, '2026-06-03 13:03:10', '2026-06-04 09:56:40'),
+(13, 17, 'Tsubame Amaya', '雨夜 燕', '2000-05-20', 'A', 169, 'Tokyo', 'Class 3-1', 'Debut', 80, 90, 70, 'Vice president of the Hatsuboshi Academy student council. The academy\'s No. 2 idol. She carries pride befitting her ability and holds herself with an arrogant attitude. She is strict with both herself and others but is caring. She sees her childhood friend Sena as a rival and has publicly declared that she will one day surpass Sena to become the \"number one star.\"', '#7B68EE', '#D8D2FB', 1, '2026-06-03 13:03:10', '2026-06-04 09:58:27');
 
 -- --------------------------------------------------------
 
@@ -972,10 +1223,10 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`
 (11, 'China Kuramoto', '$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy', 'student', 'China Kuramoto.png', 1, '2026-05-26 13:13:13', '2026-06-03 13:06:31', '2026-06-03 13:06:31'),
 (12, 'Ume Hanami', '$2y$10$v48vl/ymkgldjh/sUGwPHusiC7iBAahdLG4ynPeWTGjI.MCfn2Wvq', 'student', 'Ume Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-03 13:07:24', '2026-06-03 13:07:24'),
 (13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-06-03 12:03:23', '2026-06-03 12:03:23'),
-(14, 'Mao Arimura', '$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO', 'student', 'Mao Arimura.png', 1, '2026-05-26 13:13:13', '2026-06-01 22:59:58', '2026-06-01 19:44:53'),
-(15, 'Rinami Himesaki', '$2y$10$Mc/amUU4R6ORKAqyn6WMt.S3EcLbF5jxjIq8c83h6D0kElQpB/XZW', 'student', 'Rinami Himesaki.png', 1, '2026-05-26 13:13:13', '2026-06-01 23:00:21', '2026-06-01 19:44:53'),
-(16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-06-01 23:00:42', '2026-06-01 19:44:53'),
-(17, 'Tsubame Amaya', '$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi', 'student', 'Tsubame Amaya.png', 1, '2026-05-26 13:13:13', '2026-06-01 23:01:02', '2026-06-01 19:44:53');
+(14, 'Mao Arimura', '$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO', 'student', 'Mao Arimura.png', 1, '2026-05-26 13:13:13', '2026-06-04 11:41:05', '2026-06-04 11:41:05'),
+(15, 'Rinami Himesaki', '$2y$10$Mc/amUU4R6ORKAqyn6WMt.S3EcLbF5jxjIq8c83h6D0kElQpB/XZW', 'student', 'Rinami Himesaki.png', 1, '2026-05-26 13:13:13', '2026-06-04 12:15:43', '2026-06-04 12:15:43'),
+(16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-06-04 12:15:10', '2026-06-04 12:15:10'),
+(17, 'Tsubame Amaya', '$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi', 'student', 'Tsubame Amaya.png', 1, '2026-05-26 13:13:13', '2026-06-04 11:43:00', '2026-06-04 11:43:00');
 
 --
 -- Indexes for dumped tables
@@ -1118,7 +1369,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `daily_student_stats`
 --
 ALTER TABLE `daily_student_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
 
 --
 -- AUTO_INCREMENT for table `events`
@@ -1154,13 +1405,13 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `producer_messages`
 --
 ALTER TABLE `producer_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=298;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=418;
 
 --
 -- AUTO_INCREMENT for table `recurring_schedules`
 --
 ALTER TABLE `recurring_schedules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=313;
 
 --
 -- AUTO_INCREMENT for table `schedules`
