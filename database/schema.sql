@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 04, 2026 at 08:58 AM
+-- Generation Time: Jun 08, 2026 at 11:07 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -190,6 +190,7 @@ CREATE TABLE `songs` (
   `artist` varchar(150) DEFAULT NULL,
   `duration` time DEFAULT NULL,
   `release_date` date DEFAULT NULL,
+  `song_type` enum('Solo','Group','Remix','Cover') NOT NULL DEFAULT 'Group',
   `notes` text DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -224,9 +225,14 @@ CREATE TABLE `students` (
   `name` varchar(100) NOT NULL,
   `name_jp` varchar(100) DEFAULT NULL,
   `birthday` date DEFAULT NULL,
+  `zodiac` varchar(30) DEFAULT NULL,
   `blood_type` char(2) DEFAULT NULL,
   `height` int(11) DEFAULT NULL,
+  `weight` int(11) DEFAULT NULL,
+  `three_size` varchar(20) DEFAULT NULL,
   `hometown` varchar(50) DEFAULT NULL,
+  `hobbies` text DEFAULT NULL,
+  `special_skill` text DEFAULT NULL,
   `school_year` varchar(20) DEFAULT NULL,
   `rank` varchar(10) NOT NULL DEFAULT 'Debut',
   `vocal` int(11) NOT NULL DEFAULT 0,
