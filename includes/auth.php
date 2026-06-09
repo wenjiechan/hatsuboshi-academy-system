@@ -37,11 +37,16 @@ $id = $_SESSION['id'];
 $username = $_SESSION['user_name'];
 $role = $_SESSION['role'];
 
+require_once __DIR__ . '/error_redirect.php';
+
 function require_role(string ...$allowed_roles): void {     // Restrict pages by role
     global $role;
     if (!in_array($role, $allowed_roles, true)) {
-        http_response_code(403);
-        exit('Access denied');
+        redirect_to_account_issue(
+            'Access denied',
+            'Your account does not have permission to open that page. Please log out and sign in with the correct account.',
+            403
+        );
     }
 }
 
@@ -54,8 +59,11 @@ function csrf_token(): string {     // Generate a random CSRF token and stores i
 
 function verify_csrf(string $submitted): void {     // Check whether the submitted tokens matches the session token
     if (!hash_equals($_SESSION['csrf_token'] ?? '', $submitted)) {
-        http_response_code(403);
-        exit('Invalid CSRF token');
+        redirect_to_account_issue(
+            'Security check failed',
+            'The page security check could not be verified. Please log out, sign in again, and retry your action.',
+            403
+        );
     }
 }
 

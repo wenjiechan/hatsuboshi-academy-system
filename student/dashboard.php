@@ -27,9 +27,13 @@ $stmt = $pdo->prepare(
 $stmt->execute([$_SESSION['id']]);
 $student = $stmt->fetch();
 
+//Redirect to the error page
 if (!$student) {
-    http_response_code(404);
-    exit('Student profile not found');
+    redirect_to_account_issue(
+        'Student profile not found',
+        'Your login is active, but no student profile is linked to this account yet. Please log out and ask an administrator to check your student account setup.',
+        404
+    );
 }
 
 //Save student theme into session
