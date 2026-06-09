@@ -64,6 +64,9 @@ $role_label = match ($role) {
     <link rel="stylesheet" href="/gakumas-sms/assets/css/theme.css">
     <link rel="stylesheet" href="/gakumas-sms/assets/css/components.css">
     <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/dashboard.css">
+    <?php foreach (($page_styles ?? []) as $style_href): ?>
+        <link rel="stylesheet" href="<?= htmlspecialchars($style_href, ENT_QUOTES, 'UTF-8') ?>">
+    <?php endforeach; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="/gakumas-sms/assets/js/click-sparkle.js" defer></script>
