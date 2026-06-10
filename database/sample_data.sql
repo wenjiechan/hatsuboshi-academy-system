@@ -3,16 +3,17 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 09, 2026 at 10:57 AM
+-- Generation Time: Jun 10, 2026 at 08:32 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET FOREIGN_KEY_CHECKS = 0;
 SET time_zone = "+00:00";
 
 
+
+SET FOREIGN_KEY_CHECKS = 0;
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -31,20 +32,19 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`
 (2, 'Vocal Trainer', '$2y$10$mfACa/WYxB5KtG.u/sz0NOsEavc0F8j7fR.Zf/PF9hcEl7gdLMNdK', 'teacher', NULL, 1, '2026-05-26 13:11:33', '2026-05-27 11:39:47', NULL),
 (3, 'Dance Trainer', '$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-05-28 16:42:24', '2026-05-28 16:42:24'),
 (4, 'Visual Trainer', '$2y$10$bGNC.jMo6tcO1e0f6A0q5erVt6QZ2LbnR4kS1AD47.vwZW0J3GQV6', 'teacher', NULL, 1, '2026-05-26 13:12:30', '2026-05-27 11:40:41', NULL),
-(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-09 15:20:08', '2026-06-09 15:20:08'),
+(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-10 07:58:00', '2026-06-10 07:58:00'),
 (6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-06-09 16:22:39', '2026-06-09 16:22:39'),
-(7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-06-09 16:05:43', '2026-06-09 16:05:43'),
+(7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-06-10 11:37:02', '2026-06-10 11:37:02'),
 (8, 'Lilja Katsuragi', '$2y$10$U0wQB4kmtvPYWWQX.9oi0OJ60HDhnd/yf.tuf71exJ8MoG8xS0FVa', 'student', 'Lilja Katsuragi.png', 1, '2026-05-26 13:13:13', '2026-06-09 16:50:11', '2026-06-09 16:50:11'),
 (9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-06-09 16:51:09', '2026-06-09 16:51:09'),
 (10, 'Hiro Shinosawa', '$2y$10$yw50phXBAJaDziCBQu8ul.P/V5GmB5qKyObADsMOiw5nMBEfly4o2', 'student', 'Hiro Shinosawa.png', 1, '2026-05-26 13:13:13', '2026-06-09 16:19:32', '2026-06-09 16:19:32'),
 (11, 'China Kuramoto', '$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy', 'student', 'China Kuramoto.png', 1, '2026-05-26 13:13:13', '2026-06-09 15:43:36', '2026-06-09 15:43:36'),
 (12, 'Ume Hanami', '$2y$10$v48vl/ymkgldjh/sUGwPHusiC7iBAahdLG4ynPeWTGjI.MCfn2Wvq', 'student', 'Ume Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-09 16:49:17', '2026-06-09 16:49:17'),
-(13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-06-09 16:52:29', '2026-06-09 16:52:29'),
+(13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-06-10 11:11:12', '2026-06-10 11:11:12'),
 (14, 'Mao Arimura', '$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO', 'student', 'Mao Arimura.png', 1, '2026-05-26 13:13:13', '2026-06-09 15:05:35', '2026-06-09 15:05:35'),
 (15, 'Rinami Himesaki', '$2y$10$Mc/amUU4R6ORKAqyn6WMt.S3EcLbF5jxjIq8c83h6D0kElQpB/XZW', 'student', 'Rinami Himesaki.png', 1, '2026-05-26 13:13:13', '2026-06-09 16:27:21', '2026-06-09 16:27:21'),
-(16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-06-09 15:42:16', '2026-06-09 15:42:16'),
-(17, 'Tsubame Amaya', '$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi', 'student', 'Tsubame Amaya.png', 1, '2026-05-26 13:13:13', '2026-06-09 15:26:35', '2026-06-09 15:26:35');
---
+(16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-06-10 11:28:37', '2026-06-10 11:28:37'),
+(17, 'Tsubame Amaya', '$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi', 'student', 'Tsubame Amaya.png', 1, '2026-05-26 13:13:13', '2026-06-10 11:18:49', '2026-06-10 11:18:49');--
 -- Dumping data for table `teachers`
 --
 
@@ -90,13 +90,13 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (11, 'Ivy', 'アイヴイ', '月村手毬', '00:03:15', '2024-05-23', 'Solo', 'Original solo song for Temari Tsukimura.', 1, '2026-06-08 13:53:09', '2026-06-09 16:06:54'),
 (12, 'The Rolling Riceball', 'The Rolling Riceball', '花海佑芽', '00:03:12', '2024-06-01', 'Solo', 'Original solo song for Ume Hanami.', 1, '2026-06-08 13:53:09', '2026-06-09 16:06:54'),
 (13, 'Kanaetai, Koto Bakari', '叶えたい、ことばかり', '月村手毬', '00:04:07', '2024-06-03', 'Solo', 'Birthday song for Temari Tsukimura.', 1, '2026-06-08 13:53:09', '2026-06-09 16:25:34'),
-(14, 'Campus mode!!', 'Campus mode!!', '初星学園', '00:04:20', '2024-06-10', 'Group', 'Academy ensemble song. Performed by all Hatsuboshi Academy idols.', 1, '2026-06-08 13:53:09', '2026-06-09 15:56:46'),
+(14, 'Campus mode!!', 'Campus mode!!', '初星学園', '00:04:20', '2024-06-10', 'Group', 'Academy ensemble song. Performed by the original nine Hatsuboshi Academy idols.', 1, '2026-06-08 13:53:09', '2026-06-10 11:20:42'),
 (15, 'Yellow Big Bang!', 'Yellow Big Bang！', '藤田ことね', '00:04:08', '2024-06-11', 'Solo', 'Original solo song for Kotone Fujita.', 1, '2026-06-08 13:53:09', '2026-06-09 16:06:54'),
 (16, 'Boom Boom Pow', 'Boom Boom Pow', '花海咲季', '00:03:21', '2024-06-20', 'Solo', 'Original solo song for Saki Hanami.', 1, '2026-06-08 13:53:09', '2026-06-09 16:06:54'),
 (17, 'Kimi to Semi Blue', 'キミとセミブルー', '姫崎莉波・有村麻央・紫雲清夏', '00:03:56', '2024-07-02', 'Group', 'Summer and sea season event song. Performed by Sumika Shiun, Mao Arimura, Rinami Himesaki.', 1, '2026-06-08 13:53:09', '2026-06-09 16:20:09'),
 (18, 'Wake up!!', 'Wake up!!', '葛城リーリヤ', '00:04:22', '2024-07-24', 'Solo', 'Birthday song for Lilja Katsuragi.', 1, '2026-06-08 13:53:09', '2026-06-09 16:25:34'),
 (19, 'Akogare wo Ippai', '憧れをいっぱい', '倉本千奈', '00:04:48', '2024-08-01', 'Solo', 'Birthday song for China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-09 16:25:34'),
-(20, 'Kamurigiku', '冠菊', '花海咲季・藤田ことね・葛城リーリヤ', '00:04:00', '2024-08-02', 'Group', 'Summer festival season event song. Performed by Saki Hanami, Kotone Fujita, Lilja Katsuragi.', 1, '2026-06-08 13:53:09', '2026-06-09 16:20:09'),
+(20, 'Kamuro Giku', '冠菊', '花海咲季・藤田ことね・葛城リーリヤ', '00:04:00', '2024-08-02', 'Group', 'Summer festival season event song. Performed by Saki Hanami, Kotone Fujita, Lilja Katsuragi.', 1, '2026-06-08 13:53:09', '2026-06-10 12:04:27'),
 (21, 'Hajime [Saki Hanami Solo ver.]', '初 [花海咲季 Solo Ver.]', '花海咲季', '00:05:18', '2024-08-07', 'Remix', 'Solo version of Hajime. Performed by Saki Hanami. Included on 花海咲季 1st Single.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (22, 'Hajime [Temari Tsukimura Solo ver.]', '初 [月村手毬 Solo Ver.]', '月村手毬', '00:05:18', '2024-08-07', 'Remix', 'Solo version of Hajime. Performed by Temari Tsukimura. Included on 月村手毬 1st Single.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (23, 'Hajime [Kotone Fujita Solo ver.]', '初 [藤田ことね Solo Ver.]', '藤田ことね', '00:05:18', '2024-08-07', 'Remix', 'Solo version of Hajime. Performed by Kotone Fujita. Included on 藤田ことね 1st Single.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
@@ -110,15 +110,15 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (31, 'Kimi to Semi Blue [Sumika Shiun Solo ver.]', 'キミとセミブルー [紫雲清夏 Solo Ver.]', '紫雲清夏', '00:03:56', '2024-08-14', 'Remix', 'Solo version of Kimi to Semi Blue, a summer and sea season event song. Performed by Sumika Shiun. Released in Season Solo Collection Vol.1.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (32, 'Kimi to Semi Blue [Hiro Shinosawa Solo ver.]', 'キミとセミブルー [篠澤広 Solo Ver.]', '篠澤広', '00:03:56', '2024-08-14', 'Remix', 'Solo version of Kimi to Semi Blue, a summer and sea season event song. Performed by Hiro Shinosawa. Released in Season Solo Collection Vol.1.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (33, 'Kimi to Semi Blue [Rinami Himesaki Solo ver.]', 'キミとセミブルー [姫崎莉波 Solo Ver.]', '姫崎莉波', '00:03:56', '2024-08-14', 'Remix', 'Solo version of Kimi to Semi Blue, a summer and sea season event song. Performed by Rinami Himesaki. Released in Season Solo Collection Vol.1.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(34, 'Kamurigiku [Saki Hanami Solo ver.]', '冠菊 [花海咲季 Solo Ver.]', '花海咲季', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by Saki Hanami. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(35, 'Kamurigiku [Temari Tsukimura Solo ver.]', '冠菊 [月村手毬 Solo Ver.]', '月村手毬', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by Temari Tsukimura. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(36, 'Kamurigiku [Kotone Fujita Solo ver.]', '冠菊 [藤田ことね Solo Ver.]', '藤田ことね', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by Kotone Fujita. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(37, 'Kamurigiku [Mao Arimura Solo ver.]', '冠菊 [有村麻央 Solo Ver.]', '有村麻央', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by Mao Arimura. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(38, 'Kamurigiku [Lilja Katsuragi Solo ver.]', '冠菊 [葛城リーリヤ Solo Ver.]', '葛城リーリヤ', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by Lilja Katsuragi. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(39, 'Kamurigiku [China Kuramoto Solo ver.]', '冠菊 [倉本千奈 Solo Ver.]', '倉本千奈', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by China Kuramoto. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(40, 'Kamurigiku [Sumika Shiun Solo ver.]', '冠菊 [紫雲清夏 Solo Ver.]', '紫雲清夏', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by Sumika Shiun. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(41, 'Kamurigiku [Hiro Shinosawa Solo ver.]', '冠菊 [篠澤広 Solo Ver.]', '篠澤広', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by Hiro Shinosawa. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(42, 'Kamurigiku [Rinami Himesaki Solo ver.]', '冠菊 [姫崎莉波 Solo Ver.]', '姫崎莉波', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamurigiku, a summer festival season event song. Performed by Rinami Himesaki. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
+(34, 'Kamuro Giku [Saki Hanami Solo ver.]', '冠菊 [花海咲季 Solo Ver.]', '花海咲季', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by Saki Hanami. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
+(35, 'Kamuro Giku [Temari Tsukimura Solo ver.]', '冠菊 [月村手毬 Solo Ver.]', '月村手毬', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by Temari Tsukimura. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
+(36, 'Kamuro Giku [Kotone Fujita Solo ver.]', '冠菊 [藤田ことね Solo Ver.]', '藤田ことね', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by Kotone Fujita. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
+(37, 'Kamuro Giku [Mao Arimura Solo ver.]', '冠菊 [有村麻央 Solo Ver.]', '有村麻央', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by Mao Arimura. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
+(38, 'Kamuro Giku [Lilja Katsuragi Solo ver.]', '冠菊 [葛城リーリヤ Solo Ver.]', '葛城リーリヤ', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by Lilja Katsuragi. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
+(39, 'Kamuro Giku [China Kuramoto Solo ver.]', '冠菊 [倉本千奈 Solo Ver.]', '倉本千奈', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by China Kuramoto. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
+(40, 'Kamuro Giku [Sumika Shiun Solo ver.]', '冠菊 [紫雲清夏 Solo Ver.]', '紫雲清夏', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by Sumika Shiun. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
+(41, 'Kamuro Giku [Hiro Shinosawa Solo ver.]', '冠菊 [篠澤広 Solo Ver.]', '篠澤広', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by Hiro Shinosawa. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
+(42, 'Kamuro Giku [Rinami Himesaki Solo ver.]', '冠菊 [姫崎莉波 Solo Ver.]', '姫崎莉波', '00:04:00', '2024-08-14', 'Remix', 'Solo version of Kamuro Giku, a summer festival season event song. Performed by Rinami Himesaki. Released in Season Solo Collection Vol.2.', 1, '2026-06-08 15:41:10', '2026-06-10 12:04:27'),
 (43, 'Howling over the World (Saki Hanami, Temari Tsukimura, Kotone Fujita ver.)', 'Howling over the World (花海咲季・月村手毬・藤田ことね ver.)', '花海咲季・月村手毬・藤田ことね', '00:04:01', '2024-08-16', 'Group', 'Hajime TOUR song. Performed by Saki Hanami, Temari Tsukimura, Kotone Fujita.', 1, '2026-06-08 16:15:20', '2026-06-09 16:07:05'),
 (44, 'Hibi, Hakkenteki Step!', '日々、発見的ステップ！', '倉本千奈', '00:03:15', '2024-08-23', 'Solo', 'Original solo song for China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
 (45, 'Miracle Nanau! (Saki Hanami, Temari Tsukimura, Kotone Fujita ver.)', 'ミラクルナナウ(ﾟ∀ﾟ)！(花海咲季・月村手毬・藤田ことね ver.)', '花海咲季・月村手毬・藤田ことね', '00:03:43', '2024-08-24', 'Group', 'Hajime TOUR song. Performed by Saki Hanami, Temari Tsukimura, Kotone Fujita.', 1, '2026-06-08 13:53:10', '2026-06-09 16:07:05'),
@@ -133,7 +133,7 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (54, 'Kasou Kyousoukyoku', '仮装狂騒曲', '月村手毬・倉本千奈・篠澤広', '00:03:13', '2024-10-01', 'Group', 'Halloween season event song. Performed by Temari Tsukimura, Hiro Shinosawa, China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (55, 'Howling over the World (Mao Arimura, Sumika Shiun, Hiro Shinosawa ver.)', 'Howling over the World (有村麻央・紫雲清夏・篠澤広 ver.)', '有村麻央・紫雲清夏・篠澤広', '00:04:01', '2024-10-18', 'Group', 'Hajime TOUR song. Performed by Sumika Shiun, Hiro Shinosawa, Mao Arimura.', 1, '2026-06-08 16:15:20', '2026-06-09 16:07:05'),
 (56, 'Miracle Nanau! (Mao Arimura, Sumika Shiun, Hiro Shinosawa ver.)', 'ミラクルナナウ(ﾟ∀ﾟ)！(有村麻央・紫雲清夏・篠澤広 ver.)', '有村麻央・紫雲清夏・篠澤広', '00:03:43', '2024-10-26', 'Group', 'Hajime TOUR song. Performed by Sumika Shiun, Hiro Shinosawa, Mao Arimura.', 1, '2026-06-08 16:17:58', '2026-06-09 16:07:05'),
-(57, 'Kokon Touzai Chochoino Choi', '古今東西ちょちょいのちょい', '花海咲季・月村手毬・藤田ことね', '00:03:50', '2024-10-30', 'Group', 'Animate collaboration song for the #Animate wo Moriagetai event. Performed by Saki Hanami, Temari Tsukimura, Kotone Fujita.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
+(57, 'All times, All places, CHOCHOINOCHOI', '古今東西ちょちょいのちょい', '花海咲季・月村手毬・藤田ことね', '00:03:50', '2024-10-30', 'Group', 'Animate collaboration song for the #Animate wo Moriagetai event. Performed by Saki Hanami, Temari Tsukimura, Kotone Fujita.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (58, 'Ride on Beat', 'Ride on Beat', '紫雲清夏', '00:04:29', '2024-11-11', 'Solo', 'Birthday song for Sumika Shiun.', 1, '2026-06-08 13:53:10', '2026-06-09 16:25:34'),
 (59, 'Kasou Kyousoukyoku [Saki Hanami Solo ver.]', '仮装狂騒曲 [花海咲季 Solo Ver.]', '花海咲季', '00:03:13', '2024-11-13', 'Remix', 'Solo version of Kasou Kyousoukyoku, a Halloween season event song. Performed by Saki Hanami. Released in Season Solo Collection Vol.3.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (60, 'Kasou Kyousoukyoku [Temari Tsukimura Solo ver.]', '仮装狂騒曲 [月村手毬 Solo Ver.]', '月村手毬', '00:03:13', '2024-11-13', 'Remix', 'Solo version of Kasou Kyousoukyoku, a Halloween season event song. Performed by Temari Tsukimura. Released in Season Solo Collection Vol.3.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
@@ -157,13 +157,13 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (78, 'White Night! White Wish! [Hiro Shinosawa Solo ver.]', 'White Night! White Wish! [篠澤広 Solo Ver.]', '篠澤広', '00:03:56', '2024-12-11', 'Remix', 'Solo version of White Night! White Wish!, a Christmas season event song. Performed by Hiro Shinosawa. Released in Season Solo Collection Vol.4.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (79, 'White Night! White Wish! [Rinami Himesaki Solo ver.]', 'White Night! White Wish! [姫崎莉波 Solo Ver.]', '姫崎莉波', '00:03:56', '2024-12-11', 'Remix', 'Solo version of White Night! White Wish!, a Christmas season event song. Performed by Rinami Himesaki. Released in Season Solo Collection Vol.4.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (80, 'White Night! White Wish! [Ume Hanami Solo ver.]', 'White Night! White Wish! [花海佑芽 Solo Ver.]', '花海佑芽', '00:03:56', '2024-12-11', 'Remix', 'Solo version of White Night! White Wish!, a Christmas season event song. Performed by Ume Hanami. Released in Season Solo Collection Vol.4.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(81, 'Kakushita Watashi', 'カクシタワタシ', '紫雲清夏', '00:03:20', '2024-12-19', 'Solo', 'Original solo song for Sumika Shiun.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(81, 'Two Sides Of The Same Me', 'カクシタワタシ', '紫雲清夏', '00:03:20', '2024-12-19', 'Solo', 'Original solo song for Sumika Shiun.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (82, 'Mekurume', 'メクルメ', '篠澤広', '00:03:17', '2024-12-21', 'Solo', 'Birthday song for Hiro Shinosawa.', 1, '2026-06-08 13:53:10', '2026-06-09 16:25:34'),
 (83, 'Hajime [Ume Hanami Solo ver.]', '初 [花海佑芽 Solo Ver.]', '花海佑芽', '00:05:18', '2025-01-15', 'Remix', 'Solo version of Hajime. Performed by Ume Hanami. Included on 花海佑芽 1st Single.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (84, 'Sweet Magic', 'Sweet Magic', '有村麻央', '00:03:01', '2025-01-18', 'Solo', 'Birthday song for Mao Arimura.', 1, '2026-06-08 13:53:10', '2026-06-09 16:25:34'),
 (85, 'Happy Mille-Feuille', 'ハッピーミルフィーユ', '篠澤広・十王星南・姫崎莉波', '00:03:16', '2025-02-02', 'Group', 'Valentine season event song. Performed by Hiro Shinosawa, Rinami Himesaki, Sena Juo.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (86, 'Taisetsu na Mono', 'たいせつなもの', '秦谷美鈴', '00:05:16', '2025-02-06', 'Solo', 'Birthday song for Misuzu Hataya.', 1, '2026-06-08 13:53:10', '2026-06-09 16:25:34'),
-(87, 'Tsuki no Kame', 'ツキノカメ', '秦谷美鈴', '00:04:44', '2025-02-07', 'Solo', 'Original solo song for Misuzu Hataya.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(87, 'Moon Turtle', 'ツキノカメ', '秦谷美鈴', '00:04:44', '2025-02-07', 'Solo', 'Original solo song for Misuzu Hataya.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (88, 'Happy Mille-Feuille [Saki Hanami Solo ver.]', 'ハッピーミルフィーユ [花海咲季 Solo Ver.]', '花海咲季', '00:03:16', '2025-02-14', 'Remix', 'Solo version of Happy Mille-Feuille, a Valentine season event song. Performed by Saki Hanami. Released in Season Solo Collection Vol.5.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (89, 'Happy Mille-Feuille [Temari Tsukimura Solo ver.]', 'ハッピーミルフィーユ [月村手毬 Solo Ver.]', '月村手毬', '00:03:16', '2025-02-14', 'Remix', 'Solo version of Happy Mille-Feuille, a Valentine season event song. Performed by Temari Tsukimura. Released in Season Solo Collection Vol.5.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (90, 'Happy Mille-Feuille [Kotone Fujita Solo ver.]', 'ハッピーミルフィーユ [藤田ことね Solo Ver.]', '藤田ことね', '00:03:16', '2025-02-14', 'Remix', 'Solo version of Happy Mille-Feuille, a Valentine season event song. Performed by Kotone Fujita. Released in Season Solo Collection Vol.5.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
@@ -175,7 +175,7 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (96, 'Happy Mille-Feuille [Rinami Himesaki Solo ver.]', 'ハッピーミルフィーユ [姫崎莉波 Solo Ver.]', '姫崎莉波', '00:03:16', '2025-02-14', 'Remix', 'Solo version of Happy Mille-Feuille, a Valentine season event song. Performed by Rinami Himesaki. Released in Season Solo Collection Vol.5.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (97, 'Happy Mille-Feuille [Ume Hanami Solo ver.]', 'ハッピーミルフィーユ [花海佑芽 Solo Ver.]', '花海佑芽', '00:03:16', '2025-02-14', 'Remix', 'Solo version of Happy Mille-Feuille, a Valentine season event song. Performed by Ume Hanami. Released in Season Solo Collection Vol.5.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
 (98, 'Happy Mille-Feuille [Sena Juo Solo ver.]', 'ハッピーミルフィーユ [十王星南 Solo Ver.]', '十王星南', '00:03:16', '2025-02-14', 'Remix', 'Solo version of Happy Mille-Feuille, a Valentine season event song. Performed by Sena Juo. Released in Season Solo Collection Vol.5.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
-(99, 'Chiisana Yabou', '小さな野望', '十王星南', '00:05:26', '2025-02-19', 'Solo', 'Original solo song for Sena Juo.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(99, 'Tiny Ambition', '小さな野望', '十王星南', '00:05:26', '2025-02-19', 'Solo', 'Original solo song for Sena Juo.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (100, 'Hajime [Sena Juo Solo ver.]', '初 [十王星南 Solo Ver.]', '十王星南', '00:05:18', '2025-02-19', 'Remix', 'Solo version of Hajime. Performed by Sena Juo. Included on 十王星南 1st Single.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (101, 'Yukidoke ni', '雪解けに', '倉本千奈・有村麻央・月村手毬', '00:04:02', '2025-03-01', 'Group', 'Hinamatsuri season event song. Performed by Temari Tsukimura, China Kuramoto, Mao Arimura.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (102, 'Yukidoke ni [Saki Hanami Solo ver.]', '雪解けに [花海咲季 Solo Ver.]', '花海咲季', '00:04:02', '2025-03-03', 'Remix', 'Solo version of Yukidoke ni, a Hinamatsuri season event song. Performed by Saki Hanami. Released in Season Solo Collection Vol.6.', 1, '2026-06-08 15:41:10', '2026-06-09 16:20:09'),
@@ -203,10 +203,10 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (124, 'Miracle Nanau! [Temari Tsukimura Solo ver.]', 'ミラクルナナウ(ﾟ∀ﾟ)！ [月村手毬 Solo Ver.]', '月村手毬', '00:03:43', '2025-03-12', 'Remix', 'Solo version of Miracle Nanau!. Performed by Temari Tsukimura.', 1, '2026-06-08 15:41:10', '2026-06-09 15:56:46'),
 (125, 'Miracle Nanau! [Kotone Fujita Solo ver.]', 'ミラクルナナウ(ﾟ∀ﾟ)！ [藤田ことね Solo Ver.]', '藤田ことね', '00:03:43', '2025-03-12', 'Remix', 'Solo version of Miracle Nanau!. Performed by Kotone Fujita.', 1, '2026-06-08 15:41:10', '2026-06-09 15:56:46'),
 (126, 'Contrast', 'コントラスト', '篠澤広', '00:03:38', '2025-03-19', 'Solo', 'Original solo song for Hiro Shinosawa.', 1, '2026-06-08 13:53:09', '2026-06-09 16:06:54'),
-(127, 'Tokimeki no Solfege', 'ときめきのソルフェージュ', '倉本千奈', '00:03:18', '2025-03-19', 'Solo', 'Original solo song for China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(127, 'Fantasy Solfege', 'ときめきのソルフェージュ', '倉本千奈', '00:03:18', '2025-03-19', 'Solo', 'Original solo song for China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (128, 'Feel Jewel Dream', 'Feel Jewel Dream', '有村麻央', '00:03:22', '2025-03-19', 'Solo', 'Original solo song for Mao Arimura.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
 (129, 'Top Secret', 'Top Secret', '有村麻央', '00:02:50', '2025-03-19', 'Solo', 'Original solo song for Mao Arimura.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
-(130, 'Contemporary no Dance', 'コンテンポラリのダンス', '篠澤広', '00:03:25', '2025-03-19', 'Solo', 'Original solo song for Hiro Shinosawa.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(130, 'Contemporary dance', 'コンテンポラリのダンス', '篠澤広', '00:03:25', '2025-03-19', 'Solo', 'Original solo song for Hiro Shinosawa.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (131, 'Gamushara ni Ikou! [Mao Arimura Solo ver.]', 'がむしゃらに行こう！ [有村麻央 Solo Ver.]', '有村麻央', '00:03:40', '2025-03-19', 'Remix', 'Solo version of Gamushara ni Ikou!. Performed by Mao Arimura.', 1, '2026-06-08 15:41:10', '2026-06-09 15:56:46'),
 (132, 'Gamushara ni Ikou! [China Kuramoto Solo ver.]', 'がむしゃらに行こう！ [倉本千奈 Solo Ver.]', '倉本千奈', '00:03:40', '2025-03-19', 'Remix', 'Solo version of Gamushara ni Ikou!. Performed by China Kuramoto.', 1, '2026-06-08 15:41:10', '2026-06-09 15:56:46'),
 (133, 'Gamushara ni Ikou! [Hiro Shinosawa Solo ver.]', 'がむしゃらに行こう！ [篠澤広 Solo Ver.]', '篠澤広', '00:03:40', '2025-03-19', 'Remix', 'Solo version of Gamushara ni Ikou!. Performed by Hiro Shinosawa.', 1, '2026-06-08 15:41:10', '2026-06-09 15:56:46'),
@@ -219,7 +219,7 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (140, 'Kyokkou', '極光', '葛城リーリヤ', '00:03:33', '2025-03-22', 'Solo', 'Original solo song for Lilja Katsuragi.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
 (141, 'L.U.V', 'L.U.V', '姫崎莉波', '00:04:11', '2025-03-26', 'Solo', 'Original solo song for Rinami Himesaki.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
 (142, 'Fragile Heart', 'Fragile Heart', '葛城リーリヤ', '00:04:04', '2025-03-26', 'Solo', 'Original solo song for Lilja Katsuragi.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
-(143, 'Utagoe wa Kimi Iro', '歌声は君いろ', '姫崎莉波', '00:04:38', '2025-03-26', 'Solo', 'Original solo song for Rinami Himesaki.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(143, 'The singing voice is your color', '歌声は君いろ', '姫崎莉波', '00:04:38', '2025-03-26', 'Solo', 'Original solo song for Rinami Himesaki.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (144, 'Kira Kira', 'Kira Kira', '紫雲清夏', '00:03:06', '2025-03-26', 'Solo', 'Original solo song for Sumika Shiun.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
 (145, 'Gamushara ni Ikou! [Lilja Katsuragi Solo ver.]', 'がむしゃらに行こう！ [葛城リーリヤ Solo Ver.]', '葛城リーリヤ', '00:03:40', '2025-03-26', 'Remix', 'Solo version of Gamushara ni Ikou!. Performed by Lilja Katsuragi.', 1, '2026-06-08 15:41:10', '2026-06-09 15:56:46'),
 (146, 'Gamushara ni Ikou! [Sumika Shiun Solo ver.]', 'がむしゃらに行こう！ [紫雲清夏 Solo Ver.]', '紫雲清夏', '00:03:40', '2025-03-26', 'Remix', 'Solo version of Gamushara ni Ikou!. Performed by Sumika Shiun.', 1, '2026-06-08 15:41:10', '2026-06-09 15:56:46'),
@@ -259,28 +259,28 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (180, 'ENDLESS DANCE (Lilja Katsuragi, China Kuramoto, Rinami Himesaki ver.)', 'ENDLESS DANCE (葛城リーリヤ・倉本千奈・姫崎莉波 ver.)', '葛城リーリヤ・倉本千奈・姫崎莉波', '00:03:22', '2025-08-02', 'Group', 'Unit/group song. Performed by Lilja Katsuragi, China Kuramoto, Rinami Himesaki.', 1, '2026-06-08 16:17:59', '2026-06-09 16:06:54'),
 (181, 'GO MY WAY!! -Kotone Fujita cover-', 'GO MY WAY!! -藤田ことね cover-', '藤田ことね', '00:04:50', '2025-08-07', 'Cover', 'Cover song performed by Kotone Fujita. Released in Gakuen Idolmaster GOLD RUSH.', 1, '2026-06-08 15:30:10', '2026-06-09 15:56:46'),
 (182, 'ENDLESS DANCE (Mao Arimura, Sumika Shiun, Hiro Shinosawa ver.)', 'ENDLESS DANCE (有村麻央・紫雲清夏・篠澤広 ver.)', '有村麻央・紫雲清夏・篠澤広', '00:03:22', '2025-08-09', 'Group', 'Unit/group song. Performed by Sumika Shiun, Hiro Shinosawa, Mao Arimura.', 1, '2026-06-08 16:17:59', '2026-06-09 16:06:54'),
-(183, 'Jiko Kouteikan Bakuage Shuki Shuki Song', '自己肯定感爆上げ↑↑しゅきしゅきソング', '藤田ことね', '00:03:55', '2025-08-13', 'Solo', 'STEP 3 song for Kotone Fujita.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
+(183, 'Self-affirmation Explosion! Love Love Song', '自己肯定感爆上げ↑↑しゅきしゅきソング', '藤田ことね', '00:03:55', '2025-08-13', 'Solo', 'STEP 3 song for Kotone Fujita.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (184, 'SUPREMACY', 'SUPREMACY', '1年1組', '00:03:51', '2025-08-29', 'Group', 'Sports day event class song for Class 1-1. Performed by Saki Hanami, Temari Tsukimura, Kotone Fujita, Lilja Katsuragi, Sumika Shiun.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (185, 'Let’s GO!! ICHI-NO-NI!!', 'Let’s GO!! ICHI-NO-NI!!', '1年2組', '00:03:28', '2025-09-05', 'Group', 'Sports day event class song for Class 1-2. Performed by Hiro Shinosawa, China Kuramoto, Ume Hanami, Misuzu Hataya.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (186, 'Naiwa', 'ナイワ', '3年1組', '00:03:07', '2025-09-11', 'Group', 'Sports day event class song for Class 3-1. Performed by Mao Arimura, Rinami Himesaki, Sena Juo, Tsubame Amaya.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (187, '36℃ U･B･U', '36℃ U･B･U', '姫崎莉波', '00:04:12', '2025-09-18', 'Solo', 'STEP 3 song for Rinami Himesaki.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
-(188, 'Sora to Yakusoku', '空と約束', '倉本千奈', '00:04:54', '2025-10-22', 'Solo', 'STEP 3 song for China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
-(189, 'Mite', '見て', '有村麻央', '00:05:03', '2025-11-01', 'Solo', 'STEP 3 song for Mao Arimura.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
+(188, 'a tiny and brave promise', '空と約束', '倉本千奈', '00:04:54', '2025-10-22', 'Solo', 'STEP 3 song for China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
+(189, 'Face me', '見て', '有村麻央', '00:05:03', '2025-11-01', 'Solo', 'STEP 3 song for Mao Arimura.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (190, 'Katamari on the Doon', 'カタマリオンザドゥン', '花海咲季', '00:04:20', '2025-11-13', 'Cover', 'External collaboration song for Once Upon a Katamari. Performed by Saki Hanami, with chorus by Temari Tsukimura and Kotone Fujita.', 1, '2026-06-08 13:53:10', '2026-06-09 15:56:46'),
-(191, 'Riron Busou Shite', '理論武装して', '雨夜燕', '00:03:32', '2025-11-16', 'Solo', 'Original solo song for Tsubame Amaya.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(191, 'RIRONBUSO SITE', '理論武装して', '雨夜燕', '00:03:32', '2025-11-16', 'Solo', 'Original solo song for Tsubame Amaya.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (192, 'Ameagari no Iris [Saki Hanami Solo ver.]', '雨上がりのアイリス [花海咲季 Solo Ver.]', '花海咲季', '00:04:01', '2025-11-19', 'Remix', 'Solo version of Ameagari no Iris. Performed by Saki Hanami. Included on Re;IRIS 1st Single「雨上がりのアイリス」.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (193, 'Ameagari no Iris [Temari Tsukimura Solo ver.]', '雨上がりのアイリス [月村手毬 Solo Ver.]', '月村手毬', '00:04:01', '2025-11-19', 'Remix', 'Solo version of Ameagari no Iris. Performed by Temari Tsukimura. Included on Re;IRIS 1st Single「雨上がりのアイリス」.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (194, 'Ameagari no Iris [Kotone Fujita Solo ver.]', '雨上がりのアイリス [藤田ことね Solo Ver.]', '藤田ことね', '00:04:01', '2025-11-19', 'Remix', 'Solo version of Ameagari no Iris. Performed by Kotone Fujita. Included on Re;IRIS 1st Single「雨上がりのアイリス」.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (195, 'Star-mine [Ume Hanami Solo ver.]', 'Star-mine [花海佑芽 Solo Ver.]', '花海佑芽', '00:03:59', '2025-11-19', 'Remix', 'Solo version of Star-mine. Performed by Ume Hanami. Included on Begrazia 1st Single「Star-mine」.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (196, 'Star-mine [Misuzu Hataya Solo ver.]', 'Star-mine [秦谷美鈴 Solo Ver.]', '秦谷美鈴', '00:03:59', '2025-11-19', 'Remix', 'Solo version of Star-mine. Performed by Misuzu Hataya. Included on Begrazia 1st Single「Star-mine」.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (197, 'Star-mine [Sena Juo Solo ver.]', 'Star-mine [十王星南 Solo Ver.]', '十王星南', '00:03:59', '2025-11-19', 'Remix', 'Solo version of Star-mine. Performed by Sena Juo. Included on Begrazia 1st Single「Star-mine」.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
-(198, 'Guu Suu Pii', 'グースーピー', '花海佑芽', '00:03:02', '2025-11-29', 'Solo', 'Original solo song for Ume Hanami.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
-(199, 'Atmosphere', 'Atmosphere', '葛城リーリヤ', '00:04:31', '2025-12-09', 'Solo', 'STEP 3 song for Lilja Katsuragi.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09');
+(198, 'Gu-Su-Pi', 'グースーピー', '花海佑芽', '00:03:02', '2025-11-29', 'Solo', 'Original solo song for Ume Hanami.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27');
 INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_date`, `song_type`, `notes`, `created_by`, `created_at`, `updated_at`) VALUES
+(199, 'Atmosphere', 'Atmosphere', '葛城リーリヤ', '00:04:31', '2025-12-09', 'Solo', 'STEP 3 song for Lilja Katsuragi.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (200, 'Hatsuboshi Taisou Daiichi', '初星体操第一', 'Artist not listed', '00:02:02', '2025-12-17', 'Group', 'Sports day event song for Class Rivalry Hatsuboshi Sports Day. Performed by all Hatsuboshi Academy idols.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (201, 'Superlative', 'Superlative', '秦谷美鈴', '00:05:04', '2026-01-06', 'Solo', 'Original solo song for Misuzu Hataya.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
-(202, 'Ittai Itsu Kara', '一体いつから', '月村手毬', '00:04:14', '2026-01-17', 'Solo', 'STEP 3 song for Temari Tsukimura.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
-(203, 'Michi Naru Hirogaru', 'みちなるひろがる', 'ゆめぱしー (倉本千奈・篠澤広)', '00:03:25', '2026-01-28', 'Group', 'Unit/group song. Performed by Hiro Shinosawa, China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(202, 'Ittai itsukara', '一体いつから', '月村手毬', '00:04:14', '2026-01-17', 'Solo', 'STEP 3 song for Temari Tsukimura.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
+(203, 'Unknowns Unbound', 'みちなるひろがる', 'ゆめぱしー (倉本千奈・篠澤広)', '00:03:25', '2026-01-28', 'Group', 'Unit/group song. Performed by Hiro Shinosawa, China Kuramoto.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (204, 'Tokimeki Emotion', 'ときめきエモーション', 'REVERSI (紫雲清夏・葛城リーリヤ)', '00:03:27', '2026-01-28', 'Group', 'Unit/group song. Performed by Lilja Katsuragi, Sumika Shiun.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
 (205, 'Shirushi [Sumika Shiun Solo Ver.]', '標 [紫雲清夏 Solo Ver.]', '紫雲清夏', '00:03:29', '2026-01-28', 'Remix', 'Solo version of Shirushi. Performed by Sumika Shiun. Included on Sumika Shiun\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
 (206, 'Shirushi [Hiro Shinosawa Solo Ver.]', '標 [篠澤広 Solo Ver.]', '篠澤広', '00:03:29', '2026-01-28', 'Remix', 'Solo version of Shirushi. Performed by Hiro Shinosawa. Included on Hiro Shinosawa\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
@@ -291,7 +291,7 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (211, 'ENDLESS DANCE [Kotone Fujita Solo Ver.]', 'ENDLESS DANCE [藤田ことね Solo Ver.]', '藤田ことね', '00:03:22', '2026-01-28', 'Remix', 'Solo version of ENDLESS DANCE. Performed by Kotone Fujita. Included on Kotone Fujita\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
 (212, 'ENDLESS DANCE [Rinami Himesaki Solo Ver.]', 'ENDLESS DANCE [姫崎莉波 Solo Ver.]', '姫崎莉波', '00:03:22', '2026-01-28', 'Remix', 'Solo version of ENDLESS DANCE. Performed by Rinami Himesaki. Included on Rinami Himesaki\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
 (213, 'SEARCH RIGHT', 'SEARCH RIGHT', '初星学園生徒会', '00:03:24', '2026-02-08', 'Group', 'Culture festival collaboration song for the real escape game Jinro Hisomu Bunkasai kara no Dasshutsu. Performed by the Hatsuboshi student council members.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
-(214, 'Sekirara', '赤裸々', '十王星南', '00:04:25', '2026-02-10', 'Solo', 'STEP 3 song for Sena Juo.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
+(214, 'SEKIRARA', '赤裸々', '十王星南', '00:04:25', '2026-02-10', 'Solo', 'STEP 3 song for Sena Juo.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (215, 'Wakashi, Sawagashi, Ska Punk', 'わかし・さわがし・スカパンク', '花海佑芽・秦谷美鈴・十王星南', '00:03:23', '2026-02-19', 'Group', 'Hatsuboshi Music Festival song. Performed by Ume Hanami, Misuzu Hataya, Sena Juo.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (216, 'Yorunite', 'ヨルニテ', '秦谷美鈴', '00:03:39', '2026-02-25', 'Solo', 'Original solo song for Misuzu Hataya.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
 (217, 'Kin no Ono, Gin no Ono, Emerald no Ono', '金の斧、銀の斧、エメラルドの斧', '花海佑芽', '00:03:17', '2026-02-25', 'Solo', 'Original solo song for Ume Hanami.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
@@ -328,7 +328,7 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (248, 'Wakashi Sawagashi Ska Punk [Tsubame Amaya Solo ver.]', 'わかし・さわがし・スカパンク [雨夜燕 Solo Ver.]', '雨夜燕', '00:03:23', '2026-03-02', 'Remix', 'Solo version of Wakashi Sawagashi Ska Punk, a Hatsuboshi Music Festival song. Performed by Tsubame Amaya. Included on Wakashi Sawagashi Ska Punk -Solo Version Album-.', 1, '2026-06-08 16:00:57', '2026-06-09 16:20:09'),
 (249, 'Agent Yoru wo Yuku -Mao Arimura cover-', 'エージェント夜を往く -有村麻央 cover-', '有村麻央', '00:04:14', '2026-03-06', 'Cover', 'Cover song performed by Mao Arimura. Released in Gakuen Idolmaster GOLD RUSH.', 1, '2026-06-08 15:30:10', '2026-06-09 15:56:46'),
 (250, 'Wildest Flower', 'Wildest Flower', '花海咲季', '00:02:54', '2026-03-19', 'Solo', 'STEP 3 song for Saki Hanami.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
-(251, 'Masshiroi Page to Suisai no Shujinkou', '真っ白いページと水彩の主人公', '花海佑芽', '00:03:48', '2026-04-11', 'Solo', 'STEP 3 song for Ume Hanami.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(251, 'A Blank White Page and a Watercolor Hero', '真っ白いページと水彩の主人公', '花海佑芽', '00:03:48', '2026-04-11', 'Solo', 'STEP 3 song for Ume Hanami.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27'),
 (252, 'Shirushi [China Kuramoto Solo Ver.]', '標 [倉本千奈 Solo Ver.]', '倉本千奈', '00:03:29', '2026-04-15', 'Remix', 'Solo version of Shirushi. Performed by China Kuramoto. Included on China Kuramoto\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
 (253, 'Shirushi [Mao Arimura Solo Ver.]', '標 [有村麻央 Solo Ver.]', '有村麻央', '00:03:29', '2026-04-15', 'Remix', 'Solo version of Shirushi. Performed by Mao Arimura. Included on Mao Arimura\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
 (254, 'Shirushi [Lilja Katsuragi Solo Ver.]', '標 [葛城リーリヤ Solo Ver.]', '葛城リーリヤ', '00:03:29', '2026-04-15', 'Remix', 'Solo version of Shirushi. Performed by Lilja Katsuragi. Included on Lilja Katsuragi\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
@@ -361,18 +361,27 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (281, 'L.U.V (Sho Ishihama Remix)', 'L.U.V (石濱翔 Remix)', '姫崎莉波', '00:04:24', '2026-05-25', 'Remix', 'ReCollection remix of L.U.V. Performed by Rinami Himesaki. Released in ReCollection vol.1.', 1, '2026-06-08 16:03:03', '2026-06-09 15:57:46'),
 (282, 'The Rolling Riceball (LindaAI-CUE Remix)', 'The Rolling Riceball (LindaAI-CUE Remix)', '花海佑芽', '00:04:07', '2026-05-25', 'Remix', 'ReCollection remix of The Rolling Riceball. Performed by Ume Hanami. Released in ReCollection vol.1.', 1, '2026-06-08 16:03:03', '2026-06-09 15:57:46'),
 (283, 'Cosmetic (REDALiCE Remix)', 'Cosmetic (REDALiCE Remix)', '十王星南', '00:03:13', '2026-05-25', 'Remix', 'ReCollection remix of Cosmetic. Performed by Sena Juo. Released in ReCollection vol.1.', 1, '2026-06-08 16:03:03', '2026-06-09 15:57:46'),
-(284, 'Tsuki no Kame (Shinpei Nasuno Remix)', 'ツキノカメ (Shinpei Nasuno Remix)', '秦谷美鈴', '00:03:53', '2026-05-25', 'Remix', 'ReCollection remix of Tsuki no Kame. Performed by Misuzu Hataya. Released in ReCollection vol.1.', 1, '2026-06-08 16:03:03', '2026-06-09 15:57:46'),
+(284, 'Moon Turtle (Shinpei Nasuno Remix)', 'ツキノカメ (Shinpei Nasuno Remix)', '秦谷美鈴', '00:03:53', '2026-05-25', 'Remix', 'ReCollection remix of Moon Turtle. Performed by Misuzu Hataya. Released in ReCollection vol.1.', 1, '2026-06-08 16:03:03', '2026-06-10 12:04:27'),
 (285, 'Kasou Kyousoukyoku (Sasuke Haraguchi Remix)', '仮装狂騒曲 (原口沙輔 Remix)', '倉本千奈・篠澤広・月村手毬', '00:04:44', '2026-05-25', 'Remix', 'ReCollection remix of Kasou Kyousoukyoku, a Halloween season event song. Performed by Temari Tsukimura, Hiro Shinosawa, China Kuramoto. Released in ReCollection vol.1.', 1, '2026-06-08 16:03:03', '2026-06-09 16:20:09'),
 (286, 'Miracle Nanau! (Takafumi Sato Remix)', 'ミラクルナナウ(ﾟ∀ﾟ)！ (佐藤貴文 Remix)', '有村麻央・紫雲清夏・篠澤広', '00:03:25', '2026-05-25', 'Remix', 'ReCollection remix of Miracle Nanau!. Performed by Sumika Shiun, Hiro Shinosawa, Mao Arimura. Released in ReCollection vol.1.', 1, '2026-06-08 16:03:03', '2026-06-09 15:57:46'),
-(287, 'Shirushi [Sena Juo Solo Ver.]', '標 [十王星南 Solo Ver.]', '十王星南', '00:03:29', '2026-08-26', 'Remix', 'Solo version of Shirushi. Performed by Sena Juo. Included on Sena Juo\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
-(288, 'Shirushi [Saki Hanami Solo Ver.]', '標 [花海咲季 Solo Ver.]', '花海咲季', '00:03:29', '2026-08-26', 'Remix', 'Solo version of Shirushi. Performed by Saki Hanami. Included on Saki Hanami\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
-(289, 'Shirushi [Ume Hanami Solo Ver.]', '標 [花海佑芽 Solo Ver.]', '花海佑芽', '00:03:29', '2026-08-26', 'Remix', 'Solo version of Shirushi. Performed by Ume Hanami. Included on Ume Hanami\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
-(290, 'Shirushi [Misuzu Hataya Solo Ver.]', '標 [秦谷美鈴 Solo Ver.]', '秦谷美鈴', '00:03:29', '2026-08-26', 'Remix', 'Solo version of Shirushi. Performed by Misuzu Hataya. Included on Misuzu Hataya\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
-(291, 'ENDLESS DANCE [Sena Juo Solo Ver.]', 'ENDLESS DANCE [十王星南 Solo Ver.]', '十王星南', '00:03:22', '2026-08-26', 'Remix', 'Solo version of ENDLESS DANCE. Performed by Sena Juo. Included on Sena Juo\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
-(292, 'ENDLESS DANCE [Saki Hanami Solo Ver.]', 'ENDLESS DANCE [花海咲季 Solo Ver.]', '花海咲季', '00:03:22', '2026-08-26', 'Remix', 'Solo version of ENDLESS DANCE. Performed by Saki Hanami. Included on Saki Hanami\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
-(293, 'ENDLESS DANCE [Ume Hanami Solo Ver.]', 'ENDLESS DANCE [花海佑芽 Solo Ver.]', '花海佑芽', '00:03:22', '2026-08-26', 'Remix', 'Solo version of ENDLESS DANCE. Performed by Ume Hanami. Included on Ume Hanami\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
-(294, 'ENDLESS DANCE [Misuzu Hataya Solo Ver.]', 'ENDLESS DANCE [秦谷美鈴 Solo Ver.]', '秦谷美鈴', '00:03:22', '2026-08-26', 'Remix', 'Solo version of ENDLESS DANCE. Performed by Misuzu Hataya. Included on Misuzu Hataya\'s 3rd Single.', 1, '2026-06-08 16:17:59', '2026-06-09 15:57:46'),
-(295, 'SUGAR FLAVOR', 'SUGAR FLAVOR', 'RippleSign (有村麻央・姫崎莉波)', NULL, NULL, 'Group', 'Unit/group song. Performed by Mao Arimura, Rinami Himesaki.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54');
+(295, 'SUGAR FLAVOR', 'SUGAR FLAVOR', 'RippleSign (有村麻央・姫崎莉波)', NULL, NULL, 'Group', 'Unit/group song. Performed by Mao Arimura, Rinami Himesaki.', 1, '2026-06-08 13:53:10', '2026-06-09 16:06:54'),
+(296, 'Campus mode!! [Saki Hanami Solo Ver.]', 'Campus mode!! [花海咲季 Solo Ver.]', '花海咲季', '00:04:20', '2024-08-07', 'Remix', 'Solo version of Campus mode!!. Performed by Saki Hanami. Included on 花海咲季 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(297, 'Campus mode!! [Temari Tsukimura Solo Ver.]', 'Campus mode!! [月村手毬 Solo Ver.]', '月村手毬', '00:04:20', '2024-08-07', 'Remix', 'Solo version of Campus mode!!. Performed by Temari Tsukimura. Included on 月村手毬 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(298, 'Campus mode!! [Kotone Fujita Solo Ver.]', 'Campus mode!! [藤田ことね Solo Ver.]', '藤田ことね', '00:04:20', '2024-08-07', 'Remix', 'Solo version of Campus mode!!. Performed by Kotone Fujita. Included on 藤田ことね 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(299, 'Campus mode!! [Lilja Katsuragi Solo Ver.]', 'Campus mode!! [葛城リーリヤ Solo Ver.]', '葛城リーリヤ', '00:04:20', '2024-08-28', 'Remix', 'Solo version of Campus mode!!. Performed by Lilja Katsuragi. Included on 葛城リーリヤ 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(300, 'Campus mode!! [Sumika Shiun Solo Ver.]', 'Campus mode!! [紫雲清夏 Solo Ver.]', '紫雲清夏', '00:04:20', '2024-09-25', 'Remix', 'Solo version of Campus mode!!. Performed by Sumika Shiun. Included on 紫雲清夏 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(301, 'Campus mode!! [Hiro Shinosawa Solo Ver.]', 'Campus mode!! [篠澤広 Solo Ver.]', '篠澤広', '00:04:20', '2024-09-25', 'Remix', 'Solo version of Campus mode!!. Performed by Hiro Shinosawa. Included on 篠澤広 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(302, 'Campus mode!! [China Kuramoto Solo Ver.]', 'Campus mode!! [倉本千奈 Solo Ver.]', '倉本千奈', '00:04:20', '2024-08-28', 'Remix', 'Solo version of Campus mode!!. Performed by China Kuramoto. Included on 倉本千奈 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(303, 'Campus mode!! [Mao Arimura Solo Ver.]', 'Campus mode!! [有村麻央 Solo Ver.]', '有村麻央', '00:04:20', '2024-09-25', 'Remix', 'Solo version of Campus mode!!. Performed by Mao Arimura. Included on 有村麻央 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(304, 'Campus mode!! [Rinami Himesaki Solo Ver.]', 'Campus mode!! [姫崎莉波 Solo Ver.]', '姫崎莉波', '00:04:20', '2024-08-28', 'Remix', 'Solo version of Campus mode!!. Performed by Rinami Himesaki. Included on 姫崎莉波 1st Single.', 1, '2026-06-10 11:20:42', '2026-06-10 11:27:19'),
+(305, 'Campus mode!! [Ume Hanami Solo Ver.]', 'Campus mode!! [花海佑芽 Solo Ver.]', '花海佑芽', '00:04:20', '2025-01-15', 'Remix', 'Solo version of Campus mode!!. Performed by Ume Hanami. Included on 花海佑芽 1st Single.', 1, '2026-06-10 11:27:19', '2026-06-10 11:27:19'),
+(306, 'Campus mode!! [Sena Juo Solo Ver.]', 'Campus mode!! [十王星南 Solo Ver.]', '十王星南', '00:04:20', '2025-02-19', 'Remix', 'Solo version of Campus mode!!. Performed by Sena Juo. Included on 十王星南 1st Single.', 1, '2026-06-10 11:27:19', '2026-06-10 11:27:19'),
+(307, 'Campus mode!! [Misuzu Hataya Solo Ver.]', 'Campus mode!! [秦谷美鈴 Solo Ver.]', '秦谷美鈴', '00:04:20', '2025-05-21', 'Remix', 'Solo version of Campus mode!!. Performed by Misuzu Hataya. Included on 秦谷美鈴 1st Single.', 1, '2026-06-10 11:27:19', '2026-06-10 11:27:19'),
+(308, 'Campus mode!! [Tsubame Amaya Solo Ver.]', 'Campus mode!! [雨夜燕 Solo Ver.]', '雨夜燕', '00:04:20', '2026-02-25', 'Remix', 'Solo version of Campus mode!!. Performed by Tsubame Amaya. Included on 雨夜燕 1st Single.', 1, '2026-06-10 11:27:19', '2026-06-10 11:27:19'),
+(309, 'Ai NEED YOU (FOR WONDERFUL STORY)', 'アイ NEED YOU（FOR WONDERFUL STORY）', '初星学園（花海咲季、月村手毬、藤田ことね）', NULL, NULL, 'Group', 'Gakuen Idolmaster edition song. Performed by Saki Hanami, Temari Tsukimura, Kotone Fujita.', 1, '2026-06-10 11:36:31', '2026-06-10 11:36:31'),
+(310, 'Ai NEED YOU (FOR WONDERFUL STORY) [Saki Hanami Solo ver.]', 'アイ NEED YOU（FOR WONDERFUL STORY）花海咲季 Solo ver.', '花海咲季', NULL, NULL, 'Remix', 'Solo version of Ai NEED YOU (FOR WONDERFUL STORY). Performed by Saki Hanami.', 1, '2026-06-10 11:36:31', '2026-06-10 11:36:31'),
+(311, 'Ai NEED YOU (FOR WONDERFUL STORY) [Temari Tsukimura Solo ver.]', 'アイ NEED YOU（FOR WONDERFUL STORY）月村手毬 Solo ver.', '月村手毬', NULL, NULL, 'Remix', 'Solo version of Ai NEED YOU (FOR WONDERFUL STORY). Performed by Temari Tsukimura.', 1, '2026-06-10 11:36:31', '2026-06-10 11:36:31'),
+(312, 'Ai NEED YOU (FOR WONDERFUL STORY) [Kotone Fujita Solo ver.]', 'アイ NEED YOU（FOR WONDERFUL STORY）藤田ことね Solo ver.', '藤田ことね', NULL, NULL, 'Remix', 'Solo version of Ai NEED YOU (FOR WONDERFUL STORY). Performed by Kotone Fujita.', 1, '2026-06-10 11:36:31', '2026-06-10 11:36:31');
 
 --
 -- Dumping data for table `student_songs`
@@ -413,8 +422,6 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (446, 1, 250, 1, '2026-06-08 13:53:10'),
 (447, 1, 265, 1, '2026-06-09 15:15:02'),
 (448, 1, 273, 1, '2026-06-09 15:15:02'),
-(450, 1, 288, 1, '2026-06-08 16:17:59'),
-(451, 1, 292, 1, '2026-06-08 16:17:59'),
 (452, 2, 2, 1, '2026-06-08 13:53:09'),
 (453, 2, 10, 1, '2026-06-08 13:53:09'),
 (454, 2, 11, 1, '2026-06-08 13:53:09'),
@@ -622,7 +629,6 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (661, 7, 285, 1, '2026-06-09 15:15:02'),
 (663, 8, 10, 1, '2026-06-08 13:53:09'),
 (664, 8, 12, 1, '2026-06-08 13:53:09'),
-(665, 8, 14, 1, '2026-06-08 13:53:09'),
 (666, 8, 68, 1, '2026-06-08 15:46:19'),
 (667, 8, 80, 1, '2026-06-09 15:15:02'),
 (668, 8, 83, 1, '2026-06-09 15:15:02'),
@@ -648,10 +654,7 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (688, 8, 271, 1, '2026-06-09 15:15:02'),
 (689, 8, 272, 1, '2026-06-08 16:15:20'),
 (690, 8, 282, 1, '2026-06-09 15:15:02'),
-(692, 8, 289, 1, '2026-06-08 16:17:59'),
-(693, 8, 293, 1, '2026-06-08 16:17:59'),
 (694, 9, 10, 1, '2026-06-08 13:53:09'),
-(695, 9, 14, 1, '2026-06-08 13:53:09'),
 (697, 9, 86, 1, '2026-06-08 13:53:10'),
 (698, 9, 87, 1, '2026-06-08 15:46:19'),
 (699, 9, 171, 1, '2026-06-08 16:00:57'),
@@ -676,8 +679,6 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (718, 9, 269, 1, '2026-06-08 15:57:25'),
 (719, 9, 270, 1, '2026-06-08 15:57:25'),
 (720, 9, 284, 1, '2026-06-09 15:15:02'),
-(722, 9, 290, 1, '2026-06-08 16:17:59'),
-(723, 9, 294, 1, '2026-06-08 16:17:59'),
 (724, 10, 9, 1, '2026-06-08 13:53:09'),
 (725, 10, 10, 1, '2026-06-08 13:53:09'),
 (726, 10, 14, 1, '2026-06-08 13:53:09'),
@@ -745,7 +746,6 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (789, 11, 281, 1, '2026-06-09 15:15:02'),
 (791, 11, 295, 1, '2026-06-08 13:53:10'),
 (792, 12, 10, 1, '2026-06-08 13:53:09'),
-(793, 12, 14, 1, '2026-06-08 13:53:09'),
 (794, 12, 69, 1, '2026-06-08 13:53:10'),
 (795, 12, 70, 1, '2026-06-09 15:15:02'),
 (796, 12, 98, 1, '2026-06-08 13:53:10'),
@@ -772,10 +772,7 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (817, 12, 247, 1, '2026-06-08 16:00:57'),
 (818, 12, 265, 1, '2026-06-09 15:15:02'),
 (819, 12, 283, 1, '2026-06-09 15:15:02'),
-(821, 12, 287, 1, '2026-06-08 16:17:59'),
-(822, 12, 291, 1, '2026-06-08 16:17:59'),
 (823, 13, 10, 1, '2026-06-08 13:53:09'),
-(824, 13, 14, 1, '2026-06-08 13:53:09'),
 (825, 13, 171, 1, '2026-06-09 15:15:02'),
 (826, 13, 186, 1, '2026-06-09 15:15:02'),
 (827, 13, 191, 1, '2026-06-09 15:15:02'),
@@ -800,18 +797,32 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (932, 5, 156, 1, '2026-06-09 15:45:49'),
 (933, 10, 286, 1, '2026-06-09 15:45:49'),
 (934, 5, 286, 1, '2026-06-09 15:45:49'),
-(935, 6, 286, 1, '2026-06-09 15:45:49');
+(935, 6, 286, 1, '2026-06-09 15:45:49'),
+(936, 1, 296, 1, '2026-06-10 11:20:42'),
+(937, 2, 297, 1, '2026-06-10 11:20:42'),
+(938, 3, 298, 1, '2026-06-10 11:20:42'),
+(939, 4, 299, 1, '2026-06-10 11:20:42'),
+(940, 5, 300, 1, '2026-06-10 11:20:42'),
+(941, 6, 301, 1, '2026-06-10 11:20:42'),
+(942, 7, 302, 1, '2026-06-10 11:20:42'),
+(943, 10, 303, 1, '2026-06-10 11:20:42'),
+(944, 11, 304, 1, '2026-06-10 11:20:42'),
+(945, 8, 305, 1, '2026-06-10 11:27:19'),
+(946, 12, 306, 1, '2026-06-10 11:27:19'),
+(947, 9, 307, 1, '2026-06-10 11:27:19'),
+(948, 13, 308, 1, '2026-06-10 11:27:19'),
+(949, 1, 309, 1, '2026-06-10 11:36:31'),
+(950, 2, 309, 1, '2026-06-10 11:36:31'),
+(951, 3, 309, 1, '2026-06-10 11:36:31'),
+(952, 1, 310, 1, '2026-06-10 11:36:31'),
+(953, 2, 311, 1, '2026-06-10 11:36:31'),
+(954, 3, 312, 1, '2026-06-10 11:36:31');
 
 --
 -- Dumping data for table `daily_student_stats`
 --
 
 INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `dance`, `visual`, `created_at`, `updated_at`) VALUES
-(13, 1, '2026-05-28', 75, 75, 80, '2026-05-28 17:34:26', '2026-05-28 17:34:26'),
-(14, 1, '2026-06-03', 75, 75, 80, '2026-06-03 08:06:06', '2026-06-03 08:06:06'),
-(15, 1, '2026-06-03', 75, 75, 80, '2026-06-03 12:04:21', '2026-06-03 12:04:21'),
-(16, 1, '2026-06-03', 75, 75, 80, '2026-06-03 12:06:39', '2026-06-03 12:06:39'),
-(17, 1, '2026-06-03', 75, 75, 80, '2026-06-03 12:06:47', '2026-06-03 12:06:47'),
 (36, 2, '2026-06-01', 75, 65, 55, '2026-06-01 22:54:32', '2026-06-01 22:54:32'),
 (37, 2, '2026-06-03', 75, 65, 55, '2026-06-03 07:40:36', '2026-06-03 07:40:36'),
 (38, 2, '2026-06-03', 75, 65, 55, '2026-06-03 08:04:28', '2026-06-03 08:04:28'),
@@ -845,7 +856,6 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (66, 2, '2026-06-03', 85, 75, 65, '2026-06-03 15:26:48', '2026-06-03 15:26:48'),
 (67, 2, '2026-06-03', 85, 75, 65, '2026-06-03 15:27:40', '2026-06-03 15:27:40'),
 (68, 2, '2026-06-03', 85, 75, 65, '2026-06-03 15:27:44', '2026-06-03 15:27:44'),
-(73, 3, '2026-05-28', 65, 55, 75, '2026-05-28 16:00:17', '2026-05-28 16:00:17'),
 (81, 4, '2026-05-31', 55, 55, 65, '2026-05-31 20:57:17', '2026-05-31 20:57:17'),
 (82, 4, '2026-06-03', 55, 55, 65, '2026-06-03 13:07:09', '2026-06-03 13:07:09'),
 (98, 5, '2026-06-01', 65, 55, 65, '2026-06-01 19:44:53', '2026-06-01 19:44:53'),
@@ -859,11 +869,6 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (110, 7, '2026-06-03', 55, 55, 60, '2026-06-03 13:06:38', '2026-06-03 13:06:38'),
 (112, 8, '2026-06-02', 50, 60, 60, '2026-06-02 09:16:05', '2026-06-02 09:16:05'),
 (113, 8, '2026-06-03', 50, 60, 60, '2026-06-03 13:07:24', '2026-06-03 13:07:24'),
-(115, 9, '2026-06-02', 65, 70, 80, '2026-06-02 09:16:31', '2026-06-02 09:16:31'),
-(116, 9, '2026-06-03', 65, 70, 80, '2026-06-03 12:03:23', '2026-06-03 12:03:23'),
-(117, 9, '2026-06-03', 65, 70, 80, '2026-06-03 12:03:49', '2026-06-03 12:03:49'),
-(118, 9, '2026-06-03', 65, 70, 80, '2026-06-03 12:03:51', '2026-06-03 12:03:51'),
-(119, 9, '2026-06-03', 65, 70, 80, '2026-06-03 12:04:11', '2026-06-03 12:04:11'),
 (128, 1, '2026-06-03', 75, 75, 80, '2026-06-03 15:30:37', '2026-06-03 15:30:37'),
 (129, 2, '2026-06-03', 85, 75, 65, '2026-06-03 15:30:37', '2026-06-03 15:30:37'),
 (130, 3, '2026-06-03', 65, 55, 75, '2026-06-03 15:30:37', '2026-06-03 15:30:37'),
@@ -975,7 +980,12 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (236, 8, '2026-06-09', 50, 60, 60, '2026-06-09 16:49:17', '2026-06-09 16:49:17'),
 (237, 4, '2026-06-09', 55, 55, 65, '2026-06-09 16:50:11', '2026-06-09 16:50:11'),
 (238, 5, '2026-06-09', 65, 55, 65, '2026-06-09 16:51:09', '2026-06-09 16:51:09'),
-(239, 9, '2026-06-09', 65, 70, 80, '2026-06-09 16:52:29', '2026-06-09 16:52:29');
+(239, 9, '2026-06-09', 65, 70, 80, '2026-06-09 16:52:29', '2026-06-09 16:52:29'),
+(240, 1, '2026-06-10', 75, 75, 80, '2026-06-10 07:58:00', '2026-06-10 07:58:00'),
+(241, 9, '2026-06-10', 65, 70, 80, '2026-06-10 11:11:12', '2026-06-10 11:11:12'),
+(242, 13, '2026-06-10', 80, 90, 70, '2026-06-10 11:18:49', '2026-06-10 11:18:49'),
+(243, 12, '2026-06-10', 130, 100, 105, '2026-06-10 11:28:37', '2026-06-10 11:28:37'),
+(244, 3, '2026-06-10', 65, 55, 75, '2026-06-10 11:37:02', '2026-06-10 11:37:02');
 
 --
 -- Dumping data for table `producer_messages`
@@ -1605,6 +1615,7 @@ INSERT INTO `recurring_schedules` (`id`, `student_id`, `weekday`, `activity_type
 (225, 7, 5, 'meeting', 'Student Council Session', 'Student council work with China handling cheerful support and committee errands.', '16:20:00', '17:20:00', 'Student Council Room', 1, 1, '2026-06-08 11:30:35', '2026-06-08 11:30:35'),
 (226, 8, 5, 'meeting', 'Student Council Session', 'Student council work with Ume helping through energy, outreach, and practical tasks.', '16:20:00', '17:20:00', 'Student Council Room', 1, 1, '2026-06-08 11:30:35', '2026-06-08 11:30:35'),
 (227, 9, 5, 'meeting', 'Student Council Session', 'Student council work with Misuzu supporting welfare and student care requests.', '16:20:00', '17:20:00', 'Student Council Room', 1, 1, '2026-06-08 11:30:35', '2026-06-08 11:30:35');
+
 
 SET FOREIGN_KEY_CHECKS = 1;
 COMMIT;
