@@ -10,6 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 // Connect to database
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/includes/theme_settings_helpers.php';
 
 // Create a random secret token (CSRF token) and store in session
 if (empty($_SESSION['login_csrf_token'])) {
@@ -70,14 +71,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['id'] = $user['id'];
                 $_SESSION['user_name'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
+                $_SESSION['avatar'] = $user['avatar'] ?? '';
 
                 unset($_SESSION['student_name']);
-                $_SESSION['theme_primary_color'] = '#FF6B9D';
-                $_SESSION['theme_secondary_color'] = '#FFB3D1';
+
+                $user_theme = load_user_theme($pdo, (int) $user['id']);
+                apply_theme_session($user_theme['primary'], $user_theme['secondary']);
 
                 if ($user['role'] === 'student') {
                     $student_stmt = $pdo->prepare(
-                        'SELECT name, theme_primary_color, theme_secondary_color
+                        'SELECT name
                         FROM students
                         WHERE user_id = ?
                         LIMIT 1'
@@ -87,8 +90,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     if ($student) {
                         $_SESSION['student_name'] = $student['name'];
-                        $_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: '#FF6B9D';
-                        $_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: '#FFB3D1';
                     }
                 }
 

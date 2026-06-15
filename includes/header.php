@@ -27,7 +27,27 @@ $body_style = sprintf(
 $role = $_SESSION['role'] ?? 'student';
 $username = $_SESSION['user_name'] ?? 'Guest';
 $student_name = $_SESSION['student_name'] ?? $username;
-$avatar_path = '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student_name) . '.png';
+$custom_avatar = trim((string) ($_SESSION['avatar'] ?? ''));
+
+if ($custom_avatar !== '') {
+    $avatar_path = str_replace('\\', '/', $custom_avatar);
+    $document_root = str_replace('\\', '/', rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/'));
+
+    if ($document_root !== '' && str_starts_with($avatar_path, $document_root)) {
+        $avatar_path = substr($avatar_path, strlen($document_root));
+    } elseif (!str_starts_with($avatar_path, '/') && !preg_match('/^https?:\/\//i', $avatar_path)) {
+        $avatar_path = '/gakumas-sms/' . ltrim($avatar_path, '/');
+    }
+} else {
+    $avatar_path = match ($role) {
+        'producer' => '/gakumas-sms/assets/images/avatars/default_producer.webp',
+        'teacher' => '/gakumas-sms/assets/images/avatars/default_teacher.webp',
+        default => '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student_name) . '.png',
+    };
+}
+
+$avatar_alt = $role === 'student' ? $student_name : $username;
+
 
 // Choose home URL based on role
 $home_url = match ($role) {
@@ -94,7 +114,7 @@ $role_label = match ($role) {
 
         <div class="topbar-user">
             <img src="<?= htmlspecialchars($avatar_path, ENT_QUOTES, 'UTF-8') ?>"
-                alt="<?= htmlspecialchars($student_name, ENT_QUOTES, 'UTF-8') ?>" class="topbar-avatar">
+                alt="<?= htmlspecialchars($avatar_alt, ENT_QUOTES, 'UTF-8') ?>" class="topbar-avatar">
             <div class="topbar-user-text">
                 <span class="topbar-username">
                     <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>
@@ -125,7 +145,7 @@ $role_label = match ($role) {
 
             <div class="topbar-user">
                 <img src="<?= htmlspecialchars($avatar_path, ENT_QUOTES, 'UTF-8') ?>"
-                    alt="<?= htmlspecialchars($student_name, ENT_QUOTES, 'UTF-8') ?>" class="topbar-avatar">
+                    alt="<?= htmlspecialchars($avatar_alt, ENT_QUOTES, 'UTF-8') ?>" class="topbar-avatar">
                 <div class="topbar-user-text">
                     <span class="topbar-username">
                         <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>

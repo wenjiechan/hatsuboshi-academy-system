@@ -3,6 +3,7 @@ require_once '../includes/auth.php';
 require_role('student');
 
 require_once '../config/database.php';
+require_once '../includes/theme_settings_helpers.php';
 
 //Helper for safe output
 function e(?string $value): string
@@ -39,12 +40,13 @@ function format_song_date(?string $date): string
 // Get current student profile
 $stmt = $pdo->prepare(
     'SELECT
-        id,
-        name,
-        theme_primary_color,
-        theme_secondary_color
-     FROM students
-     WHERE user_id = ?
+        s.id,
+        s.name,
+        u.theme_primary_color,
+        u.theme_secondary_color
+     FROM students s
+     INNER JOIN users u ON u.id = s.user_id
+     WHERE s.user_id = ?
      LIMIT 1'
 );
 
@@ -61,8 +63,8 @@ if (!$student) {
 }
 
 $_SESSION['student_name'] = $student['name'];
-$_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: '#FF6B9D';
-$_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: '#FFB3D1';
+$_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: DEFAULT_THEME_PRIMARY;
+$_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: DEFAULT_THEME_SECONDARY;
 
 //Get songs assigned to the student
 $song_stmt = $pdo->prepare(

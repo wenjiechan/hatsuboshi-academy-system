@@ -10,8 +10,8 @@ function get_dashboard_birthday_students(PDO $pdo): array
             s.id,
             s.name,
             s.birthday,
-            s.theme_primary_color,
-            s.theme_secondary_color
+            u.theme_primary_color,
+            u.theme_secondary_color
          FROM students s
          INNER JOIN users u ON u.id = s.user_id
          WHERE DATE_FORMAT(s.birthday, "%m-%d") = ?

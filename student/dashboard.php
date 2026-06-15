@@ -3,6 +3,7 @@ require_once '../includes/auth.php';
 require_role('student');
 
 require_once '../config/database.php';
+require_once '../includes/theme_settings_helpers.php';
 
 //Get current student profile
 $stmt = $pdo->prepare(
@@ -15,11 +16,12 @@ $stmt = $pdo->prepare(
         s.vocal,
         s.dance,
         s.visual,
-        s.theme_primary_color,
-        s.theme_secondary_color,
-        u.username AS producer_name
+        su.theme_primary_color,
+        su.theme_secondary_color,
+        pu.username AS producer_name
      FROM students s
-     LEFT JOIN users u ON u.id = s.producer_id
+     INNER JOIN users su ON su.id = s.user_id
+     LEFT JOIN users pu ON pu.id = s.producer_id
      WHERE s.user_id = ?
      LIMIT 1'
 );
@@ -38,8 +40,8 @@ if (!$student) {
 
 //Save student theme into session
 $_SESSION['student_name'] = $student['name'];
-$_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: '#FF6B9D';
-$_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: '#FFB3D1';
+$_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: DEFAULT_THEME_PRIMARY;
+$_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: DEFAULT_THEME_SECONDARY;
 
 $weekday = (int) date('N');
 
