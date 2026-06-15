@@ -36,7 +36,10 @@ if ($custom_avatar !== '') {
     if ($document_root !== '' && str_starts_with($avatar_path, $document_root)) {
         $avatar_path = substr($avatar_path, strlen($document_root));
     } elseif (!str_starts_with($avatar_path, '/') && !preg_match('/^https?:\/\//i', $avatar_path)) {
-        $avatar_path = '/gakumas-sms/' . ltrim($avatar_path, '/');
+        $avatar_path = match ($role) {
+            'student' => '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($avatar_path),
+            default => '/gakumas-sms/assets/images/avatars/' . rawurlencode($avatar_path),
+        };
     }
 } else {
     $avatar_path = match ($role) {
