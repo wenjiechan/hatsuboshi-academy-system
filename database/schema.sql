@@ -34,7 +34,7 @@ CREATE TABLE `daily_student_stats` (
   PRIMARY KEY (`id`),
   KEY `idx_daily_student_stats_student_date` (`student_id`,`stat_date`),
   KEY `idx_daily_student_stats_date` (`stat_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=245 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -404,4 +404,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-15 12:15:28
+-- Dump completed on 2026-06-17 16:41:53
