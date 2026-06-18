@@ -2,91 +2,6 @@
    components.css — Reusable UI elements
    ============================================================ */
 
-/* ---------- Avatars ---------- */
-.avatar {
-    border-radius: 50%;
-    object-fit: cover;
-    background: var(--bg-soft);
-    box-shadow: var(--shadow-soft);
-}
-.avatar-sm  { width: 32px;  height: 32px;  }
-.avatar-md  { width: 64px;  height: 64px;  }
-.avatar-lg  { width: 128px; height: 128px; }
-.avatar-xl  { width: 200px; height: 200px; }
-
-/* Avatar with theme-color ring */
-.avatar-ringed {
-    border: 3px solid var(--primary);
-    padding: 2px;
-}
-
-/* ---------- Stat bars ---------- */
-.stat-bar {
-    background: var(--bg-soft);
-    height: 24px;
-    border-radius: var(--radius-pill);
-    overflow: hidden;
-    position: relative;
-}
-.stat-bar-fill {
-    height: 100%;
-    border-radius: var(--radius-pill);
-    transition: width 0.6s ease;
-}
-.stat-bar-fill.vocal  { background: linear-gradient(90deg, var(--vocal-color),  #FFCCD9); }
-.stat-bar-fill.dance  { background: linear-gradient(90deg, var(--dance-color),  #B8DCFF); }
-.stat-bar-fill.visual { background: linear-gradient(90deg, var(--visual-color), #FFEDA8); }
-
-.stat-label {
-    font-weight: 700;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-/* ---------- Rank badges ---------- */
-.rank-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    border-radius: var(--radius-pill);
-    padding: 4px 12px;
-    font-size: 0.875rem;
-}
-.rank-debut { background: #EDEDED; color: #6B6B6B; }
-.rank-c     { background: #FFE9D6; color: #B86B2A; }
-.rank-b     { background: #D6F0FF; color: #2A6BB8; }
-.rank-a     { background: #FFD6F0; color: #B82A8B; }
-.rank-s     { background: #FFE7B5; color: #8B6B1A; }
-.rank-ss    { background: linear-gradient(135deg, #FFD700, #FFB347); color: #6B4A00; }
-
-/* ---------- Idol color circles (default placeholder for avatars) ---------- */
-.idol-circle {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 2.5rem;
-    font-weight: 700;
-    font-family: 'M PLUS Rounded 1c', sans-serif;
-    box-shadow: var(--shadow-soft);
-}
-
-/* ---------- Empty state ---------- */
-.empty-state {
-    text-align: center;
-    padding: var(--space-7) var(--space-4);
-    color: var(--text-secondary);
-}
-.empty-state img {
-    width: 240px;
-    opacity: 0.75;
-    margin-bottom: var(--space-4);
-}
-
 /* ---------- Account issue page ---------- */
 .account-issue-page {
     min-height: 100vh;
@@ -162,7 +77,7 @@
 
 /* ---------- Settings ---------- */
 .settings-panel {
-    max-width: 720px;
+    width: 100%;
     padding: 28px;
     border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
     border-radius: var(--radius-md);
@@ -175,48 +90,167 @@
     gap: 20px;
 }
 
-.settings-grid {
+.theme-settings-layout {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: minmax(360px, 1fr) minmax(280px, 380px);
+    gap: 20px;
+    align-items: stretch;
 }
 
-.settings-grid .form-label {
+.theme-controls {
     display: grid;
+    gap: 14px;
+    align-content: start;
+}
+
+.theme-color-control,
+.theme-auto-panel {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--secondary) 10%, white);
+}
+
+.theme-control-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.theme-control-heading code {
+    padding: 4px 8px;
+    border-radius: var(--radius-pill);
+    background: white;
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.theme-color-control .form-control-color {
+    width: 100%;
+    height: 52px;
+    padding: 6px;
+    border-color: color-mix(in srgb, var(--primary) 18%, white);
+    cursor: pointer;
+}
+
+.theme-auto-panel {
+    background: white;
+}
+
+.theme-auto-title {
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.theme-auto-actions {
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
+.theme-auto-actions .btn {
+    flex: 1 1 140px;
+    justify-content: center;
+    min-height: 34px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+}
+
 .theme-preview {
-    min-height: 120px;
-    display: flex;
-    align-items: center;
+    min-height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-content: end;
+    align-items: end;
     gap: 16px;
-    padding: 20px;
+    padding: 28px;
     border-radius: var(--radius-md);
-    background: linear-gradient(135deg, var(--preview-primary), var(--preview-secondary));
+    background:
+        linear-gradient(135deg, var(--preview-primary), var(--preview-secondary)),
+        var(--preview-primary);
     color: white;
     box-shadow: 0 10px 24px color-mix(in srgb, var(--preview-primary) 24%, transparent);
 }
 
-.theme-preview span {
-    width: 44px;
-    height: 44px;
+.theme-preview::before {
+    content: "";
+    position: absolute;
+    inset: 18px 18px auto auto;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.theme-preview-avatar {
+    width: 58px;
+    height: 58px;
     border: 3px solid rgba(255, 255, 255, 0.8);
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+}
+
+.theme-preview-copy {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+}
+
+.theme-preview-copy small {
+    color: rgba(255, 255, 255, 0.82);
+    font-weight: 800;
+    text-transform: uppercase;
 }
 
 .theme-preview strong {
     color: white;
-    font-size: 1.2rem;
+    font-size: 1.45rem;
+    line-height: 1.2;
     overflow-wrap: anywhere;
 }
 
+.theme-preview-pills {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 8px;
+    margin-top: 28px;
+}
+
+.theme-preview-pills span {
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.46);
+}
+
+.theme-preview-pills span:nth-child(1) {
+    width: 42%;
+}
+
+.theme-preview-pills span:nth-child(2) {
+    width: 24%;
+}
+
+.theme-preview-pills span:nth-child(3) {
+    width: 14%;
+}
+
 .settings-form .btn {
-    justify-self: start;
     display: inline-flex;
     align-items: center;
     gap: 8px;
+}
+
+.settings-form > .btn[type="submit"] {
+    justify-self: end;
 }
 
 @media (max-width: 575.98px) {
@@ -224,49 +258,18 @@
         padding: 20px;
     }
 
-    .settings-grid {
+    .theme-settings-layout {
         grid-template-columns: 1fr;
     }
-}
 
-/* ---------- Notification badge ---------- */
-.notif-badge {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    background: var(--error);
-    color: white;
-    border-radius: var(--radius-pill);
-    padding: 2px 6px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    min-width: 18px;
-    text-align: center;
-}
+    .theme-preview {
+        min-height: 220px;
+    }
 
-/* ---------- Page header ---------- */
-.page-header {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    padding: var(--space-6) var(--space-5);
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--space-5);
-    box-shadow: var(--shadow-medium);
-}
-.page-header h1 {
-    color: white;
-    margin: 0;
-}
-
-/* ---------- Sparkle decorations (optional) ---------- */
-.sparkle {
-    display: inline-block;
-    color: var(--accent-gold);
-    animation: sparkle-pulse 1.5s infinite ease-in-out;
-}
-@keyframes sparkle-pulse {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50%      { opacity: 1;   transform: scale(1.2); }
+    .theme-control-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }
 
 /* ---------- App sidebar ---------- */
@@ -679,10 +682,6 @@
 
 .click-sparkle.medium {
     font-size: 16px;
-}
-
-.click-sparkle.large {
-    font-size: 20px;
 }
 
 @media (prefers-reduced-motion: reduce) {

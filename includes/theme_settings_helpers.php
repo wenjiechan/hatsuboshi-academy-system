@@ -1,8 +1,10 @@
 <?php
 
+//Default colors
 const DEFAULT_THEME_PRIMARY = '#FF6B9D';
 const DEFAULT_THEME_SECONDARY = '#FFB3D1';
 
+//Add theme columns to users table
 function ensure_user_theme_columns(PDO $pdo): void
 {
     $pdo->exec(
@@ -12,6 +14,7 @@ function ensure_user_theme_columns(PDO $pdo): void
     );
 }
 
+//Validate whether the color is valid HEX format
 function normalize_theme_color(string $color, string $fallback): string
 {
     $color = trim($color);
@@ -23,6 +26,7 @@ function normalize_theme_color(string $color, string $fallback): string
     return $fallback;
 }
 
+//Load the user theme
 function load_user_theme(PDO $pdo, int $user_id): array
 {
     ensure_user_theme_columns($pdo);
@@ -42,6 +46,7 @@ function load_user_theme(PDO $pdo, int $user_id): array
     ];
 }
 
+//Saves the user theme
 function save_user_theme(PDO $pdo, int $user_id, string $primary, string $secondary): void
 {
     ensure_user_theme_columns($pdo);
@@ -54,6 +59,7 @@ function save_user_theme(PDO $pdo, int $user_id, string $primary, string $second
     $stmt->execute([$primary, $secondary, $user_id]);
 }
 
+//Store theme colors in session
 function apply_theme_session(string $primary, string $secondary): void
 {
     $_SESSION['theme_primary_color'] = $primary;
