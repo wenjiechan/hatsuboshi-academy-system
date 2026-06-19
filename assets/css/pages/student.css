@@ -1,0 +1,363 @@
+/* ---------- Students management ---------- */
+.students-main {
+    display: grid;
+    gap: 22px;
+}
+
+.students-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 0;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-soft);
+}
+
+.students-search {
+    flex: 1 1 320px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    max-width: 520px;
+    margin-right: auto;
+    padding: 0 14px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, white);
+    border-radius: var(--radius-pill);
+    background: white;
+    color: var(--text-secondary);
+}
+
+.students-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-weight: 700;
+}
+
+.students-search input::placeholder {
+    color: var(--text-muted);
+}
+
+.students-toolbar h2 {
+    margin: 0;
+    font-size: 1.45rem;
+    line-height: 1.25;
+}
+
+.students-add-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    font-weight: 800;
+}
+
+.students-pending-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 8px 14px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: #fff3cd;
+    color: #946200;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.students-pending-button:hover,
+.students-pending-button.active {
+    background: #946200;
+    color: white;
+}
+
+.students-class-section {
+    overflow: hidden;
+    height: auto;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-soft);
+}
+
+.students-class-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+}
+
+.students-class-heading div {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 12px;
+}
+
+.students-class-heading i {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 14%, white);
+    color: var(--primary);
+}
+
+.students-class-heading h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    overflow-wrap: anywhere;
+}
+
+.students-class-heading > span {
+    flex: 0 0 auto;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.students-table-wrap {
+    overflow-x: auto;
+    padding: 8px;
+}
+
+.students-table {
+    min-width: 860px;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.students-table thead th {
+    height: 36px;
+    border: 0;
+    padding: 0 12px;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.student-sort-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin-left: 4px;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+    font-size: 0.78rem;
+    line-height: 1;
+}
+
+.student-sort-button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.students-table tbody td {
+    height: 58px;
+    border: 0;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-weight: 650;
+}
+
+.students-table tbody tr {
+    transition: background var(--transition), color var(--transition);
+}
+
+.students-table tbody tr:hover {
+    background: color-mix(in srgb, var(--primary) 9%, white);
+}
+
+.students-table tbody tr:hover td:first-child {
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.students-table tbody tr:hover td:last-child {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.student-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.student-avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    object-position: top center;
+    border: 2px solid rgba(255, 255, 255, 0.94);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--secondary) 24%, white);
+    box-shadow: 0 6px 14px color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+.student-name-cell div {
+    display: grid;
+    min-width: 0;
+}
+
+.student-name-cell strong,
+.student-name-cell small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.student-name-cell strong {
+    color: var(--text-primary);
+    font-size: 0.96rem;
+}
+
+.student-name-cell small {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.students-table tbody td:nth-child(3),
+.students-table tbody td:nth-child(4),
+.students-table tbody td:nth-child(5) {
+    color: var(--text-secondary);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.student-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.student-status-removal-pending {
+    background: #fff3cd;
+    color: #946200;
+}
+
+.student-status-released {
+    background: #eeeeee;
+    color: #666666;
+}
+
+.student-status-unassigned {
+    background: color-mix(in srgb, var(--secondary) 18%, white);
+    color: var(--text-secondary);
+}
+
+.student-actions {
+    white-space: nowrap;
+}
+
+.student-actions a,
+.student-action-pending {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-height: 30px;
+    margin-left: 8px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.student-actions a:hover {
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+}
+
+.student-actions a.danger {
+    background: #ffe5e5;
+    color: var(--error);
+}
+
+.student-actions a.danger:hover {
+    background: var(--error);
+    color: white;
+}
+
+.student-action-pending {
+    background: #fff3cd;
+    color: #946200;
+    cursor: not-allowed;
+}
+
+.students-search-empty {
+    min-height: 220px;
+}
+
+@media (max-width: 767.98px) {
+    .students-toolbar {
+        display: grid;
+        align-items: stretch;
+        justify-content: stretch;
+    }
+
+    .students-search {
+        max-width: none;
+    }
+
+    .students-add-button {
+        width: fit-content;
+    }
+
+    .students-pending-button {
+        width: fit-content;
+    }
+
+    .students-class-heading {
+        padding: 18px;
+    }
+
+    .students-class-heading {
+        display: grid;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .student-name-cell strong,
+    .student-name-cell small {
+        white-space: normal;
+    }
+}

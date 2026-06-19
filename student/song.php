@@ -190,11 +190,33 @@ require_once '../includes/sidebar.php';
 
                     <div class="song-list" role="list">
                         <div class="song-list-header" aria-hidden="true">
-                            <span>#</span>
-                            <span>Title</span>
-                            <span>Artist</span>
-                            <span>Release</span>
-                            <span>Time</span>
+                            <span>
+                                #
+                                <button type="button" class="song-sort-button" data-sort-column="number" data-sort-direction="asc" aria-label="Sort number ascending">
+                                    <i class="bi bi-sort-numeric-down" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                            <span>
+                                Title
+                                <button type="button" class="song-sort-button" data-sort-column="title" data-sort-direction="asc" aria-label="Sort title ascending">
+                                    <i class="bi bi-sort-alpha-down" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                            <span>
+                                Artist
+                            </span>
+                            <span>
+                                Release
+                                <button type="button" class="song-sort-button" data-sort-column="release" data-sort-direction="asc" aria-label="Sort release ascending">
+                                    <i class="bi bi-sort-numeric-down" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                            <span>
+                                Time
+                                <button type="button" class="song-sort-button" data-sort-column="duration" data-sort-direction="asc" aria-label="Sort time ascending">
+                                    <i class="bi bi-sort-numeric-down" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         </div>
 
                         <!-- Loops through songs in a category-->
@@ -214,7 +236,14 @@ require_once '../includes/sidebar.php';
                             );
                             ?>
 
-                            <article class="song-track" data-song-search="<?= e($search_text) ?>" role="listitem">
+                            <article class="song-track"
+                                data-song-search="<?= e($search_text) ?>"
+                                data-sort-number="<?= (int) ($index + 1) ?>"
+                                data-sort-title="<?= e($song['title']) ?>"
+                                data-sort-artist="<?= e($song['artist'] ?: 'Unknown artist') ?>"
+                                data-sort-release="<?= e($song['release_date'] ?: '') ?>"
+                                data-sort-duration="<?= e($song['duration'] ?: '') ?>"
+                                role="listitem">
                                 <button
                                     class="song-track-button collapsed"
                                     type="button"
@@ -300,6 +329,7 @@ const songSearch = document.getElementById('songSearch');
 const songTracks = Array.from(document.querySelectorAll('.song-track'));
 const songSections = Array.from(document.querySelectorAll('.song-category-section'));
 const songSearchEmpty = document.getElementById('songSearchEmpty');
+const songSortButtons = Array.from(document.querySelectorAll('.song-sort-button'));
 
 if (songSearch) {
     // Runs when user types in the search box
@@ -332,6 +362,80 @@ if (songSearch) {
         }
     });
 }
+
+function songDurationToSeconds(duration) {
+    const parts = duration.split(':').map(Number);
+
+    if (parts.length !== 3 || parts.some(Number.isNaN)) {
+        return 0;
+    }
+
+    return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+}
+
+songSortButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        // Find the current category section
+        const section = button.closest('.song-category-section');
+        const list = section?.querySelector('.song-list');
+        // Get current direction
+        const currentDirection = button.dataset.sortDirection || 'asc';
+        const directionMultiplier = currentDirection === 'asc' ? 1 : -1;
+        //Get the column name
+        const sortColumn = button.dataset.sortColumn;
+
+        if (!list || !sortColumn) {
+            return;
+        }
+
+        // Get all songs inside that category
+        const tracks = Array.from(list.querySelectorAll('.song-track'));
+
+        tracks.sort((firstTrack, secondTrack) => {
+            //Convert column name into dataset key
+            const firstValue = firstTrack.dataset[`sort${sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1)}`] || '';
+            const secondValue = secondTrack.dataset[`sort${sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1)}`] || '';
+
+            //Sort by number
+            if (sortColumn === 'number') {
+                return (Number(firstValue) - Number(secondValue)) * directionMultiplier;
+            }
+
+            //Sort by duration
+            if (sortColumn === 'duration') {
+                return (songDurationToSeconds(firstValue) - songDurationToSeconds(secondValue)) * directionMultiplier;
+            }
+
+            //Sort by release date
+            if (sortColumn === 'release') {
+                return (new Date(firstValue || 0) - new Date(secondValue || 0)) * directionMultiplier;
+            }
+
+            // Sort by title
+            return firstValue.trim().localeCompare(secondValue.trim(), undefined, {
+                numeric: true,
+                sensitivity: 'base'
+            }) * directionMultiplier;
+        });
+
+        // Put sorted songs back into the page
+        tracks.forEach((track) => list.appendChild(track));
+
+        const nextDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+        const icon = button.querySelector('i');
+
+        button.dataset.sortDirection = nextDirection;
+        button.setAttribute('aria-label', `Sort ${sortColumn} ${nextDirection === 'asc' ? 'ascending' : 'descending'}`);
+
+        //Change the sort icon
+        if (icon) {
+            const isNumeric = ['number', 'release', 'duration'].includes(sortColumn);
+            icon.className = `bi ${isNumeric
+                ? (nextDirection === 'asc' ? 'bi-sort-numeric-down' : 'bi-sort-numeric-up')
+                : (nextDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up')}`;
+        }
+    });
+});
 </script>
 
 <?php require_once '../includes/footer.php'; ?>
