@@ -16,6 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Current Database: `gakumas_sms`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `gakumas_sms` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+
+USE `gakumas_sms`;
+
+--
 -- Table structure for table `daily_student_stats`
 --
 
@@ -34,7 +42,7 @@ CREATE TABLE `daily_student_stats` (
   PRIMARY KEY (`id`),
   KEY `idx_daily_student_stats_student_date` (`student_id`,`stat_date`),
   KEY `idx_daily_student_stats_date` (`stat_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=266 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -331,6 +339,7 @@ CREATE TABLE `students` (
   `visual` int(11) NOT NULL DEFAULT 0,
   `bio` text DEFAULT NULL,
   `producer_id` int(11) DEFAULT NULL,
+  `producer_status` enum('active','removal_pending','released','unassigned') DEFAULT 'unassigned',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
@@ -404,4 +413,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-17 16:41:53
+-- Dump completed on 2026-06-19 17:40:03
