@@ -42,7 +42,7 @@ CREATE TABLE `daily_student_stats` (
   PRIMARY KEY (`id`),
   KEY `idx_daily_student_stats_student_date` (`student_id`,`stat_date`),
   KEY `idx_daily_student_stats_date` (`stat_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=266 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=280 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -381,7 +381,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('producer','teacher','student') NOT NULL,
+  `role` enum('admin','producer','teacher','student') NOT NULL,
   `avatar` varchar(255) DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -393,7 +393,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `uniq_users_username` (`username`),
   KEY `idx_users_role` (`role`),
   KEY `idx_users_is_active` (`is_active`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -413,4 +413,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-19 17:40:03
+-- Dump completed on 2026-06-22 16:19:38

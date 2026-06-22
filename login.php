@@ -20,9 +20,11 @@ if (empty($_SESSION['login_csrf_token'])) {
 // Redirect already logged-in users
 if (isset($_SESSION['id'], $_SESSION['role'])) {
     $role = $_SESSION['role'];
-    if ($role === 'producer') {
+    if ($role === 'admin') {
         header("Location: /gakumas-sms/admin/dashboard.php");
-    }elseif ($role === 'teacher') {
+    } elseif ($role === 'producer') {
+        header("Location: /gakumas-sms/producer/dashboard.php");
+    } elseif ($role === 'teacher') {
         header("Location: /gakumas-sms/teacher/dashboard.php");
     } else {
         header("Location: /gakumas-sms/student/dashboard.php");
@@ -101,9 +103,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 unset($_SESSION['login_csrf_token']);
-                if ($user['role'] === 'producer') {
+                if ($user['role'] === 'admin') {
                     header("Location: /gakumas-sms/admin/dashboard.php");
-                }elseif ($user['role'] === 'teacher') {
+                } elseif ($user['role'] === 'producer') {
+                    header("Location: /gakumas-sms/producer/dashboard.php");
+                } elseif ($user['role'] === 'teacher') {
                     header("Location: /gakumas-sms/teacher/dashboard.php");
                 } else {
                     header("Location: /gakumas-sms/student/dashboard.php");

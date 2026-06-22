@@ -2,7 +2,7 @@
 require_once '../includes/auth.php';
 require_role('admin');
 
-$page_title = 'Students';
+$page_title = 'Users';
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
@@ -12,13 +12,13 @@ require_once '../includes/sidebar.php';
         <div class="section-heading">
             <div>
                 <p class="dashboard-eyebrow">School Admin</p>
-                <h2>Students</h2>
+                <h2>Users</h2>
             </div>
         </div>
 
         <div class="empty-dashboard-state">
-            <strong>Student administration coming next</strong>
-            <p>This page will create official student records and keep unassigned students available for producer invites.</p>
+            <strong>User management coming next</strong>
+            <p>This page will create and manage admin, producer, teacher, and student accounts.</p>
         </div>
     </section>
 </main>

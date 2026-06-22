@@ -14,14 +14,23 @@ $student_nav = [
 ];
 
 $producer_nav = [
-    ['label' => 'Home', 'url' => '/gakumas-sms/admin/dashboard.php', 'icon' => 'bi-house-heart', 'page' => 'dashboard.php'],
-    ['label' => 'Students', 'url' => '/gakumas-sms/admin/students.php', 'icon' => 'bi-people', 'page' => 'students.php'],
-    ['label' => 'Schedules', 'url' => '/gakumas-sms/admin/schedules.php', 'icon' => 'bi-calendar-event', 'page' => 'schedules.php'],
-    ['label' => 'Lessons', 'url' => '/gakumas-sms/admin/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],
-    ['label' => 'Songs', 'url' => '/gakumas-sms/admin/songs.php', 'icon' => 'bi-music-note-list', 'page' => 'songs.php'],
-    ['label' => 'Events', 'url' => '/gakumas-sms/admin/events.php', 'icon' => 'bi-stars', 'page' => 'events.php'],
+    ['label' => 'Home', 'url' => '/gakumas-sms/producer/dashboard.php', 'icon' => 'bi-house-heart', 'page' => 'dashboard.php'],
+    ['label' => 'Students', 'url' => '/gakumas-sms/producer/students.php', 'icon' => 'bi-people', 'page' => 'students.php'],
+    ['label' => 'Schedules', 'url' => '/gakumas-sms/producer/schedules.php', 'icon' => 'bi-calendar-event', 'page' => 'schedules.php'],
+    ['label' => 'Lessons', 'url' => '/gakumas-sms/producer/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],
+    ['label' => 'Songs', 'url' => '/gakumas-sms/producer/songs.php', 'icon' => 'bi-music-note-list', 'page' => 'songs.php'],
+    ['label' => 'Events', 'url' => '/gakumas-sms/producer/events.php', 'icon' => 'bi-stars', 'page' => 'events.php'],
     ['label' => 'Messages', 'url' => '/gakumas-sms/messages/inbox.php', 'icon' => 'bi-envelope', 'page' => 'inbox.php'],
-    ['label' => 'Reports', 'url' => '/gakumas-sms/admin/reports.php', 'icon' => 'bi-bar-chart-line', 'page' => 'reports.php'],
+    ['label' => 'Reports', 'url' => '/gakumas-sms/producer/reports.php', 'icon' => 'bi-bar-chart-line', 'page' => 'reports.php'],
+    ['label' => 'Settings', 'url' => '/gakumas-sms/producer/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
+];
+
+$admin_nav = [
+    ['label' => 'Home', 'url' => '/gakumas-sms/admin/dashboard.php', 'icon' => 'bi-house-heart', 'page' => 'dashboard.php'],
+    ['label' => 'Users', 'url' => '/gakumas-sms/admin/users.php', 'icon' => 'bi-person-gear', 'page' => 'users.php'],
+    ['label' => 'Students', 'url' => '/gakumas-sms/admin/students.php', 'icon' => 'bi-people', 'page' => 'students.php'],
+    ['label' => 'Producers', 'url' => '/gakumas-sms/admin/producers.php', 'icon' => 'bi-person-badge', 'page' => 'producers.php'],
+    ['label' => 'Teachers', 'url' => '/gakumas-sms/admin/teachers.php', 'icon' => 'bi-mortarboard', 'page' => 'teachers.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/admin/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
 
@@ -35,12 +44,14 @@ $teacher_nav = [
 ];
 
 $panel_label = match ($role) {
+    'admin' => 'Admin Panel',
     'producer' => 'Producer Panel',
     'teacher' => 'Teacher Panel',
     default => 'Student Panel',
 };
 
 $nav_items = match ($role) {
+    'admin' => $admin_nav,
     'producer' => $producer_nav,
     'teacher' => $teacher_nav,
     default => $student_nav,

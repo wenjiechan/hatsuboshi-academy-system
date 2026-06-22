@@ -2,8 +2,12 @@
 require_once __DIR__ . '/includes/auth.php';
 
 switch ($role) {
-    case 'producer':
+    case 'admin':
         header('Location: /gakumas-sms/admin/dashboard.php');
+        break;
+
+    case 'producer':
+        header('Location: /gakumas-sms/producer/dashboard.php');
         break;
 
     case 'teacher':

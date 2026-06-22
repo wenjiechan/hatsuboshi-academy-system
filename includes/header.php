@@ -29,6 +29,7 @@ $username = $_SESSION['user_name'] ?? 'Guest';
 $student_name = $_SESSION['student_name'] ?? $username;
 $custom_avatar = trim((string) ($_SESSION['avatar'] ?? ''));
 $default_avatar_path = match ($role) {
+    'admin' => '/gakumas-sms/assets/images/avatars/default.webp',
     'producer' => '/gakumas-sms/assets/images/avatars/default_producer.webp',
     'teacher' => '/gakumas-sms/assets/images/avatars/default_teacher.webp',
     default => '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student_name) . '.png',
@@ -67,20 +68,23 @@ $avatar_alt = $role === 'student' ? $student_name : $username;
 
 // Choose home URL based on role
 $home_url = match ($role) {
-    'producer' => '/gakumas-sms/admin/dashboard.php',
+    'admin' => '/gakumas-sms/admin/dashboard.php',
+    'producer' => '/gakumas-sms/producer/dashboard.php',
     'teacher' => '/gakumas-sms/teacher/dashboard.php',
     default => '/gakumas-sms/student/dashboard.php',
 };
 
 // Choose avatar/profile settings URL based on role
 $profile_url = match ($role) {
-    'producer' => '/gakumas-sms/admin/settings.php',
+    'admin' => '/gakumas-sms/admin/settings.php',
+    'producer' => '/gakumas-sms/producer/settings.php',
     'teacher' => '/gakumas-sms/teacher/settings.php',
     default => '/gakumas-sms/student/profile.php',
 };
 
 //Choose role label
 $role_label = match ($role) {
+    'admin' => 'Admin',
     'producer' => 'Producer',
     'teacher' => 'Teacher',
     default => 'Student',

@@ -175,7 +175,7 @@ gakumas-sms/
 │   ├── schedules.php
 │   └── lessons.php
 │
-├── admin/
+├── producer/
 │   ├── dashboard.php
 │   ├── students.php
 │   ├── student_add.php
