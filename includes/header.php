@@ -59,6 +59,13 @@ $home_url = match ($role) {
     default => '/gakumas-sms/student/dashboard.php',
 };
 
+// Choose avatar/profile settings URL based on role
+$profile_url = match ($role) {
+    'producer' => '/gakumas-sms/admin/settings.php',
+    'teacher' => '/gakumas-sms/teacher/settings.php',
+    default => '/gakumas-sms/student/profile.php',
+};
+
 //Choose role label
 $role_label = match ($role) {
     'producer' => 'Producer',
@@ -115,7 +122,7 @@ $role_label = match ($role) {
             <i class="bi bi-bell"></i>
         </a>
 
-        <div class="topbar-user">
+        <a href="<?= htmlspecialchars($profile_url, ENT_QUOTES, 'UTF-8') ?>" class="topbar-user topbar-user-link" aria-label="Open profile settings">
             <img src="<?= htmlspecialchars($avatar_path, ENT_QUOTES, 'UTF-8') ?>"
                 alt="<?= htmlspecialchars($avatar_alt, ENT_QUOTES, 'UTF-8') ?>" class="topbar-avatar">
             <div class="topbar-user-text">
@@ -126,7 +133,7 @@ $role_label = match ($role) {
                     <?= htmlspecialchars($role_label, ENT_QUOTES, 'UTF-8') ?>
                 </span>
             </div>
-        </div>
+        </a>
     </header>
 
     <header class="app-topbar d-none d-xl-flex">
@@ -146,7 +153,7 @@ $role_label = match ($role) {
                 <i class="bi bi-bell"></i>
             </a>
 
-            <div class="topbar-user">
+            <a href="<?= htmlspecialchars($profile_url, ENT_QUOTES, 'UTF-8') ?>" class="topbar-user topbar-user-link" aria-label="Open profile settings">
                 <img src="<?= htmlspecialchars($avatar_path, ENT_QUOTES, 'UTF-8') ?>"
                     alt="<?= htmlspecialchars($avatar_alt, ENT_QUOTES, 'UTF-8') ?>" class="topbar-avatar">
                 <div class="topbar-user-text">
@@ -157,7 +164,7 @@ $role_label = match ($role) {
                         <?= htmlspecialchars($role_label, ENT_QUOTES, 'UTF-8') ?>
                     </span>
                 </div>
-            </div>
+            </a>
 
         </div>
     </header>

@@ -451,6 +451,17 @@
     box-shadow: var(--shadow-soft);
 }
 
+.topbar-user-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.topbar-user-link:hover {
+    color: inherit;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
 .role-badge {
     display: inline-flex;
     align-items: center;

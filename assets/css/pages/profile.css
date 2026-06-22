@@ -1,0 +1,279 @@
+/* ---------- Student profile ---------- */
+.profile-main {
+    display: grid;
+    gap: 22px;
+}
+
+.profile-hero,
+.profile-card {
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-soft);
+}
+
+.profile-hero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: center;
+    padding: 24px;
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--secondary) 28%, white), rgba(255, 255, 255, 0.96));
+}
+
+.profile-avatar-wrap {
+    position: relative;
+    width: 104px;
+    height: 104px;
+}
+
+.profile-avatar {
+    width: 104px;
+    height: 104px;
+    object-fit: cover;
+    object-position: top center;
+    border: 4px solid rgba(255, 255, 255, 0.94);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--secondary) 24%, white);
+    box-shadow: 0 12px 24px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.profile-avatar-upload {
+    position: absolute;
+    right: -8px;
+    bottom: -8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--primary);
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 800;
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 24%, transparent);
+    cursor: pointer;
+}
+
+.profile-avatar-upload:hover {
+    background: color-mix(in srgb, var(--primary) 82%, black);
+}
+
+.profile-avatar-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.profile-hero-copy {
+    min-width: 0;
+}
+
+.profile-hero h2 {
+    margin: 0;
+    font-size: 1.55rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.profile-hero-copy p:not(.dashboard-eyebrow) {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.profile-edit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--primary) 12%, white);
+    color: var(--primary);
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.profile-edit-button:hover,
+.profile-edit-button[aria-pressed="true"] {
+    background: var(--primary);
+    color: white;
+}
+
+.profile-form {
+    display: grid;
+    gap: 22px;
+}
+
+.profile-form > .alert {
+    margin: 0;
+}
+
+.profile-card {
+    padding: 24px;
+}
+
+.profile-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.profile-card-heading i {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 14%, white);
+    color: var(--primary);
+}
+
+.profile-card-heading h2 {
+    margin: 0;
+    font-size: 1.18rem;
+}
+
+.profile-main .form-label {
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.profile-main .form-control {
+    min-height: 42px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-weight: 650;
+}
+
+.profile-main .form-control:focus {
+    border-color: color-mix(in srgb, var(--primary) 56%, white);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.profile-main .form-control[readonly] {
+    background: color-mix(in srgb, var(--secondary) 12%, white);
+    color: var(--text-secondary);
+}
+
+.profile-main .profile-editable:not([readonly]) {
+    background: white;
+    color: var(--text-primary);
+}
+
+.profile-main textarea.form-control {
+    resize: vertical;
+}
+
+.profile-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.profile-stat {
+    display: grid;
+    gap: 6px;
+    min-height: 96px;
+    align-content: center;
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+    border-radius: var(--radius-sm);
+    background: white;
+}
+
+.profile-stat span {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.profile-stat strong {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.profile-stat.vocal strong {
+    color: var(--vocal-color);
+}
+
+.profile-stat.dance strong {
+    color: var(--dance-color);
+}
+
+.profile-stat.visual strong {
+    color: var(--visual-color);
+}
+
+.profile-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-soft);
+}
+
+.profile-form-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+}
+
+.profile-form-actions .btn-outline-secondary {
+    border-color: color-mix(in srgb, var(--primary) 18%, white);
+    background: white;
+    color: var(--text-secondary);
+}
+
+.profile-form-actions .btn-outline-secondary:hover {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+}
+
+@media (max-width: 767.98px) {
+    .profile-hero {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        padding: 20px;
+    }
+
+    .profile-avatar-wrap,
+    .profile-avatar {
+        width: 88px;
+        height: 88px;
+    }
+
+    .profile-card {
+        padding: 20px;
+    }
+
+    .profile-stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-form-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
