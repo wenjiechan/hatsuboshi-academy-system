@@ -171,9 +171,6 @@ require_once '../includes/sidebar.php';
                                         </span>
                                     </td>
                                     <td class="text-end student-actions">
-                                        <a href="/gakumas-sms/admin/student_view.php?id=<?= $student_id ?>" aria-label="View <?= htmlspecialchars($student['name'], ENT_QUOTES, 'UTF-8') ?>">
-                                            <i class="bi bi-eye" aria-hidden="true"></i>
-                                        </a>
                                         <a href="/gakumas-sms/admin/student_edit.php?id=<?= $student_id ?>" aria-label="Edit <?= htmlspecialchars($student['name'], ENT_QUOTES, 'UTF-8') ?>">
                                             <i class="bi bi-pencil" aria-hidden="true"></i>
                                         </a>

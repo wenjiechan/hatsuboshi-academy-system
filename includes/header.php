@@ -28,6 +28,11 @@ $role = $_SESSION['role'] ?? 'student';
 $username = $_SESSION['user_name'] ?? 'Guest';
 $student_name = $_SESSION['student_name'] ?? $username;
 $custom_avatar = trim((string) ($_SESSION['avatar'] ?? ''));
+$default_avatar_path = match ($role) {
+    'producer' => '/gakumas-sms/assets/images/avatars/default_producer.webp',
+    'teacher' => '/gakumas-sms/assets/images/avatars/default_teacher.webp',
+    default => '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student_name) . '.png',
+};
 
 if ($custom_avatar !== '') {
     $avatar_path = str_replace('\\', '/', $custom_avatar);
@@ -42,11 +47,19 @@ if ($custom_avatar !== '') {
         };
     }
 } else {
-    $avatar_path = match ($role) {
-        'producer' => '/gakumas-sms/assets/images/avatars/default_producer.webp',
-        'teacher' => '/gakumas-sms/assets/images/avatars/default_teacher.webp',
-        default => '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student_name) . '.png',
-    };
+    $avatar_path = $default_avatar_path;
+}
+
+if (
+    !preg_match('/^https?:\/\//i', $avatar_path) &&
+    str_starts_with($avatar_path, '/') &&
+    !empty($_SERVER['DOCUMENT_ROOT'])
+) {
+    $local_avatar_path = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/') . $avatar_path;
+
+    if (!is_file($local_avatar_path)) {
+        $avatar_path = $default_avatar_path;
+    }
 }
 
 $avatar_alt = $role === 'student' ? $student_name : $username;
