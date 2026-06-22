@@ -6,6 +6,7 @@
 
 .profile-hero,
 .profile-card {
+    position: relative;
     border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
     border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.92);
@@ -122,6 +123,10 @@
     padding: 24px;
 }
 
+.profile-card.is-calendar-open {
+    z-index: 30;
+}
+
 .profile-card-heading {
     display: flex;
     align-items: center;
@@ -161,7 +166,20 @@
     font-weight: 650;
 }
 
+.profile-main .form-select {
+    min-height: 42px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-weight: 650;
+}
+
 .profile-main .form-control:focus {
+    border-color: color-mix(in srgb, var(--primary) 56%, white);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.profile-main .form-select:focus {
     border-color: color-mix(in srgb, var(--primary) 56%, white);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
 }
@@ -171,13 +189,136 @@
     color: var(--text-secondary);
 }
 
-.profile-main .profile-editable:not([readonly]) {
+.profile-main .form-select:disabled {
+    background-color: color-mix(in srgb, var(--secondary) 12%, white);
+    background-image: none;
+    color: var(--text-secondary);
+    opacity: 1;
+}
+
+.profile-fixed-prefix .input-group-text {
+    border-color: color-mix(in srgb, var(--primary) 14%, white);
+    background: color-mix(in srgb, var(--secondary) 12%, white);
+    color: var(--text-secondary);
+    font-weight: 800;
+}
+
+.profile-main input.profile-editable:not([readonly]),
+.profile-main textarea.profile-editable:not([readonly]) {
     background: white;
+    color: var(--text-primary);
+}
+
+.profile-main select.profile-editable:not(:disabled) {
+    background-color: white;
     color: var(--text-primary);
 }
 
 .profile-main textarea.form-control {
     resize: vertical;
+}
+
+.profile-birthday-picker {
+    position: relative;
+}
+
+.profile-birthday-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    text-align: left;
+}
+
+.profile-birthday-button:disabled {
+    background: color-mix(in srgb, var(--secondary) 12%, white);
+    color: var(--text-secondary);
+    opacity: 1;
+}
+
+.profile-birthday-popover {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% + 8px);
+    left: 0;
+    width: min(320px, 86vw);
+    padding: 14px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: white;
+    box-shadow: 0 18px 36px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.profile-three-size {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+}
+
+.profile-three-size-separator {
+    color: var(--text-secondary);
+    font-weight: 800;
+}
+
+.profile-three-size-input {
+    text-align: center;
+}
+
+.profile-birthday-controls {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) 36px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.profile-calendar-nav {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--secondary) 10%, white);
+    color: var(--primary);
+}
+
+.profile-calendar-nav:hover {
+    background: color-mix(in srgb, var(--primary) 12%, white);
+}
+
+.profile-calendar-weekdays,
+.profile-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.profile-calendar-weekdays {
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.profile-calendar-day {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--secondary) 10%, white);
+    color: var(--text-primary);
+    font-weight: 800;
+}
+
+.profile-calendar-day:hover,
+.profile-calendar-day.is-selected {
+    background: var(--primary);
+    color: white;
 }
 
 .profile-stat-grid {
@@ -197,7 +338,8 @@
     background: white;
 }
 
-.profile-stat span {
+.profile-stat span,
+.profile-stat label {
     color: var(--text-secondary);
     font-size: 0.78rem;
     font-weight: 800;
@@ -218,6 +360,32 @@
 }
 
 .profile-stat.visual strong {
+    color: var(--visual-color);
+}
+
+.profile-stat .form-control {
+    max-width: 120px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    font-size: 1.8rem;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.profile-stat .form-control[readonly] {
+    background: transparent;
+}
+
+.profile-stat.vocal .form-control {
+    color: var(--vocal-color);
+}
+
+.profile-stat.dance .form-control {
+    color: var(--dance-color);
+}
+
+.profile-stat.visual .form-control {
     color: var(--visual-color);
 }
 

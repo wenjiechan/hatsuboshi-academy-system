@@ -239,6 +239,11 @@ require_once '../includes/sidebar.php';
                 </div>
 
                 <div class="col-md-4">
+                    <label for="blood_type" class="form-label">Blood Type</label>
+                    <input type="text" id="blood_type" name="blood_type" class="form-control" value="<?= e($student['blood_type']) ?>" readonly>
+                </div>
+
+                <div class="col-md-4">
                     <label for="hometown" class="form-label">Hometown</label>
                     <input type="text" id="hometown" name="hometown" class="form-control profile-editable" value="<?= e($student['hometown']) ?>" readonly>
                 </div>

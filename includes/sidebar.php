@@ -15,7 +15,13 @@ $student_nav = [
 
 $producer_nav = [
     ['label' => 'Home', 'url' => '/gakumas-sms/producer/dashboard.php', 'icon' => 'bi-house-heart', 'page' => 'dashboard.php'],
-    ['label' => 'Students', 'url' => '/gakumas-sms/producer/students.php', 'icon' => 'bi-people', 'page' => 'students.php'],
+    [
+        'label' => 'Students',
+        'url' => '/gakumas-sms/producer/students.php',
+        'icon' => 'bi-people',
+        'page' => 'students.php',
+        'pages' => ['students.php', 'student_add.php', 'student_edit.php', 'student_delete.php'],
+    ],
     ['label' => 'Schedules', 'url' => '/gakumas-sms/producer/schedules.php', 'icon' => 'bi-calendar-event', 'page' => 'schedules.php'],
     ['label' => 'Lessons', 'url' => '/gakumas-sms/producer/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],
     ['label' => 'Songs', 'url' => '/gakumas-sms/producer/songs.php', 'icon' => 'bi-music-note-list', 'page' => 'songs.php'],
@@ -73,8 +79,9 @@ $nav_items = match ($role) {
     <!--Sidebar navigation-->
     <nav class="sidebar-nav">
         <?php foreach ($nav_items as $item): ?>
+        <?php $active_pages = $item['pages'] ?? [$item['page']]; ?>
         <a href="<?= htmlspecialchars($item['url']) ?>"
-            class="sidebar-link <?= $current_page === $item['page'] ? 'active' : '' ?>">
+            class="sidebar-link <?= in_array($current_page, $active_pages, true) ? 'active' : '' ?>">
             <i class="bi <?= htmlspecialchars($item['icon'], ENT_QUOTES, 'UTF-8') ?>"></i>
             <span><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></span>
         </a>
