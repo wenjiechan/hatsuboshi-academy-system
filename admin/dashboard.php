@@ -2,6 +2,11 @@
 require_once '../includes/auth.php';
 require_role('admin');
 
+require_once '../config/database.php';
+require_once '../includes/notifications_helpers.php';
+
+generate_automatic_notifications($pdo);
+
 $page_title = 'Admin Dashboard';
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';

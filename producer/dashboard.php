@@ -4,6 +4,9 @@ require_role('producer');
 
 require_once '../config/database.php';
 require_once '../includes/birthday_banner_helpers.php';
+require_once '../includes/notifications_helpers.php';
+
+generate_automatic_notifications($pdo);
 
 // Get current producer account
 $stmt = $pdo->prepare(

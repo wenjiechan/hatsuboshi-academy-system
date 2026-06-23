@@ -56,7 +56,7 @@ if (
     str_starts_with($avatar_path, '/') &&
     !empty($_SERVER['DOCUMENT_ROOT'])
 ) {
-    $local_avatar_path = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/') . $avatar_path;
+    $local_avatar_path = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/') . rawurldecode($avatar_path);
 
     if (!is_file($local_avatar_path)) {
         $avatar_path = $default_avatar_path;
@@ -89,6 +89,8 @@ $role_label = match ($role) {
     'teacher' => 'Teacher',
     default => 'Student',
 };
+
+$is_notifications_page = basename($_SERVER['PHP_SELF']) === 'notifications.php';
 ?>
 
 <!DOCTYPE html>
@@ -111,12 +113,14 @@ $role_label = match ($role) {
     <link rel="stylesheet" href="/gakumas-sms/assets/css/theme.css">
     <link rel="stylesheet" href="/gakumas-sms/assets/css/components.css">
     <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/dashboard.css">
+    <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/notification.css">
     <?php foreach (($page_styles ?? []) as $style_href): ?>
         <link rel="stylesheet" href="<?= htmlspecialchars($style_href, ENT_QUOTES, 'UTF-8') ?>">
     <?php endforeach; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="/gakumas-sms/assets/js/click-sparkle.js" defer></script>
+    <script src="/gakumas-sms/assets/js/notification-live.js" defer></script>
 </head>
 
 <body class="<?= htmlspecialchars($full_body_class, ENT_QUOTES, 'UTF-8') ?>" style="<?= $body_style ?>">
@@ -135,8 +139,9 @@ $role_label = match ($role) {
             <i class="bi bi-envelope"></i>
         </a>
 
-        <a href="/gakumas-sms/notifications.php" class="mobile-icon-link" aria-label="Notifications">
+        <a href="/gakumas-sms/notifications.php" class="mobile-icon-link <?= $is_notifications_page ? 'active' : '' ?>" aria-label="Notifications">
             <i class="bi bi-bell"></i>
+            <span class="notification-badge d-none" data-notification-badge aria-label="0 unread notifications">0</span>
         </a>
 
         <a href="<?= htmlspecialchars($profile_url, ENT_QUOTES, 'UTF-8') ?>" class="topbar-user topbar-user-link" aria-label="Open profile settings">
@@ -166,8 +171,9 @@ $role_label = match ($role) {
                 <i class="bi bi-envelope"></i>
             </a>
 
-            <a href="/gakumas-sms/notifications.php" class="topbar-icon-link" aria-label="Notifications">
+            <a href="/gakumas-sms/notifications.php" class="topbar-icon-link <?= $is_notifications_page ? 'active' : '' ?>" aria-label="Notifications">
                 <i class="bi bi-bell"></i>
+                <span class="notification-badge d-none" data-notification-badge aria-label="0 unread notifications">0</span>
             </a>
 
             <a href="<?= htmlspecialchars($profile_url, ENT_QUOTES, 'UTF-8') ?>" class="topbar-user topbar-user-link" aria-label="Open profile settings">
@@ -185,3 +191,5 @@ $role_label = match ($role) {
 
         </div>
     </header>
+
+    <div class="notification-toast-region" data-notification-toasts aria-live="polite" aria-atomic="false"></div>

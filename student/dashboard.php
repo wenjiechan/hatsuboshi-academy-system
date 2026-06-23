@@ -4,6 +4,9 @@ require_role('student');
 
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
+require_once '../includes/notifications_helpers.php';
+
+generate_automatic_notifications($pdo);
 
 //Get current student profile
 $stmt = $pdo->prepare(

@@ -1,5 +1,12 @@
 <?php
-require_once 'includes/auth.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'httponly' => true,
+        'samesite' => 'Lax',
+        'secure' => !empty($_SERVER['HTTPS']),
+    ]);
+    session_start();
+}
 
 //Read the error form the session
 $issue = $_SESSION['account_issue'] ?? null;
