@@ -150,6 +150,7 @@ $producer_display = in_array($producer_status, ['active', 'removal_pending'], tr
 
 //Avatar diaplay logic
 $profile_avatar = trim((string) ($student['avatar'] ?? ''));
+$default_student_avatar_path = '/gakumas-sms/assets/images/avatars/default.webp';
 
 if ($profile_avatar !== '') {
     $profile_avatar_path = str_replace('\\', '/', $profile_avatar);
@@ -160,7 +161,7 @@ if ($profile_avatar !== '') {
     }
 } else {
     // Default avatar
-    $profile_avatar_path = '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student['name']) . '.png';
+    $profile_avatar_path = $default_student_avatar_path;
 }
 
 $page_title = 'My Profile';

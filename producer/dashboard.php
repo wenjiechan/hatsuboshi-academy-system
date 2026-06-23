@@ -90,6 +90,7 @@ foreach ($stat_labels as $stat_key => $stat_label) {
         'SELECT
             s.name,
             s.' . $stat_key . ' AS stat_value,
+            u.avatar,
             u.theme_primary_color,
             u.theme_secondary_color
          FROM students s
@@ -107,6 +108,7 @@ foreach ($stat_labels as $stat_key => $stat_label) {
             'stat_label' => $stat_label,
             'name' => $top_stat_student['name'],
             'stat_value' => (int) $top_stat_student['stat_value'],
+            'avatar' => $top_stat_student['avatar'] ?? '',
             'theme_primary_color' => $top_stat_student['theme_primary_color'] ?: '#FF6B9D',
             'theme_secondary_color' => $top_stat_student['theme_secondary_color'] ?: '#FFB3D1',
         ];
@@ -265,9 +267,22 @@ require_once '../includes/sidebar.php';
                 <?php else: ?>
                 <div class="schedule-list">
                     <?php foreach ($top_students as $student): ?>
+                    <?php
+                    $profile_avatar = trim((string) ($student['avatar'] ?? ''));
+
+                    if ($profile_avatar !== '') {
+                        $avatar_path = str_replace('\\', '/', $profile_avatar);
+
+                        if (!str_starts_with($avatar_path, '/') && !preg_match('/^https?:\/\//i', $avatar_path)) {
+                            $avatar_path = '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($avatar_path);
+                        }
+                    } else {
+                        $avatar_path = '/gakumas-sms/assets/images/avatars/default.webp';
+                    }
+                    ?>
                     <article class="top-stat-card <?= htmlspecialchars($student['stat_key'], ENT_QUOTES, 'UTF-8') ?>"
                         style="--student-primary: <?= htmlspecialchars($student['theme_primary_color'], ENT_QUOTES, 'UTF-8') ?>; --student-secondary: <?= htmlspecialchars($student['theme_secondary_color'], ENT_QUOTES, 'UTF-8') ?>;">
-                        <img src="/gakumas-sms/assets/images/avatars/idols/<?= rawurlencode($student['name']) ?>.png"
+                        <img src="<?= htmlspecialchars($avatar_path, ENT_QUOTES, 'UTF-8') ?>"
                             alt="<?= htmlspecialchars($student['name'], ENT_QUOTES, 'UTF-8') ?>" class="top-stat-avatar">
 
                         <div class="top-stat-content">

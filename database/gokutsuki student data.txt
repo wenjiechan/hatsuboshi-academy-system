@@ -1,0 +1,187 @@
+## Gokutsuki Academy Student Data
+
+---
+
+# 1. Kaya Rinha
+
+## Users table
+
+```text
+ID: 20
+Username: kaya_rinha
+Password: rinha001
+Role: student
+Avatar: NULL
+Theme Primary Color: #5A3FA8
+Theme Secondary Color: #C9B8FF
+```
+
+## Students table
+
+```text
+User ID: 20
+Name: Kaya Rinha
+Japanese Name: 賀陽 燐羽
+Birthday: 2008-12-12
+Zodiac: Sagittarius
+Blood Type: AB
+Height: 162
+Weight: 47
+Three Size: 78/56/80
+Hometown: Unknown
+Hobbies: Quiet training, observing other idols, reading fan letters
+Special Skill: Leadership, precise performance control, calm stage presence
+School Year: High School Year 1
+Rank: Debut
+Vocal: 88
+Dance: 76
+Visual: 92
+Producer ID: NULL
+Producer Status: unassigned
+```
+
+## Bio
+
+```text
+Former leader of the middle-school No.1 unit SyngUp!. She was once connected to Hatsuboshi Academy, but later became a rival idol associated with 961 Production and Gokutsuki Academy. Birthday, blood type, height, weight, three size, hobbies, and stats are fan-made placeholder values based on her character image.
+```
+
+---
+
+# 2. Aoi Nadeshiko
+
+## Users table
+
+```text
+ID: 21
+Username: aoi_nadeshiko
+Password: aoi001
+Role: student
+Avatar: NULL
+Theme Primary Color: #4A90E2
+Theme Secondary Color: #BFDFFF
+```
+
+## Students table
+
+```text
+User ID: 21
+Name: Aoi Nadeshiko
+Japanese Name: 藍井 撫子
+Birthday: 2008-05-18
+Zodiac: Taurus
+Blood Type: A
+Height: 158
+Weight: 46
+Three Size: 77/56/80
+Hometown: Unknown
+Hobbies: Fashion, beauty care, social media, collecting luxury accessories
+Special Skill: Self-promotion, charming fans, elegant posing
+School Year: High School Year 1
+Rank: Debut
+Vocal: 72
+Dance: 78
+Visual: 90
+Producer ID: NULL
+Producer Status: unassigned
+```
+
+## Bio
+
+```text
+A first-year idol from Gokutsuki Academy. She is a B-rank idol from the upper level of the school. She gained many fans by using the power of her wealthy family and has overwhelming confidence in her appearance. She admires Shirakusa Shion and calls her onee-sama, but does not realize she is being used. Birthday, blood type, height, weight, three size, hobbies, and stats are fan-made placeholder values.
+```
+
+---
+
+# 3. Shirakusa Shion
+
+## Users table
+
+```text
+ID: 22
+Username: shirakusa_shion
+Password: shion001
+Role: student
+Avatar: NULL
+Theme Primary Color: #8E6BBE
+Theme Secondary Color: #D8C8F0
+```
+
+## Students table
+
+```text
+User ID: 22
+Name: Shirakusa Shion
+Japanese Name: 白草 四音
+Birthday: 2008-09-04
+Zodiac: Virgo
+Blood Type: AB
+Height: 160
+Weight: 47
+Three Size: 78/56/81
+Hometown: Unknown
+Hobbies: Tea, strategy games, observing rivals, acting polite
+Special Skill: All-round performance, manipulation, perfect idol mask
+School Year: High School Year 1
+Rank: Debut
+Vocal: 92
+Dance: 91
+Visual: 94
+Producer ID: NULL
+Producer Status: unassigned
+```
+
+## Bio
+
+```text
+A first-year idol from Gokutsuki Academy. She reigns as an A-rank idol, with first-class ability in vocal, visual, and dance. She usually acts gentle and polite, but her true nature is cold and ruthless. For her, idols are a means and fans are tools. Birthday, blood type, height, weight, three size, hobbies, and stats are fan-made placeholder values.
+```
+
+---
+
+# 4. Shirakusa Gekka
+
+## Users table
+
+```text
+ID: 23
+Username: shirakusa_gekka
+Password: gekka001
+Role: student
+Avatar: NULL
+Theme Primary Color: #1E2A44
+Theme Secondary Color: #C7D3E8
+```
+
+## Students table
+
+```text
+User ID: 23
+Name: Shirakusa Gekka
+Japanese Name: 白草 月花
+Birthday: 2006-11-21
+Zodiac: Scorpio
+Blood Type: O
+Height: 168
+Weight: 52
+Three Size: 84/58/86
+Hometown: Unknown
+Hobbies: Overseas travel, night views, performance analysis, quiet places
+Special Skill: Top-level stage presence, cool performance, international appeal
+School Year: High School Year 3
+Rank: Debut
+Vocal: 96
+Dance: 94
+Visual: 98
+Producer ID: NULL
+Producer Status: unassigned
+```
+
+## Bio
+
+```text
+A third-year idol from Gokutsuki Academy. She is the only known S-rank idol in the school and is already famous as a top idol, currently active mainly in America. She dislikes waste, has little interest in most people, and only remembers the names of those with talent. Birthday, blood type, height, weight, three size, hobbies, and stats are fan-made placeholder values.
+```
+
+

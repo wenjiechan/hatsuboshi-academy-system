@@ -32,7 +32,7 @@ $default_avatar_path = match ($role) {
     'admin' => '/gakumas-sms/assets/images/avatars/default.webp',
     'producer' => '/gakumas-sms/assets/images/avatars/default_producer.webp',
     'teacher' => '/gakumas-sms/assets/images/avatars/default_teacher.webp',
-    default => '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student_name) . '.png',
+    default => '/gakumas-sms/assets/images/avatars/default.webp',
 };
 
 if ($custom_avatar !== '') {

@@ -31,10 +31,13 @@ $_SESSION['theme_secondary_color'] = $producer['theme_secondary_color'] ?: ($_SE
 
 //Get student under this producer
 $student_stmt = $pdo->prepare(
-    'SELECT *
-     FROM students
-     WHERE producer_id = ?
-     ORDER BY school_year, name;'
+    'SELECT
+        s.*,
+        u.avatar
+     FROM students s
+     INNER JOIN users u ON u.id = s.user_id
+     WHERE s.producer_id = ?
+     ORDER BY s.school_year, s.name;'
 );
 
 $student_stmt->execute([$producer['id']]);
@@ -133,7 +136,17 @@ require_once '../includes/sidebar.php';
                                 $student_id = (int) $student['id'];
                                 $producer_status = $student['producer_status'] ?? 'active';
                                 $producer_status_label = ucwords(str_replace('_', ' ', $producer_status));
-                                $avatar_path = '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($student['name']) . '.png';
+                                $profile_avatar = trim((string) ($student['avatar'] ?? ''));
+
+                                if ($profile_avatar !== '') {
+                                    $avatar_path = str_replace('\\', '/', $profile_avatar);
+
+                                    if (!str_starts_with($avatar_path, '/') && !preg_match('/^https?:\/\//i', $avatar_path)) {
+                                        $avatar_path = '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($avatar_path);
+                                    }
+                                } else {
+                                    $avatar_path = '/gakumas-sms/assets/images/avatars/default.webp';
+                                }
                                 //Search data
                                 $search_text = strtolower(
                                     implode(' ', [
