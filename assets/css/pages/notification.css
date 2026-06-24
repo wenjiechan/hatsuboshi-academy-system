@@ -9,7 +9,8 @@
     position: relative;
 }
 
-.notification-badge {
+.notification-badge,
+.message-badge {
     position: absolute;
     top: -4px;
     right: -4px;
@@ -216,6 +217,10 @@
 
 .notification-card--lesson {
     --notification-accent: #7c65d6;
+}
+
+.notification-card--message {
+    --notification-accent: #278a78;
 }
 
 .notification-card-top,

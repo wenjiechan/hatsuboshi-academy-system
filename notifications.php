@@ -34,6 +34,7 @@ function notification_icon(string $type): string
         NOTIFICATION_TYPE_SCHEDULE_UPDATED => 'bi-calendar2-check',
         NOTIFICATION_TYPE_SCHEDULE_CANCELLED => 'bi-calendar-x',
         NOTIFICATION_TYPE_LESSON_UPDATED => 'bi-journal-text',
+        NOTIFICATION_TYPE_NEW_MESSAGE => 'bi-envelope',
         default => 'bi-bell',
     };
 }
@@ -46,6 +47,7 @@ function notification_type_class(string $type): string
         NOTIFICATION_TYPE_SCHEDULE_CANCELLED => 'cancelled',
         NOTIFICATION_TYPE_LESSON_START,
         NOTIFICATION_TYPE_LESSON_UPDATED => 'lesson',
+        NOTIFICATION_TYPE_NEW_MESSAGE => 'message',
         default => 'schedule',
     };
 }
@@ -136,4 +138,3 @@ require_once 'includes/sidebar.php';
 </main>
 
 <?php require_once 'includes/footer.php'; ?>
-

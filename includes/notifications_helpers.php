@@ -8,6 +8,7 @@ const NOTIFICATION_TYPE_SCHEDULE_UPDATED = 'schedule_updated';
 const NOTIFICATION_TYPE_SCHEDULE_CANCELLED = 'schedule_cancelled';
 const NOTIFICATION_TYPE_SCHEDULE_CREATED = 'schedule_created';
 const NOTIFICATION_TYPE_LESSON_UPDATED = 'lesson_updated';
+const NOTIFICATION_TYPE_NEW_MESSAGE = 'new_message';
 
 // Check the notifications table has all required columns
 function ensure_notifications_table_columns(PDO $pdo): void
@@ -317,30 +318,45 @@ function notify_birthdays_for_date(PDO $pdo, DateTimeImmutable $date, string $ty
     $stmt->execute([$month_day]);
 
     foreach ($stmt->fetchAll() as $student) {
-        $title = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
-            ? 'Birthday today'
-            : 'Birthday coming up';
-        $body = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
-            ? sprintf('Today is %s\'s birthday.', $student['name'])
-            : sprintf('%s\'s birthday is in one week.', $student['name']);
+        $student_user_id = (int) $student['user_id'];
+        $student_title = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
+            ? 'Happy birthday!'
+            : 'Your birthday is coming up';
+        $student_body = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
+            ? 'Today is your birthday. Happy birthday!'
+            : 'Your birthday is in one week.';
 
-        $recipients = [(int) $student['user_id']];
+        $created += create_notification(
+            $pdo,
+            $student_user_id,
+            $type,
+            $student_title,
+            $student_body,
+            'student',
+            (int) $student['id'],
+            '/gakumas-sms/student/profile.php',
+            $type . ':' . (int) $student['id'] . ':' . $date_key . ':' . $student_user_id
+        ) ? 1 : 0;
 
         if (!empty($student['producer_id']) && $student['producer_status'] === 'active') {
-            $recipients[] = (int) $student['producer_id'];
-        }
+            $producer_user_id = (int) $student['producer_id'];
+            $producer_title = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
+                ? 'Student birthday today'
+                : 'Student birthday coming up';
+            $producer_body = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
+                ? sprintf('Today is %s\'s birthday.', $student['name'])
+                : sprintf('%s\'s birthday is in one week.', $student['name']);
 
-        foreach (array_unique($recipients) as $user_id) {
             $created += create_notification(
                 $pdo,
-                $user_id,
+                $producer_user_id,
                 $type,
-                $title,
-                $body,
+                $producer_title,
+                $producer_body,
                 'student',
                 (int) $student['id'],
-                '/gakumas-sms/student/profile.php',
-                $type . ':' . (int) $student['id'] . ':' . $date_key . ':' . $user_id
+                '/gakumas-sms/producer/students.php',
+                $type . ':' . (int) $student['id'] . ':' . $date_key . ':' . $producer_user_id
             ) ? 1 : 0;
         }
     }

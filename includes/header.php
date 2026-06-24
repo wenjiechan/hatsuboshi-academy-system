@@ -91,6 +91,8 @@ $role_label = match ($role) {
 };
 
 $is_notifications_page = basename($_SERVER['PHP_SELF']) === 'notifications.php';
+$current_directory = basename(dirname(str_replace('\\', '/', $_SERVER['PHP_SELF'] ?? '')));
+$is_messages_page = $current_directory === 'messages';
 ?>
 
 <!DOCTYPE html>
@@ -135,8 +137,9 @@ $is_notifications_page = basename($_SERVER['PHP_SELF']) === 'notifications.php';
             Hatsuboshi
         </a>
 
-        <a href="/gakumas-sms/messages/inbox.php" class="mobile-icon-link" aria-label="Messages">
+        <a href="/gakumas-sms/messages/inbox.php" class="mobile-icon-link <?= $is_messages_page ? 'active' : '' ?>" aria-label="Messages">
             <i class="bi bi-envelope"></i>
+            <span class="message-badge d-none" data-message-badge aria-label="0 unread messages">0</span>
         </a>
 
         <a href="/gakumas-sms/notifications.php" class="mobile-icon-link <?= $is_notifications_page ? 'active' : '' ?>" aria-label="Notifications">
@@ -167,8 +170,9 @@ $is_notifications_page = basename($_SERVER['PHP_SELF']) === 'notifications.php';
         </div>
 
         <div class="app-topbar-actions">
-            <a href="/gakumas-sms/messages/inbox.php" class="topbar-icon-link" aria-label="Messages">
+            <a href="/gakumas-sms/messages/inbox.php" class="topbar-icon-link <?= $is_messages_page ? 'active' : '' ?>" aria-label="Messages">
                 <i class="bi bi-envelope"></i>
+                <span class="message-badge d-none" data-message-badge aria-label="0 unread messages">0</span>
             </a>
 
             <a href="/gakumas-sms/notifications.php" class="topbar-icon-link <?= $is_notifications_page ? 'active' : '' ?>" aria-label="Notifications">

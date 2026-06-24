@@ -4,8 +4,10 @@ require_role('admin');
 
 require_once '../config/database.php';
 require_once '../includes/notifications_helpers.php';
+require_once '../includes/messages_helpers.php';
 
 generate_automatic_notifications($pdo);
+generate_automatic_birthday_messages($pdo);
 
 $page_title = 'Admin Dashboard';
 require_once '../includes/header.php';

@@ -3,6 +3,7 @@
     const pollUrl = '/gakumas-sms/api/notifications_poll.php';
     // Find all HTML elements with data-notification-badge
     const badges = Array.from(document.querySelectorAll('[data-notification-badge]'));
+    const messageBadges = Array.from(document.querySelectorAll('[data-message-badge]'));
     //Find the place where popup notifications should appear
     const toastRegion = document.querySelector('[data-notification-toasts]');
     // Avoid repeat showing same toast
@@ -27,6 +28,16 @@
             badge.textContent = label;
             badge.classList.toggle('d-none', count <= 0);
             badge.setAttribute('aria-label', `${count} unread notifications`);
+        });
+    }
+
+    function updateMessageBadges(count) {
+        const label = count > 99 ? '99+' : String(count);
+
+        messageBadges.forEach((badge) => {
+            badge.textContent = label;
+            badge.classList.toggle('d-none', count <= 0);
+            badge.setAttribute('aria-label', `${count} unread messages`);
         });
     }
 
@@ -106,8 +117,10 @@
             // Read JSON
             const data = await response.json();
             const count = Number(data.unread_count || 0);
+            const messageCount = Number(data.unread_message_count || 0);
             // Update badge
             updateBadges(count);
+            updateMessageBadges(messageCount);
 
             // Shows toast in reverse order
             (data.notifications || []).reverse().forEach(showToast);
@@ -116,7 +129,7 @@
         }
     }
 
-    if (badges.length === 0) {
+    if (badges.length === 0 && messageBadges.length === 0) {
         return;
     }
 

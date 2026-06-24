@@ -5,8 +5,10 @@ require_role('producer');
 require_once '../config/database.php';
 require_once '../includes/birthday_banner_helpers.php';
 require_once '../includes/notifications_helpers.php';
+require_once '../includes/messages_helpers.php';
 
 generate_automatic_notifications($pdo);
+generate_automatic_birthday_messages($pdo);
 
 // Get current producer account
 $stmt = $pdo->prepare(
@@ -118,23 +120,8 @@ foreach ($stat_labels as $stat_key => $stat_label) {
     }
 }
 
-// Recent inbox messages for the producer
-$messages_stmt = $pdo->prepare(
-    'SELECT
-        m.subject,
-        m.body,
-        m.is_read,
-        m.sent_at,
-        u.username AS sender_name
-     FROM messages m
-     LEFT JOIN users u ON u.id = m.sender_id
-     WHERE m.receiver_id = ?
-       AND m.is_deleted_by_receiver = 0
-     ORDER BY m.sent_at DESC
-     LIMIT 3'
-);
-$messages_stmt->execute([$_SESSION['id']]);
-$recent_messages = $messages_stmt->fetchAll();
+// Recent inbox conversations for the producer
+$recent_messages = get_recent_conversation_previews($pdo, (int) $_SESSION['id']);
 
 $birthday_students = get_dashboard_birthday_students($pdo);
 
@@ -317,23 +304,26 @@ require_once '../includes/sidebar.php';
                 <?php else: ?>
                 <div class="message-preview-list">
                     <?php foreach ($recent_messages as $message): ?>
-                    <article class="message-preview-item <?= $message['is_read'] ? '' : 'unread' ?>">
+                    <a
+                        href="/gakumas-sms/messages/view.php?id=<?= (int) $message['id'] ?>"
+                        class="message-preview-item <?= (int) $message['unread_count'] > 0 ? 'unread' : '' ?>"
+                    >
                         <div>
                             <h3>
-                                <?= htmlspecialchars($message['subject'] ?: 'No subject', ENT_QUOTES, 'UTF-8') ?>
+                                <?= htmlspecialchars(get_message_user_display_name($message), ENT_QUOTES, 'UTF-8') ?>
                             </h3>
                             <p>
-                                <?= htmlspecialchars($message['body'], ENT_QUOTES, 'UTF-8') ?>
+                                <?= htmlspecialchars($message['latest_message_body'], ENT_QUOTES, 'UTF-8') ?>
                             </p>
                         </div>
 
                         <footer>
-                            <span><?= htmlspecialchars($message['sender_name'] ?? 'Unknown sender', ENT_QUOTES, 'UTF-8') ?></span>
-                            <time datetime="<?= htmlspecialchars($message['sent_at'], ENT_QUOTES, 'UTF-8') ?>">
-                                <?= htmlspecialchars(date('M j', strtotime($message['sent_at'])), ENT_QUOTES, 'UTF-8') ?>
+                            <span><?= htmlspecialchars(ucfirst($message['other_role'] ?? 'User'), ENT_QUOTES, 'UTF-8') ?></span>
+                            <time datetime="<?= htmlspecialchars($message['latest_message_at'], ENT_QUOTES, 'UTF-8') ?>">
+                                <?= htmlspecialchars(date('M j', strtotime($message['latest_message_at'])), ENT_QUOTES, 'UTF-8') ?>
                             </time>
                         </footer>
-                    </article>
+                    </a>
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>

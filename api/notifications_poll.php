@@ -25,8 +25,10 @@ if ($user_id <= 0) {
 
 require_once '../config/database.php';
 require_once '../includes/notifications_helpers.php';
+require_once '../includes/messages_helpers.php';
 
 $count = get_unread_notification_count($pdo, $user_id);
+$message_count = get_unread_message_count($pdo, $user_id);
 
 ensure_notifications_table_columns($pdo);
 
@@ -44,5 +46,6 @@ $stmt->execute([$user_id]);
 // Outputs JSON
 echo json_encode([
     'unread_count' => $count,
+    'unread_message_count' => $message_count,
     'notifications' => $stmt->fetchAll(),
 ]);
