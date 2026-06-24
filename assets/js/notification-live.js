@@ -1,7 +1,11 @@
 (function () {
+    // Calls notifications_poll.php and get unread notifications
     const pollUrl = '/gakumas-sms/api/notifications_poll.php';
+    // Find all HTML elements with data-notification-badge
     const badges = Array.from(document.querySelectorAll('[data-notification-badge]'));
+    //Find the place where popup notifications should appear
     const toastRegion = document.querySelector('[data-notification-toasts]');
+    // Avoid repeat showing same toast
     const shownKey = 'gakumasShownNotifications';
     let shownIds = new Set();
 
@@ -15,6 +19,7 @@
         sessionStorage.setItem(shownKey, JSON.stringify(Array.from(shownIds).slice(-50)));
     }
 
+    // Update the notification badge
     function updateBadges(count) {
         const label = count > 99 ? '99+' : String(count);
 
@@ -25,6 +30,7 @@
         });
     }
 
+    //Create a small popup notification
     function showToast(notification) {
         if (!toastRegion || shownIds.has(String(notification.id))) {
             return;
@@ -79,6 +85,7 @@
         }, 15000);
     }
 
+    // Call the PHP API
     async function pollNotifications() {
         try {
             const response = await fetch(pollUrl, {
@@ -96,10 +103,13 @@
                 return;
             }
 
+            // Read JSON
             const data = await response.json();
             const count = Number(data.unread_count || 0);
+            // Update badge
             updateBadges(count);
 
+            // Shows toast in reverse order
             (data.notifications || []).reverse().forEach(showToast);
         } catch (error) {
             // Polling is progressive enhancement; failures should not block the page.
@@ -110,6 +120,7 @@
         return;
     }
 
+    // Checks for new notifications every 10 seconds
     pollNotifications();
     window.setInterval(pollNotifications, 10000);
 })();

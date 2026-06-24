@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 header('Content-Type: application/json; charset=utf-8');
 
+// Gets the current user id
 $user_id = (int) ($_SESSION['id'] ?? 0);
 
 if ($user_id <= 0) {
@@ -29,6 +30,7 @@ $count = get_unread_notification_count($pdo, $user_id);
 
 ensure_notifications_table_columns($pdo);
 
+// Get latest unread notifications
 $stmt = $pdo->prepare(
     'SELECT id, type, title, body, action_url, created_at
      FROM notifications
@@ -39,6 +41,7 @@ $stmt = $pdo->prepare(
 );
 $stmt->execute([$user_id]);
 
+// Outputs JSON
 echo json_encode([
     'unread_count' => $count,
     'notifications' => $stmt->fetchAll(),

@@ -1,5 +1,5 @@
 <?php
-
+// Defines all notification types
 const NOTIFICATION_TYPE_SCHEDULE_START = 'schedule_start';
 const NOTIFICATION_TYPE_LESSON_START = 'lesson_start';
 const NOTIFICATION_TYPE_BIRTHDAY_UPCOMING = 'birthday_upcoming';
@@ -9,6 +9,7 @@ const NOTIFICATION_TYPE_SCHEDULE_CANCELLED = 'schedule_cancelled';
 const NOTIFICATION_TYPE_SCHEDULE_CREATED = 'schedule_created';
 const NOTIFICATION_TYPE_LESSON_UPDATED = 'lesson_updated';
 
+// Check the notifications table has all required columns
 function ensure_notifications_table_columns(PDO $pdo): void
 {
     static $ensured = false;
@@ -57,6 +58,7 @@ function ensure_notifications_table_columns(PDO $pdo): void
     $ensured = true;
 }
 
+// Inserts a new notification in to the database
 function create_notification(
     PDO $pdo,
     int $user_id,
@@ -70,6 +72,7 @@ function create_notification(
 ): bool {
     ensure_notifications_table_columns($pdo);
 
+    // Check the duplication notifications
     if ($dedupe_key !== null) {
         $duplicate_stmt = $pdo->prepare(
             'SELECT id
@@ -104,6 +107,7 @@ function create_notification(
     ]);
 }
 
+// Get all notifications for one user
 function get_user_notifications(PDO $pdo, int $user_id): array
 {
     ensure_notifications_table_columns($pdo);
@@ -119,6 +123,7 @@ function get_user_notifications(PDO $pdo, int $user_id): array
     return $stmt->fetchAll();
 }
 
+//Marks one notification as read
 function mark_notification_read(PDO $pdo, int $notification_id, int $user_id): bool
 {
     ensure_notifications_table_columns($pdo);
@@ -134,6 +139,7 @@ function mark_notification_read(PDO $pdo, int $notification_id, int $user_id): b
     return $stmt->execute([$notification_id, $user_id]);
 }
 
+// Marks all unread notifications for a user as read
 function mark_all_notifications_read(PDO $pdo, int $user_id): bool
 {
     ensure_notifications_table_columns($pdo);
@@ -149,6 +155,7 @@ function mark_all_notifications_read(PDO $pdo, int $user_id): bool
     return $stmt->execute([$user_id]);
 }
 
+// Count unread notifications
 function get_unread_notification_count(PDO $pdo, int $user_id): int
 {
     $stmt = $pdo->prepare(
@@ -162,6 +169,7 @@ function get_unread_notification_count(PDO $pdo, int $user_id): int
     return (int) $stmt->fetchColumn();
 }
 
+// Create notifications when a schedule is created, updated, or cancelled
 function notify_schedule_created(PDO $pdo, int $schedule_id, string $schedule_kind = 'schedule'): bool
 {
     return notify_schedule_change($pdo, $schedule_id, $schedule_kind, NOTIFICATION_TYPE_SCHEDULE_CREATED);
@@ -230,6 +238,7 @@ function generate_automatic_notifications(PDO $pdo, ?DateTimeImmutable $now = nu
     ];
 }
 
+// Checks schedules that are starting soon
 function notify_due_schedule_starts(PDO $pdo, DateTimeImmutable $now): int
 {
     $created = 0;
@@ -287,6 +296,7 @@ function notify_due_schedule_starts(PDO $pdo, DateTimeImmutable $now): int
     return $created;
 }
 
+// Check students whose birthday month and day match the target day
 function notify_birthdays_for_date(PDO $pdo, DateTimeImmutable $date, string $type): int
 {
     $month_day = $date->format('m-d');
@@ -367,6 +377,7 @@ function notify_schedule_change(PDO $pdo, int $schedule_id, string $schedule_kin
     );
 }
 
+//Gets schedule data from normal or recurring data
 function get_notification_schedule(PDO $pdo, int $schedule_id, string $schedule_kind): ?array
 {
     if ($schedule_kind === 'recurring_schedule') {
@@ -399,6 +410,7 @@ function get_notification_schedule(PDO $pdo, int $schedule_id, string $schedule_
     return $schedule ?: null;
 }
 
+//Creates the actual starting soon notifications
 function notify_schedule_start_row(PDO $pdo, array $schedule, string $schedule_kind, string $date_key): int
 {
     $is_lesson = is_lesson_activity((string) $schedule['activity_type']);
@@ -423,11 +435,13 @@ function notify_schedule_start_row(PDO $pdo, array $schedule, string $schedule_k
     ) ? 1 : 0;
 }
 
+// Decide the activity is considered a lessons
 function is_lesson_activity(string $activity_type): bool
 {
     return in_array(strtolower($activity_type), ['lesson', 'vocal', 'dance', 'visual'], true);
 }
 
+// Create readable schedule text
 function format_notification_schedule_summary(array $schedule, string $schedule_kind): string
 {
     $time = substr((string) $schedule['start_time'], 0, 5);
