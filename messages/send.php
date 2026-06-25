@@ -46,7 +46,7 @@ try {
     $sender_name = $sender['display_name'] ?? $_SESSION['user_name'] ?? 'Someone';
 
     // Create a notification for each recipient
-    foreach (get_conversation_recipient_ids($pdo, (int) $conversation_id, $sender_id) as $recipient_id) {
+    foreach (get_conversation_notification_recipient_ids($pdo, (int) $conversation_id, $sender_id) as $recipient_id) {
         create_notification(
             $pdo,
             $recipient_id,

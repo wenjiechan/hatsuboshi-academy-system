@@ -4,10 +4,18 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/messages_helpers.php';
 
 $user_id = (int) $_SESSION['id'];
-$conversations = get_user_conversations($pdo, $user_id);
+$conversations = get_user_conversations($pdo, $user_id, true);
+$active_conversations = array_values(array_filter(
+    $conversations,
+    static fn(array $conversation): bool => empty($conversation['is_archived'])
+));
+$archived_conversations = array_values(array_filter(
+    $conversations,
+    static fn(array $conversation): bool => !empty($conversation['is_archived'])
+));
 $total_unread = array_sum(array_map(
     static fn(array $conversation): int => (int) $conversation['unread_count'],
-    $conversations
+    $active_conversations
 ));
 
 // Format the latest message time nicely
@@ -85,10 +93,10 @@ require_once __DIR__ . '/../includes/sidebar.php';
             <p>Chat with students, producers, and teachers.</p>
         </div>
 
-        <div class="messages-summary-grid" aria-label="Message summary">
+        <div class="messages-summary-grid" aria-label="Message summary" data-inbox-summary>
             <div>
                 <span>Conversations</span>
-                <strong><?= count($conversations) ?></strong>
+                <strong><?= count($active_conversations) ?></strong>
             </div>
             <div>
                 <span>Unread</span>
@@ -151,132 +159,139 @@ require_once __DIR__ . '/../includes/sidebar.php';
         </a>
     </section>
 
-    <?php if (empty($conversations)): ?>
-        <section class="messages-empty-state">
-            <i class="bi bi-chat-square-text"></i>
-            <h3>No conversations yet</h3>
-            <p>Start a conversation with another active user.</p>
-            <a href="/gakumas-sms/messages/compose.php" class="messages-empty-action">
-                <i class="bi bi-pencil-square"></i>
-                New message
-            </a>
-        </section>
-    <?php else: ?>
-        <section class="messages-list-toolbar" aria-label="Inbox views">
-            <div class="messages-view-tabs" role="group" aria-label="Filter conversations">
-                <button type="button" class="active" data-inbox-view="all" aria-pressed="true">
-                    All
-                    <span><?= count($conversations) ?></span>
-                </button>
-                <button type="button" data-inbox-view="unread" aria-pressed="false">
-                    Unread
-                    <span><?= count(array_filter(
-                        $conversations,
-                        static fn(array $conversation): bool => (int) $conversation['unread_count'] > 0
-                    )) ?></span>
-                </button>
-            </div>
+    <div data-inbox-live-region>
+        <?php if (empty($conversations)): ?>
+            <section class="messages-empty-state">
+                <i class="bi bi-chat-square-text"></i>
+                <h3>No conversations yet</h3>
+                <p>Start a conversation with another active user.</p>
+                <a href="/gakumas-sms/messages/compose.php" class="messages-empty-action">
+                    <i class="bi bi-pencil-square"></i>
+                    New message
+                </a>
+            </section>
+        <?php else: ?>
+            <section class="messages-list-toolbar" aria-label="Inbox views">
+                <div class="messages-view-tabs" role="group" aria-label="Filter conversations">
+                    <button type="button" class="active" data-inbox-view="all" aria-pressed="true">
+                        All
+                        <span><?= count($active_conversations) ?></span>
+                    </button>
+                    <button type="button" data-inbox-view="unread" aria-pressed="false">
+                        Unread
+                        <span><?= count(array_filter(
+                            $active_conversations,
+                            static fn(array $conversation): bool => (int) $conversation['unread_count'] > 0
+                        )) ?></span>
+                    </button>
+                    <button type="button" data-inbox-view="archived" aria-pressed="false">
+                        Archived
+                        <span><?= count($archived_conversations) ?></span>
+                    </button>
+                </div>
 
-            <p class="messages-result-count" aria-live="polite">
-                Showing <strong data-visible-conversation-count><?= count($conversations) ?></strong>
-                <span data-conversation-count-label>conversation<?= count($conversations) === 1 ? '' : 's' ?></span>
-            </p>
-        </section>
+                <p class="messages-result-count" aria-live="polite">
+                    Showing <strong data-visible-conversation-count><?= count($active_conversations) ?></strong>
+                    <span data-conversation-count-label>conversation<?= count($active_conversations) === 1 ? '' : 's' ?></span>
+                </p>
+            </section>
 
-        <section class="conversation-list" aria-label="Your conversations">
-            <?php foreach ($conversations as $conversation): ?>
-                <?php
-                $display_name = get_message_user_display_name($conversation);
-                $unread_count = (int) $conversation['unread_count'];
-                $is_own_latest = (int) ($conversation['latest_sender_id'] ?? 0) === $user_id;
-                ?>
-                <a
-                    href="/gakumas-sms/messages/view.php?id=<?= (int) $conversation['id'] ?>"
-                    class="conversation-row<?= $unread_count > 0 ? ' unread' : '' ?>"
-                    data-conversation-row
-                    data-unread="<?= $unread_count > 0 ? 'true' : 'false' ?>"
-                    data-search-name="<?= htmlspecialchars(
-                        strtolower($display_name),
-                        ENT_QUOTES,
-                        'UTF-8'
-                    ) ?>"
-                    data-search-content="<?= htmlspecialchars(
-                        strtolower((string) ($conversation['latest_message_body'] ?? '')),
-                        ENT_QUOTES,
-                        'UTF-8'
-                    ) ?>"
-                >
-                    <img
-                        src="<?= htmlspecialchars(inbox_avatar_path($conversation), ENT_QUOTES, 'UTF-8') ?>"
-                        alt=""
-                        class="conversation-avatar"
+            <section class="conversation-list" aria-label="Your conversations">
+                <?php foreach ($conversations as $conversation): ?>
+                    <?php
+                    $display_name = get_message_user_display_name($conversation);
+                    $unread_count = (int) $conversation['unread_count'];
+                    $is_own_latest = (int) ($conversation['latest_sender_id'] ?? 0) === $user_id;
+                    ?>
+                    <a
+                        href="/gakumas-sms/messages/view.php?id=<?= (int) $conversation['id'] ?>"
+                        class="conversation-row<?= $unread_count > 0 ? ' unread' : '' ?>"
+                        data-conversation-row
+                        data-unread="<?= $unread_count > 0 ? 'true' : 'false' ?>"
+                        data-archived="<?= !empty($conversation['is_archived']) ? 'true' : 'false' ?>"
+                        data-search-name="<?= htmlspecialchars(
+                            strtolower($display_name),
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        data-search-content="<?= htmlspecialchars(
+                            strtolower((string) ($conversation['latest_message_body'] ?? '')),
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
                     >
+                        <img
+                            src="<?= htmlspecialchars(inbox_avatar_path($conversation), ENT_QUOTES, 'UTF-8') ?>"
+                            alt=""
+                            class="conversation-avatar"
+                        >
 
-                    <div class="conversation-copy">
-                        <div class="conversation-heading">
-                            <h3><?= htmlspecialchars($display_name, ENT_QUOTES, 'UTF-8') ?></h3>
-                            <?php if (!empty($conversation['latest_message_at'])): ?>
-                                <time datetime="<?= htmlspecialchars($conversation['latest_message_at'], ENT_QUOTES, 'UTF-8') ?>">
-                                    <?= htmlspecialchars(format_message_inbox_time($conversation['latest_message_at']), ENT_QUOTES, 'UTF-8') ?>
-                                </time>
-                            <?php endif; ?>
-                        </div>
-
-                        <div class="conversation-preview">
-                            <p>
-                                <?php if ($is_own_latest): ?>
-                                    <span class="conversation-you">You:</span>
-                                <?php endif; ?>
-                                <?= htmlspecialchars(message_preview($conversation['latest_message_body']), ENT_QUOTES, 'UTF-8') ?>
-                            </p>
-
-                            <div class="conversation-indicators">
-                                <?php if (!empty($conversation['is_muted'])): ?>
-                                    <i class="bi bi-bell-slash" title="Muted" aria-label="Muted"></i>
-                                <?php endif; ?>
-
-                                <?php if ($unread_count > 0): ?>
-                                    <span class="conversation-unread-count" aria-label="<?= $unread_count ?> unread messages">
-                                        <?= $unread_count > 99 ? '99+' : $unread_count ?>
-                                    </span>
-                                <?php else: ?>
-                                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        <div class="conversation-copy">
+                            <div class="conversation-heading">
+                                <h3><?= htmlspecialchars($display_name, ENT_QUOTES, 'UTF-8') ?></h3>
+                                <?php if (!empty($conversation['latest_message_at'])): ?>
+                                    <time datetime="<?= htmlspecialchars($conversation['latest_message_at'], ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= htmlspecialchars(format_message_inbox_time($conversation['latest_message_at']), ENT_QUOTES, 'UTF-8') ?>
+                                    </time>
                                 <?php endif; ?>
                             </div>
-                        </div>
 
-                        <span class="conversation-role">
-                            <?= htmlspecialchars(ucfirst((string) ($conversation['other_role'] ?? 'system')), ENT_QUOTES, 'UTF-8') ?>
-                        </span>
+                            <div class="conversation-preview">
+                                <p>
+                                    <?php if ($is_own_latest): ?>
+                                        <span class="conversation-you">You:</span>
+                                    <?php endif; ?>
+                                    <?= htmlspecialchars(message_preview($conversation['latest_message_body']), ENT_QUOTES, 'UTF-8') ?>
+                                </p>
 
-                        <?php if (
-                            !empty($conversation['latest_message_type']) &&
-                            $conversation['latest_message_type'] !== MESSAGE_TYPE_TEXT
-                        ): ?>
-                            <span class="conversation-message-type">
-                                <?= htmlspecialchars(
-                                    match ($conversation['latest_message_type']) {
-                                        MESSAGE_TYPE_BIRTHDAY => 'Birthday',
-                                        MESSAGE_TYPE_PRODUCER_ADD_REQUEST,
-                                        MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST => 'Request',
-                                        default => 'System',
-                                    },
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
+                                <div class="conversation-indicators">
+                                    <?php if (!empty($conversation['is_muted'])): ?>
+                                        <i class="bi bi-bell-slash" title="Muted" aria-label="Muted"></i>
+                                    <?php endif; ?>
+
+                                    <?php if ($unread_count > 0): ?>
+                                        <span class="conversation-unread-count" aria-label="<?= $unread_count ?> unread messages">
+                                            <?= $unread_count > 99 ? '99+' : $unread_count ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <span class="conversation-role">
+                                <?= htmlspecialchars(ucfirst((string) ($conversation['other_role'] ?? 'system')), ENT_QUOTES, 'UTF-8') ?>
                             </span>
-                        <?php endif; ?>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        </section>
 
-        <section class="messages-no-results" data-conversation-no-results hidden>
-            <i class="bi bi-search"></i>
-            <h3>No conversations found</h3>
-            <p>Try a different name or message keyword.</p>
-        </section>
-    <?php endif; ?>
+                            <?php if (
+                                !empty($conversation['latest_message_type']) &&
+                                $conversation['latest_message_type'] !== MESSAGE_TYPE_TEXT
+                            ): ?>
+                                <span class="conversation-message-type">
+                                    <?= htmlspecialchars(
+                                        match ($conversation['latest_message_type']) {
+                                            MESSAGE_TYPE_BIRTHDAY => 'Birthday',
+                                            MESSAGE_TYPE_PRODUCER_ADD_REQUEST,
+                                            MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST => 'Request',
+                                            default => 'System',
+                                        },
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </section>
+
+            <section class="messages-no-results" data-conversation-no-results hidden>
+                <i class="bi bi-search"></i>
+                <h3>No conversations found</h3>
+                <p>Try a different name or message keyword.</p>
+            </section>
+        <?php endif; ?>
+    </div>
 </main>
 
 <script src="/gakumas-sms/assets/js/messages.js" defer></script>

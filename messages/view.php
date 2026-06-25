@@ -69,7 +69,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 class="conversation-header-avatar"
             >
 
-            <div>
+            <div class="conversation-header-copy">
                 <h2><?= htmlspecialchars($conversation['other_display_name'] ?? 'System', ENT_QUOTES, 'UTF-8') ?></h2>
                 <p>
                     <?= $conversation['conversation_type'] === 'system'
@@ -80,6 +80,41 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <?php endif; ?>
                 </p>
             </div>
+
+            <div class="conversation-action-menu" data-conversation-action-menu>
+                <button
+                    type="button"
+                    class="conversation-action-menu-toggle"
+                    aria-label="Conversation options"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                    data-conversation-action-toggle
+                >
+                    <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+                </button>
+
+                <div class="conversation-action-menu-panel" role="menu" data-conversation-action-panel hidden>
+                    <form method="post" action="/gakumas-sms/messages/mute.php" role="none">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
+                        <input type="hidden" name="action" value="<?= !empty($conversation['is_muted']) ? 'unmute' : 'mute' ?>">
+                        <button type="submit" role="menuitem">
+                            <i class="bi <?= !empty($conversation['is_muted']) ? 'bi-bell' : 'bi-bell-slash' ?>"></i>
+                            <span><?= !empty($conversation['is_muted']) ? 'Unmute conversation' : 'Mute conversation' ?></span>
+                        </button>
+                    </form>
+
+                    <form method="post" action="/gakumas-sms/messages/archive.php" role="none">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
+                        <input type="hidden" name="action" value="<?= !empty($conversation['is_archived']) ? 'restore' : 'archive' ?>">
+                        <button type="submit" role="menuitem">
+                            <i class="bi <?= !empty($conversation['is_archived']) ? 'bi-arrow-counterclockwise' : 'bi-archive' ?>"></i>
+                            <span><?= !empty($conversation['is_archived']) ? 'Restore conversation' : 'Archive conversation' ?></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </header>
 
         <?php if ($message_error): ?>
@@ -89,7 +124,14 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         <?php endif; ?>
 
-        <div class="conversation-thread" aria-label="Conversation messages" data-conversation-thread>
+        <div
+            class="conversation-thread"
+            aria-label="Conversation messages"
+            data-conversation-thread
+            data-conversation-id="<?= (int) $conversation_id ?>"
+            data-last-message-id="<?= !empty($messages) ? (int) end($messages)['id'] : 0 ?>"
+            data-csrf-token="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>"
+        >
             <?php if (empty($messages)): ?>
                 <div class="conversation-start-state">
                     <i class="bi bi-chat-heart"></i>
@@ -100,9 +142,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <?php foreach ($messages as $message): ?>
                     <?php
                     $is_own_message = (int) ($message['sender_id'] ?? 0) === $user_id;
+                    $is_deleted_message = !empty($message['deleted_at']);
                     $type_label = chat_message_type_label((string) $message['message_type']);
                     ?>
-                    <article class="chat-message<?= $is_own_message ? ' own' : '' ?><?= $type_label ? ' special' : '' ?>">
+                    <article
+                        class="chat-message<?= $is_own_message ? ' own' : '' ?><?= $type_label ? ' special' : '' ?><?= $is_deleted_message ? ' deleted' : '' ?>"
+                        data-message-id="<?= (int) $message['id'] ?>"
+                    >
                         <div class="chat-message-bubble">
                             <?php if ($type_label): ?>
                                 <span class="chat-message-type">
@@ -110,27 +156,57 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 </span>
                             <?php endif; ?>
 
-                            <p data-message-body><?= nl2br(htmlspecialchars($message['body'], ENT_QUOTES, 'UTF-8')) ?></p>
+                            <p data-message-body>
+                                <?php if ($is_deleted_message): ?>
+                                    <i class="bi bi-slash-circle" aria-hidden="true"></i>
+                                    <em>This message was deleted.</em>
+                                <?php else: ?>
+                                    <?= nl2br(htmlspecialchars($message['body'], ENT_QUOTES, 'UTF-8')) ?>
+                                <?php endif; ?>
+                            </p>
 
                             <div class="chat-message-meta">
-                                <?php if (!empty($message['edited_at'])): ?>
-                                    <span>Edited</span>
+                                <?php if (!$is_deleted_message && !empty($message['edited_at'])): ?>
+                                    <span data-message-edited>Edited</span>
                                 <?php endif; ?>
                                 <time datetime="<?= htmlspecialchars($message['created_at'], ENT_QUOTES, 'UTF-8') ?>">
                                     <?= htmlspecialchars(format_chat_message_time($message['created_at']), ENT_QUOTES, 'UTF-8') ?>
                                 </time>
 
-                                <!--Only editable messages show the pencil button-->
-                                <?php if (!empty($message['can_edit'])): ?>
-                                    <button
-                                        type="button"
-                                        class="chat-message-edit-button"
-                                        data-message-edit-open
-                                        aria-label="Edit message"
-                                        title="Edit message"
-                                    >
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
+                                <?php if (!empty($message['can_edit']) || !empty($message['can_delete'])): ?>
+                                    <div class="chat-message-action-menu" data-message-action-menu>
+                                        <button
+                                            type="button"
+                                            class="chat-message-action-toggle"
+                                            data-message-action-toggle
+                                            aria-label="Message options"
+                                            aria-haspopup="menu"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="bi bi-three-dots" aria-hidden="true"></i>
+                                        </button>
+
+                                        <div class="chat-message-action-panel" role="menu" data-message-action-panel hidden>
+                                            <?php if (!empty($message['can_edit'])): ?>
+                                                <button type="button" role="menuitem" data-message-edit-open>
+                                                    <i class="bi bi-pencil"></i>
+                                                    <span>Edit</span>
+                                                </button>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($message['can_delete'])): ?>
+                                                <form method="post" action="/gakumas-sms/messages/delete.php" class="chat-message-delete-form" role="none">
+                                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                                                    <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
+                                                    <input type="hidden" name="message_id" value="<?= (int) $message['id'] ?>">
+                                                    <button type="submit" role="menuitem" data-message-delete-submit>
+                                                        <i class="bi bi-trash3"></i>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
                                 <?php endif; ?>
                             </div>
 

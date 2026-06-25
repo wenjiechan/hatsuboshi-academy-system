@@ -118,6 +118,7 @@ function find_or_create_direct_conversation(PDO $pdo, int $first_user_id, int $s
         ?? create_direct_conversation($pdo, $first_user_id, $second_user_id);
 }
 
+// Finds a system conversation for a user
 function find_system_conversation(PDO $pdo, int $recipient_user_id): ?int
 {
     $stmt = $pdo->prepare(
@@ -333,6 +334,79 @@ function get_conversation_recipient_ids(PDO $pdo, int $conversation_id, int $sen
     return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
 }
 
+// Gets recipients who have not muted this conversation.
+function get_conversation_notification_recipient_ids(
+    PDO $pdo,
+    int $conversation_id,
+    int $sender_id
+): array {
+    $stmt = $pdo->prepare(
+        'SELECT user_id
+         FROM conversation_participants
+         WHERE conversation_id = ?
+           AND user_id <> ?
+           AND is_muted = 0
+           AND deleted_at IS NULL'
+    );
+    $stmt->execute([$conversation_id, $sender_id]);
+
+    return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+}
+
+// Checks whether the current user has muted a conversation
+function is_conversation_muted(PDO $pdo, int $conversation_id, int $user_id): bool
+{
+    $stmt = $pdo->prepare(
+        'SELECT is_muted
+         FROM conversation_participants
+         WHERE conversation_id = ?
+           AND user_id = ?
+           AND deleted_at IS NULL
+         LIMIT 1'
+    );
+    $stmt->execute([$conversation_id, $user_id]);
+
+    return (bool) $stmt->fetchColumn();
+}
+
+// Archives or unarchives a conversation for one user
+function set_conversation_archived(
+    PDO $pdo,
+    int $conversation_id,
+    int $user_id,
+    bool $is_archived
+): bool {
+    $stmt = $pdo->prepare(
+        'UPDATE conversation_participants
+         SET is_archived = ?
+         WHERE conversation_id = ?
+           AND user_id = ?
+           AND deleted_at IS NULL'
+    );
+    $stmt->execute([$is_archived ? 1 : 0, $conversation_id, $user_id]);
+
+    return $stmt->rowCount() > 0;
+}
+
+// Mutes or unmutes a conversation for one user
+function set_conversation_muted(
+    PDO $pdo,
+    int $conversation_id,
+    int $user_id,
+    bool $is_muted
+): bool {
+    $stmt = $pdo->prepare(
+        'UPDATE conversation_participants
+         SET is_muted = ?
+         WHERE conversation_id = ?
+           AND user_id = ?
+           AND deleted_at IS NULL'
+    );
+    $stmt->execute([$is_muted ? 1 : 0, $conversation_id, $user_id]);
+
+    return $stmt->rowCount() > 0;
+}
+
 // Gets all conversations for the current user
 // If the user has not opened the conversation after a new message, it becomes unread
 // Newest conversations appear at the top
@@ -356,7 +430,11 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
             latest_message.id AS latest_message_id,
             latest_message.sender_id AS latest_sender_id,
             latest_message.message_type AS latest_message_type,
-            latest_message.body AS latest_message_body,
+            CASE
+                WHEN latest_message.deleted_at IS NOT NULL
+                THEN "This message was deleted."
+                ELSE latest_message.body
+            END AS latest_message_body,
             latest_message.created_at AS latest_message_at,
             (
                 SELECT COUNT(*)
@@ -385,12 +463,12 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
                 SELECT recent_message.id
                 FROM messages recent_message
                 WHERE recent_message.conversation_id = c.id
-                  AND recent_message.deleted_at IS NULL
                 ORDER BY recent_message.created_at DESC, recent_message.id DESC
                 LIMIT 1
             )
          WHERE current_participant.user_id = ?
            AND current_participant.deleted_at IS NULL
+           AND latest_message.id IS NOT NULL
            ' . $archive_sql . '
          ORDER BY
             COALESCE(latest_message.created_at, c.updated_at) DESC,
@@ -425,13 +503,22 @@ function get_conversation_messages(
             m.related_id,
             m.created_at,
             m.edited_at,
+            m.deleted_at,
             CASE
                 WHEN m.sender_id = ?
                  AND m.message_type = "text"
+                 AND m.deleted_at IS NULL
                  AND m.created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
                 THEN 1
                 ELSE 0
             END AS can_edit,
+            CASE
+                WHEN m.sender_id = ?
+                 AND m.message_type = "text"
+                 AND m.deleted_at IS NULL
+                THEN 1
+                ELSE 0
+            END AS can_delete,
             u.username AS sender_username,
             u.role AS sender_role,
             u.avatar AS sender_avatar,
@@ -440,11 +527,74 @@ function get_conversation_messages(
          LEFT JOIN users u ON u.id = m.sender_id
          LEFT JOIN students s ON s.user_id = u.id
          WHERE m.conversation_id = ?
-           AND m.deleted_at IS NULL
          ORDER BY m.created_at ASC, m.id ASC
          LIMIT ' . $limit
     );
-    $stmt->execute([$user_id, $conversation_id]);
+    $stmt->execute([$user_id, $user_id, $conversation_id]);
+
+    return $stmt->fetchAll();
+}
+
+// Gets messages deleted after a polling cursor.
+function get_deleted_conversation_messages(
+    PDO $pdo,
+    int $conversation_id,
+    int $user_id,
+    string $deleted_after,
+    int $limit = 100
+): array {
+    if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
+        return [];
+    }
+
+    $limit = max(1, min($limit, 200));
+    $stmt = $pdo->prepare(
+        'SELECT
+            m.id,
+            m.sender_id,
+            m.message_type,
+            m.created_at,
+            m.deleted_at
+         FROM messages m
+         WHERE m.conversation_id = ?
+           AND m.deleted_at IS NOT NULL
+           AND m.deleted_at >= DATE_SUB(?, INTERVAL 1 SECOND)
+         ORDER BY m.deleted_at ASC, m.id ASC
+         LIMIT ' . $limit
+    );
+    $stmt->execute([$conversation_id, $deleted_after]);
+
+    return $stmt->fetchAll();
+}
+
+// Gets messages edited after a polling cursor.
+// The one-second overlap prevents edits from being missed by DATETIME's second precision.
+function get_edited_conversation_messages(
+    PDO $pdo,
+    int $conversation_id,
+    int $user_id,
+    string $edited_after,
+    int $limit = 100
+): array {
+    if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
+        return [];
+    }
+
+    $limit = max(1, min($limit, 200));
+    $stmt = $pdo->prepare(
+        'SELECT
+            m.id,
+            m.body,
+            m.edited_at
+         FROM messages m
+         WHERE m.conversation_id = ?
+           AND m.edited_at IS NOT NULL
+           AND m.edited_at >= DATE_SUB(?, INTERVAL 1 SECOND)
+           AND m.deleted_at IS NULL
+         ORDER BY m.edited_at ASC, m.id ASC
+         LIMIT ' . $limit
+    );
+    $stmt->execute([$conversation_id, $edited_after]);
 
     return $stmt->fetchAll();
 }
@@ -523,6 +673,53 @@ function edit_conversation_message(
     }
 
     return (int) $message['conversation_id'];
+}
+
+// Soft delete a message
+function delete_conversation_message(
+    PDO $pdo,
+    int $message_id,
+    int $conversation_id,
+    int $sender_id
+): int {
+    $message_stmt = $pdo->prepare(
+        'SELECT sender_id, message_type, deleted_at
+         FROM messages
+         WHERE id = ?
+           AND conversation_id = ?
+         LIMIT 1'
+    );
+    $message_stmt->execute([$message_id, $conversation_id]);
+    $message = $message_stmt->fetch();
+
+    if (!$message || (int) $message['sender_id'] !== $sender_id) {
+        throw new RuntimeException('You cannot delete this message.');
+    }
+
+    if ($message['message_type'] !== MESSAGE_TYPE_TEXT) {
+        throw new RuntimeException('Only text messages can be deleted.');
+    }
+
+    if (!empty($message['deleted_at'])) {
+        return $conversation_id;
+    }
+
+    $delete_stmt = $pdo->prepare(
+        'UPDATE messages
+         SET deleted_at = NOW()
+         WHERE id = ?
+           AND conversation_id = ?
+           AND sender_id = ?
+           AND message_type = "text"
+           AND deleted_at IS NULL'
+    );
+    $delete_stmt->execute([$message_id, $conversation_id, $sender_id]);
+
+    if ($delete_stmt->rowCount() !== 1) {
+        throw new RuntimeException('This message could not be deleted.');
+    }
+
+    return $conversation_id;
 }
 
 // Insert a new message into the database
@@ -719,7 +916,11 @@ function generate_automatic_birthday_messages(
                 $dedupe_key
             );
 
-            if (function_exists('create_notification') && defined('NOTIFICATION_TYPE_NEW_MESSAGE')) {
+            if (
+                function_exists('create_notification') &&
+                defined('NOTIFICATION_TYPE_NEW_MESSAGE') &&
+                !is_conversation_muted($pdo, $conversation_id, (int) $student['user_id'])
+            ) {
                 create_notification(
                     $pdo,
                     (int) $student['user_id'],

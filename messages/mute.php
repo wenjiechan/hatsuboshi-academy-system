@@ -14,11 +14,11 @@ $user_id = (int) $_SESSION['id'];
 $conversation_id = filter_input(INPUT_POST, 'conversation_id', FILTER_VALIDATE_INT);
 $action = (string) ($_POST['action'] ?? '');
 
-// Validate permission and action
+// Validate permission
 // Prevent a user from changing another user's conversation by editing the form manually
 if (
     !$conversation_id ||
-    !in_array($action, ['archive', 'restore'], true) ||
+    !in_array($action, ['mute', 'unmute'], true) ||
     !is_conversation_participant($pdo, (int) $conversation_id, $user_id)
 ) {
     redirect_to_account_issue(
@@ -28,20 +28,14 @@ if (
     );
 }
 
-// Call the helper function
-// Only archives/restores the conversation for the current user
-set_conversation_archived(
+// Calll the helper function from messages helpers
+// Change the mute status for the current student
+set_conversation_muted(
     $pdo,
     (int) $conversation_id,
     $user_id,
-    $action === 'archive'
+    $action === 'mute'
 );
 
-// If the user archived the conversation, they will go back to inbox
-// If the user restore the conversation, they will go back to that conversation page
-$destination = $action === 'archive'
-    ? '/gakumas-sms/messages/inbox.php'
-    : '/gakumas-sms/messages/view.php?id=' . (int) $conversation_id;
-
-header('Location: ' . $destination);
+header('Location: /gakumas-sms/messages/view.php?id=' . (int) $conversation_id);
 exit;
