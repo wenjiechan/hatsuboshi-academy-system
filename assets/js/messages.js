@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.querySelector('[data-message-input]');
     const characterCount = document.querySelector('[data-message-character-count]');
     const conversationThread = document.querySelector('[data-conversation-thread]');
+    const messageComposer = document.querySelector('[data-message-composer]');
+    const messageSendButton = document.querySelector('[data-message-send-button]');
+    const messageSendError = document.querySelector('[data-message-send-error]');
     let setMessageEditVisibility = () => {};
     // Controls a menu for the whole conversation like archive, delete and mute
     const conversationActionMenu = document.querySelector('[data-conversation-action-menu]');
@@ -479,6 +482,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 pollInProgress = false;
             }
         };
+
+        // Send a message in the background without reloading the page
+        if (messageComposer && messageInput && messageSendButton) {
+            messageComposer.addEventListener('submit', async (event) => {
+                //Javascript takes control of the submit process
+                event.preventDefault();
+
+                if (messageInput.value.trim() === '') {
+                    messageInput.focus();
+                    return;
+                }
+
+                // Prevents the user from clicking Send many times quickly
+                messageSendButton.disabled = true;
+
+                // Clear previous error message before trying again
+                if (messageSendError) {
+                    messageSendError.hidden = true;
+                    messageSendError.textContent = '';
+                }
+
+                try {
+                    // Send the form to the URL
+                    const response = await fetch(messageComposer.action, {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: new FormData(messageComposer),
+                    });
+
+                    if (response.redirected) {
+                        window.location.assign(response.url);
+                        return;
+                    }
+
+                    // Read the JSON response from PHP
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success || !data.message) {
+                        throw new Error(data.error || 'The message could not be sent.');
+                    }
+
+                    //Checks whether the message already exists in the chat
+                    if (!conversationThread.querySelector(`[data-message-id="${data.message.id}"]`)) {
+                        conversationThread.querySelector('.conversation-start-state')?.remove();
+                        conversationThread.append(createMessageElement(data.message));
+                    }
+
+                    // Updates the latest message ID stores in Javascript and HTML
+                    lastMessageId = Math.max(lastMessageId, Number.parseInt(data.message.id, 10) || 0);
+                    conversationThread.dataset.lastMessageId = String(lastMessageId);
+                    // Scroll to the latest message after sending
+                    conversationThread.scrollTop = conversationThread.scrollHeight;
+
+                    // Clear the textarea after sending successfully
+                    messageInput.value = '';
+                    messageInput.dispatchEvent(new Event('input'));
+                    messageInput.focus();
+                } catch (error) {
+                    if (messageSendError) {
+                        messageSendError.textContent = error instanceof Error
+                            ? error.message
+                            : 'The message could not be sent.';
+                        messageSendError.hidden = false;
+                    }
+                } finally {
+                    messageSendButton.disabled = false;
+                }
+            });
+        }
 
         // Every 3 seconds it checks for message updates
         window.setInterval(pollMessages, 3000);

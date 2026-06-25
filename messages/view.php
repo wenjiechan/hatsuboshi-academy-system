@@ -250,7 +250,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <span>System messages cannot be replied to.</span>
                 </div>
             <?php else: ?>
-                <form method="post" action="/gakumas-sms/messages/send.php" class="message-composer">
+                <div class="message-send-error" role="alert" data-message-send-error hidden></div>
+
+                <form method="post" action="/gakumas-sms/messages/send.php" class="message-composer" data-message-composer>
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
                     <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
 
@@ -267,7 +269,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                     <span class="message-character-count" data-message-character-count>0 / 5000</span>
 
-                    <button type="submit" class="message-send-button" aria-label="Send message">
+                    <button type="submit" class="message-send-button" aria-label="Send message" data-message-send-button>
                         <i class="bi bi-send-fill"></i>
                     </button>
                 </form>
