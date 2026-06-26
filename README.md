@@ -1,121 +1,153 @@
-# ★ Hatsuboshi Gakuen Student Management System
+<a id="readme-top"></a>
 
-A web-based platform for managing student schedules, training stats, and communication
-at Hatsuboshi Academy. Inspired by **Gakuen Idolm@ster (学園アイドルマスター)**, the system
-brings the academy's 13-idol roster online with role-based workflows, threaded messaging,
-and per-idol theming.
+<!-- PROJECT HEADER -->
+<div align="center">
+
+  <h1 align="center">★ Hatsuboshi Gakuen ★</h1>
+  <h3 align="center">Student Schedule Management System</h3>
+  <p align="center"><i>初星学園 — where every idol's first star begins to shine.</i></p>
+
+  <p align="center">
+    A web-based platform for running an idol academy — role-based workflows,
+    threaded messaging, daily stat tracking, and per-idol theming.
+    <br />
+    Inspired by <b>Gakuen Idolm@ster (学園アイドルマスター)</b>.
+    <br />
+    <br />
+    <a href="https://github.com/wenjiechan/hatsuboshi-academy-system/issues">Report Bug</a>
+    ✦
+    <a href="https://github.com/wenjiechan/hatsuboshi-academy-system/issues">Request Feature</a>
+  </p>
+</div>
+
+> ✨ *Welcome to Hatsuboshi Academy, Producer-san.*
+> *Thirteen idol candidates await your guidance. Train them in Vocal, Dance, and Visual,*
+> *coordinate their schedules, and help them shine.*
 
 ---
 
-## Overview
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>★ Table of Contents</summary>
+
+- [About The Academy](#about-the-academy)
+  - [Built With](#built-with)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Background Jobs](#background-jobs)
+- [Usage](#usage)
+  - [Demo Accounts](#demo-accounts)
+- [The 13 Idols](#the-13-idols)
+- [Features](#features)
+- [Academy Roles](#academy-roles)
+- [Project Structure](#project-structure)
+- [Security](#security)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
+</details>
+
+<!-- ABOUT THE ACADEMY -->
+## About The Academy
 
 Hatsuboshi Gakuen is a full-stack PHP/MySQL application that models the day-to-day
 operations of an idol academy. Producers and teachers coordinate the training of
-student idols across vocal, dance, and visual disciplines. Students manage their own
-profiles, view their schedules, build their song repertoire, and chat directly with
-the staff assigned to them.
+student idols across the three pillars — **Vocal**, **Dance**, and **Visual**.
+Students manage their own profiles, build their song repertoire, and chat
+directly with the staff assigned to them.
 
 The Gakumas theme is a creative wrapper. Underneath is a security-conscious CRUD
-system built around four user roles, prepared-statement data access, CSRF-protected
-state changes, and a typed notification feed. The same architecture would apply to
-any school, training program, or talent agency.
+system built around four user roles, prepared-statement data access,
+CSRF-protected state changes, and a typed notification feed. The same architecture
+would suit any school, training program, or talent agency.
 
----
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
 
-## Features
+### Built With
 
-**Authentication & Access Control.** Four distinct roles — Admin, Producer, Teacher,
-Student — with bcrypt password hashing, session regeneration on login, and server-side
-ownership checks on every protected resource.
+- [PHP 8.0+](https://www.php.net/)
+- [MySQL 8 / MariaDB 10.5+](https://mariadb.org/)
+- [PDO](https://www.php.net/manual/en/book.pdo.php) (prepared statements)
+- [Bootstrap 5](https://getbootstrap.com/)
+- [Chart.js](https://www.chartjs.org/)
+- [FullCalendar.js](https://fullcalendar.io/)
+- [Bootstrap Icons](https://icons.getbootstrap.com/)
 
-**Conversation-Based Messaging.** Threaded direct conversations between any two users,
-with per-user state for last-read time, archive, mute, and soft-delete. Messages are
-typed (text, system, birthday, producer requests) and deduplicated against double-submits.
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
 
-**Producer ↔ Student Workflow.** Producers propose adding or removing students from
-their roster through chat-integrated requests. Each request flows through a
-`pending → accepted / rejected / cancelled / expired` lifecycle, with the student's
-`producer_status` field updated atomically.
-
-**Student Profiles.** Bilingual names, birthday, zodiac, blood type, hometown, hobbies,
-special skills, school year, rank, and a personal bio. Students self-edit a curated
-subset; producers and admins have full control. Avatar uploads are validated by
-extension, MIME type, and size, and stored with randomized filenames.
-
-**Song Catalog.** A shared repertoire of academy songs — solo, group, remix, or cover —
-linked to students through a many-to-many relationship, so a single song can belong
-to one idol or many.
-
-**Notifications.** A typed, dedupe-keyed feed delivered through both an in-app bell
-icon and a live JavaScript polling endpoint. Schedule-start alerts are auto-generated
-by a cron script.
-
-**Personalization.** Every user carries their own primary and secondary theme colors,
-applied at runtime through CSS variables. Students receive a birthday banner on their
-dashboard. Producers can be configured with personality-tailored greeting messages
-per student.
-
-**Background Jobs.** Cron-runnable scripts snapshot daily Vocal/Dance/Visual stats for
-time-series charts and generate scheduled notifications for upcoming activities.
-
----
-
-## Tech Stack
-
-| Layer            | Choice                                       |
-| ---------------- | -------------------------------------------- |
-| Backend          | PHP 8.0+                                     |
-| Database         | MySQL 8 / MariaDB 10.5+                      |
-| Data Access      | PDO with prepared statements                 |
-| Frontend         | Bootstrap 5, Chart.js, FullCalendar.js       |
-| Icons & Fonts    | Bootstrap Icons, M PLUS Rounded 1c, Quicksand |
-| Local Server     | XAMPP, Laragon, or MAMP                      |
-
----
-
+<!-- GETTING STARTED -->
 ## Getting Started
+
+Set up your own branch of the academy in a few steps.
+
+### Prerequisites
+
+- **PHP 8.0+** with the `pdo_mysql` extension enabled
+- **MySQL 8.0+** or **MariaDB 10.5+**
+- A local web server — Apache (XAMPP, Laragon, or MAMP)
+- A modern browser (Chrome, Firefox, Edge, Safari)
+- Git for version control
+
+### Installation
 
 The repository is named `hatsuboshi-academy-system`, but the project folder and
 database keep the shorter `gakumas-sms` naming used throughout the codebase.
 
+1. Clone the repository into your web server's document root (`htdocs/` or `www/`):
+   ```bash
+   git clone https://github.com/wenjiechan/hatsuboshi-academy-system.git gakumas-sms
+   cd gakumas-sms
+   ```
+2. Create the database:
+   ```sql
+   CREATE DATABASE gakumas_sms
+     CHARACTER SET utf8mb4
+     COLLATE utf8mb4_unicode_ci;
+   ```
+3. Import the schema and seed data:
+   ```bash
+   mysql -u root -p gakumas_sms < database/schema.sql
+   mysql -u root -p gakumas_sms < database/sample_data.sql
+   ```
+4. (Linux/Mac only) make the uploads folder writable:
+   ```bash
+   chmod -R 755 uploads/
+   ```
+5. Edit `config/database.php` if your MySQL uses non-default credentials.
+6. Visit `http://localhost/gakumas-sms/` and step onto the stage ★
+
+### Background Jobs
+
+The academy never sleeps. Schedule the two cron scripts with cron (Linux/Mac)
+or Task Scheduler (Windows):
+
 ```bash
-# 1. Clone into the gakumas-sms folder inside your web root (htdocs/ or www/)
-git clone https://github.com/wenjiechan/hatsuboshi-academy-system.git gakumas-sms
-cd gakumas-sms
-
-# 2. Create the database and import schema + seed data
-mysql -u root -p -e "CREATE DATABASE gakumas_sms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p gakumas_sms < database/schema.sql
-mysql -u root -p gakumas_sms < database/sample_data.sql
-
-# 3. (Linux/Mac only) make uploads writable
-chmod -R 755 uploads/
-```
-
-Edit `config/database.php` only if your MySQL uses non-default credentials.
-Visit `http://localhost/gakumas-sms/` and log in.
-
-To run the background jobs, schedule them with cron (Linux/Mac) or Task Scheduler
-(Windows):
-
-```bash
-# Every day at midnight: snapshot stats for charting
+# Nightly stat snapshot for charting
 0 0 * * * php /path/to/gakumas-sms/scripts/daily_stat_snapshot.php
 
-# Every minute: generate schedule-start notifications
+# Schedule-start alerts (deduped per day)
 * * * * * php /path/to/gakumas-sms/scripts/generate_notifications.php
 ```
 
----
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
 
-## Demo Accounts
+<!-- USAGE -->
+## Usage
+
+After installation, sign in with any of the seeded accounts to walk the halls of
+Hatsuboshi. The Producer and Admin roles have the broadest access; Students have
+the narrowest. Try the messaging flow, the producer add/remove request, and the
+song catalog to see most of the project's surface area.
+
+### Demo Accounts
 
 Passwords follow a simple rule, all lowercase, no spaces:
 
-- **Students:** first name + birthday in `MMDD` format (e.g. Saki Hanami, born April 2 → `saki0402`)
-- **Producer:** `producer001`
-- **Admin:** `admin001`
-- **Teachers:** discipline + `001` (e.g. `vocal001`, `dance001`, `visual001`)
+- 🎤 **Students** → first name + birthday in `MMDD` format (e.g. `saki0402`)
+- 🎬 **Producer** → `producer001`
+- 🛡 **Admin** → `admin001`
+- 🎓 **Teachers** → discipline + `001` → `vocal001` · `dance001` · `visual001`
 
 | Role     | Username           | Password      |
 | -------- | ------------------ | ------------- |
@@ -138,72 +170,193 @@ Passwords follow a simple rule, all lowercase, no spaces:
 | Student  | `Sena Juo`         | `sena1207`    |
 | Student  | `Tsubame Amaya`    | `tsubame0520` |
 
-Usernames contain spaces — log in with the exact name as shown.
+> ✨ Usernames contain spaces — type them exactly as shown.
 
----
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
 
-## User Roles
+<!-- THE 13 IDOLS -->
+## The 13 Idols
 
-| Role         | Responsibilities                                                                          |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| **Admin**    | System-level oversight. Manages all users, roles, and global settings.                    |
-| **Producer** | Manages assigned roster. CRUD on students, schedules, lessons, events, and songs.         |
-| **Teacher**  | Trains assigned students in their specialty (vocal, dance, or visual). Updates stats.     |
-| **Student**  | Views own profile and schedule. Edits bio, hobbies, and avatar. Chats with staff.         |
+Each idol carries her own theme color, applied across the entire UI at runtime
+through CSS variables.
 
-Role and ownership are verified server-side on every protected resource. UI hiding is
-treated as a UX convenience, never as the access boundary.
+| # | Idol               | 日本語       | Theme Color                                                                 |
+| - | ------------------ | ------------ | --------------------------------------------------------------------------- |
+| 1 | Saki Hanami        | 花海 咲季    | ![#E30F25](https://placehold.co/12x12/E30F25/E30F25.png) `#E30F25` Red       |
+| 2 | Temari Tsukimura   | 月村 手毬    | ![#0C7BBB](https://placehold.co/12x12/0C7BBB/0C7BBB.png) `#0C7BBB` Blue      |
+| 3 | Kotone Fujita      | 藤田 ことね  | ![#F8C112](https://placehold.co/12x12/F8C112/F8C112.png) `#F8C112` Gold      |
+| 4 | Lilja Katsuragi    | 葛城 リーリヤ| ![#7DC4D4](https://placehold.co/12x12/7DC4D4/7DC4D4.png) `#7DC4D4` Sky       |
+| 5 | Sumika Shiun       | 紫雲 清夏    | ![#7CFC00](https://placehold.co/12x12/7CFC00/7CFC00.png) `#7CFC00` Green     |
+| 6 | Hiro Shinosawa     | 篠澤 広      | ![#00AFCC](https://placehold.co/12x12/00AFCC/00AFCC.png) `#00AFCC` Teal      |
+| 7 | China Kuramoto     | 倉本 千奈    | ![#F68B1F](https://placehold.co/12x12/F68B1F/F68B1F.png) `#F68B1F` Orange    |
+| 8 | Ume Hanami         | 花海 佑芽    | ![#EA533A](https://placehold.co/12x12/EA533A/EA533A.png) `#EA533A` Coral     |
+| 9 | Misuzu Hataya      | 秦谷 美鈴    | ![#7A99CF](https://placehold.co/12x12/7A99CF/7A99CF.png) `#7A99CF` Slate     |
+| 10| Mao Arimura        | 有村 麻央    | ![#7F1184](https://placehold.co/12x12/7F1184/7F1184.png) `#7F1184` Purple    |
+| 11| Rinami Himesaki    | 姫崎 莉波    | ![#F6ADC6](https://placehold.co/12x12/F6ADC6/F6ADC6.png) `#F6ADC6` Pink      |
+| 12| Sena Juo           | 十王 星南    | ![#F6AE54](https://placehold.co/12x12/F6AE54/F6AE54.png) `#F6AE54` Amber     |
+| 13| Tsubame Amaya      | 雨夜 燕      | ![#7B68EE](https://placehold.co/12x12/7B68EE/7B68EE.png) `#7B68EE` Violet    |
 
----
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
 
+<!-- FEATURES -->
+## Features
+
+### 🎭 Identity & Access
+
+- **Four-role authentication** — Admin, Producer, Teacher, Student
+- **Role and ownership** enforced server-side on every protected route
+- **Hardened sessions** — bcrypt passwords, session regeneration on login, secure cookie flags
+- **CSRF tokens** on every state-changing POST
+
+### 🌟 Student Management
+
+- **Rich profiles** — bilingual names, birthday, zodiac, blood type, height, weight, three-size, hometown, hobbies, special skill, school year, rank, bio
+- **Safe avatar uploads** — extension whitelist, MIME verification, size limit, randomized filenames
+- **Self-edit** for trusted fields, full control for Producers and Admin
+- **Rank progression** from Debut through the academy ranks
+
+### 📅 Schedules
+
+- **One-off schedule entries** with date, time, location, and status
+- **Recurring weekly templates** that auto-populate the calendar
+- **FullCalendar.js** for weekly and monthly views
+- **Schedule-start alerts** fired automatically before each session
+
+### 📊 Stats & Progression
+
+- **Vocal / Dance / Visual** tracking with current values and historical log
+- **Daily stat snapshots** powering clean time-series charts via Chart.js
+- **Append-only stat history** with reason and timestamp on every change
+
+### 🎤 Lessons & Events
+
+- **Lesson catalog** organized by discipline with stat gain values
+- **Audition, concert, and photoshoot events** with stat requirements
+- **Event participation tracking** with placement results
+
+### 💬 Conversation-Based Messaging
+
+- **Threaded chats** between any two users — no inbox/sent split
+- **Per-user state** — last-read, archive, mute, soft-delete
+- **Typed messages** — text, system, birthday, producer requests
+- **Live polling** through `api/messages_poll.php` for near-real-time updates
+
+### 🤝 Producer ↔ Student Workflow
+
+- **Chat-integrated add/remove requests** with `pending → accepted · rejected · cancelled · expired` lifecycle
+- **`producer_status`** updates atomically with each transition
+- **Personality-tailored producer greetings** drawn from a per-student message pool
+
+### 🎵 Song Catalog
+
+- **Song types** — Solo · Group · Remix · Cover with English and Japanese titles
+- **Many-to-many** student linking — a song can belong to one idol or many
+- **Per-student repertoire** managed by the student, Producer, or Admin
+
+### 🔔 Notifications
+
+- **Typed feed** with action URLs, dedupe keys, and `responded_at` tracking
+- **Live JS polling** + auto-generated schedule-start alerts via cron
+- **In-app bell** with unread badge
+
+### ✨ Personalization & Polish
+
+- **Per-idol theming** — primary and secondary colors stored per user, applied via CSS variables
+- **Birthday banner** on the student's dashboard
+- **Dark mode** support
+- **Click-sparkle** micro-interactions for an academy-appropriate feel
+
+### ⏰ Background Jobs
+
+- `scripts/daily_stat_snapshot.php` — snapshots stats for charting
+- `scripts/generate_notifications.php` — fires deduped schedule alerts
+
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
+
+<!-- ACADEMY ROLES -->
+## Academy Roles
+
+| Role         | Responsibilities                                                                         |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| **Admin**    | System-level oversight. Manage all users, roles, and global academy settings.            |
+| **Producer** | Manage assigned roster. CRUD on students, schedules, lessons, events, and songs.         |
+| **Teacher**  | Train assigned students in their specialty (vocal, dance, or visual). Update stats.      |
+| **Student**  | View own profile and schedule. Edit bio, hobbies, and avatar. Chat with staff.           |
+
+Role and ownership are verified server-side on every protected resource. UI hiding
+is treated as a UX convenience, never as the access boundary.
+
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
+
+<!-- PROJECT STRUCTURE -->
 ## Project Structure
 
 ```
 gakumas-sms/
-├── admin/        Admin-only pages — global user, student, producer, and teacher management
+├── admin/        Admin pages — global user, student, producer, and teacher management
 ├── producer/     Producer workspace — roster, schedules, events, lessons, reports
 ├── teacher/      Teacher workspace — assigned students, lessons
 ├── student/      Student workspace — dashboard, profile, schedule, stats, songs
 ├── messages/     Conversation-based chat — inbox, threads, compose, archive, mute
 ├── api/          JSON polling endpoints for live messaging and notifications
 ├── scripts/      Cron jobs — daily stat snapshots and notification generation
-├── includes/     Auth, layout, and reusable helpers for messages, stats, and theming
-├── assets/       CSS, JavaScript, and images (avatars, decoration, logos)
+├── includes/     Auth, layout, helpers for messages, stats, and theming
+├── assets/       CSS, JavaScript, and images
 ├── config/       Database configuration
-├── database/     schema.sql and sample_data.sql
+├── database/     schema.sql · sample_data.sql · research notes
 ├── tests/        Integration tests
-├── uploads/      User-uploaded files (gitignored)
+├── uploads/      User uploads (gitignored)
 └── index.php · login.php · logout.php · notifications.php
 ```
 
----
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
 
+<!-- SECURITY -->
 ## Security
 
-The system follows established PHP security practices end-to-end:
+End-to-end PHP security practices, applied consistently:
 
-- Passwords are hashed with `password_hash()` (bcrypt) and verified with `password_verify()`.
-- All database queries use **PDO prepared statements** with parameter binding; no query is built by string concatenation.
-- `session_regenerate_id(true)` is called on login to prevent session fixation.
-- Session cookies are set with `httponly` and `samesite=Lax` flags, plus `secure` in production.
-- All output is escaped via `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')`.
-- **CSRF tokens** are required on every state-changing POST request.
-- Input is validated server-side with `filter_var()` and whitelist comparisons.
-- File uploads are validated by extension, MIME type, and size, and renamed before storage.
-- Resource access is gated by both role and ownership — a student cannot access another student's data by guessing IDs.
-- Messages and notifications carry deduplication keys to prevent double-submits and duplicate alerts.
+- ★ Passwords hashed with `password_hash()` (bcrypt), verified with `password_verify()`
+- ★ All queries use **PDO prepared statements** with parameter binding
+- ★ `session_regenerate_id(true)` on login to prevent session fixation
+- ★ Session cookies set with `httponly` and `samesite=Lax` (plus `secure` in production)
+- ★ All output escaped via `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')`
+- ★ **CSRF tokens** on every state-changing POST request
+- ★ Server-side input validation with `filter_var()` and whitelist comparisons
+- ★ File uploads validated by extension, MIME type, and size, with randomized filenames
+- ★ Role *and* ownership verified on every protected resource — IDs cannot be guessed
+- ★ Dedupe keys on messages and notifications prevent double-submits and duplicate alerts
+
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
+
+The Gakumas-themed content, character names, and visual references are **not**
+covered by this license. They belong to **Bandai Namco Entertainment Inc.** and
+must not be used commercially.
+
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+- [Gakuen Idolm@ster (学園アイドルマスター)](https://gakuen.idolmaster-official.jp/) — © Bandai Namco Entertainment Inc.
+- [Pixiv百科事典](https://dic.pixiv.net/) and ニコニコ大百科 — character research
+- [Game8 — 学園アイドルマスター攻略](https://game8.jp/gakuen-idolmaster)
+- [Project iM@S Wiki](https://project-imas.wiki)
+- [Best-README-Template](https://github.com/othneildrew/Best-README-Template) — README structure
+
+<p align="right">(<a href="#readme-top">★ back to top</a>)</p>
 
 ---
 
-## License & Credits
-
-Inspired by **Gakuen Idolm@ster (学園アイドルマスター)** — © Bandai Namco Entertainment Inc.
-This is a non-commercial educational project. Character names, themes, and visual
-references belong to their respective rights holders.
-
-The source code in this repository is released under the [MIT License](LICENSE).
-The Gakumas-themed content, character data, and visual references are **not** covered
-by this license and must not be used commercially.
-
-Research drew on the official site at <https://gakuen.idolmaster-official.jp/>, along
-with Pixiv百科事典, ニコニコ大百科, note.com, Game8, and the Project iM@S Wiki.
+<div align="center">
+  <p>
+    ★ <i>Hatsuboshi Gakuen wishes you success, Producer-san.</i> ★
+    <br />
+    <sub>初星学園 — 一番星になる。</sub>
+  </p>
+</div>
