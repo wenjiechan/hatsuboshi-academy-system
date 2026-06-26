@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     messages_poll_response(['error' => 'Method not allowed'], 405);
 }
 $user_id = (int) ($_SESSION['id'] ?? 0);
+$user_role = (string) ($_SESSION['role'] ?? '');
 
 // CHeck login user
 if ($user_id <= 0) {
@@ -65,6 +66,11 @@ $stmt = $pdo->prepare(
         m.created_at,
         m.edited_at,
         m.deleted_at,
+        request.id AS request_id,
+        request.request_type AS request_type,
+        request.status AS request_status,
+        request.producer_id AS request_producer_id,
+        request.student_id AS request_student_id,
         /*A message can be edited only 
         message belongs to current user, 
         message type is text
@@ -90,6 +96,9 @@ $stmt = $pdo->prepare(
             ELSE 0
         END AS can_delete
      FROM messages m
+     LEFT JOIN producer_student_requests request
+        ON request.id = m.related_id
+       AND m.related_type = "producer_student_request"
      WHERE m.conversation_id = ?
        AND m.id > ?
      ORDER BY m.id ASC
@@ -110,6 +119,21 @@ $deleted_messages = get_deleted_conversation_messages(
     $user_id,
     $deleted_after
 );
+
+$request_status_stmt = $pdo->prepare(
+    'SELECT
+        request.id,
+        request.status
+     FROM messages m
+     INNER JOIN producer_student_requests request
+        ON request.id = m.related_id
+       AND m.related_type = "producer_student_request"
+     WHERE m.conversation_id = ?
+       AND m.message_type IN ("producer_add_request", "producer_remove_request")'
+);
+$request_status_stmt->execute([(int) $conversation_id]);
+$request_statuses = $request_status_stmt->fetchAll();
+
 // Get the current database time as cursor
 $poll_cursor = (string) $pdo->query('SELECT NOW()')->fetchColumn();
 
@@ -131,12 +155,24 @@ foreach ($messages as $message) {
         'message_type' => (string) $message['message_type'],
         'related_type' => $message['related_type'],
         'related_id' => $message['related_id'] !== null ? (int) $message['related_id'] : null,
+        'request_id' => $message['request_id'] !== null ? (int) $message['request_id'] : null,
+        'request_type' => $message['request_type'],
+        'request_status' => $message['request_status'],
         'created_at' => (string) $message['created_at'],
         'edited_at' => $message['edited_at'],
         'deleted_at' => $message['deleted_at'],
         'is_own' => (int) ($message['sender_id'] ?? 0) === $user_id,
         'can_edit' => (bool) $message['can_edit'],
         'can_delete' => (bool) $message['can_delete'],
+        'can_respond_request' => $user_role === 'student'
+            && (int) ($message['sender_id'] ?? 0) !== $user_id
+            && in_array($message['message_type'], [
+                MESSAGE_TYPE_PRODUCER_ADD_REQUEST,
+                MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST,
+            ], true)
+            && $message['related_type'] === 'producer_student_request'
+            && in_array($message['request_type'], ['add', 'remove'], true)
+            && $message['request_status'] === 'pending',
     ];
 }
 
@@ -160,6 +196,13 @@ messages_poll_response([
             'is_own' => (int) ($message['sender_id'] ?? 0) === $user_id,
         ],
         $deleted_messages
+    ),
+    'request_statuses' => array_map(
+        static fn(array $request): array => [
+            'request_id' => (int) $request['id'],
+            'request_status' => (string) $request['status'],
+        ],
+        $request_statuses
     ),
     'next_after_id' => $next_after_id,
     'edited_cursor' => $poll_cursor,

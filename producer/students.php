@@ -4,6 +4,12 @@ require_role('producer');
 
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
+require_once '../includes/messages_helpers.php';
+require_once '../includes/notifications_helpers.php';
+
+$student_page_success = $_SESSION['student_page_success'] ?? null;
+$student_page_error = $_SESSION['student_page_error'] ?? null;
+unset($_SESSION['student_page_success'], $_SESSION['student_page_error']);
 
 // Get current producer account
 $stmt = $pdo->prepare(
@@ -75,14 +81,29 @@ require_once '../includes/sidebar.php';
         </a>
     </section>
 
-    <?php if (empty($grouped_students)): ?>
-        <div class="empty-dashboard-state">
-            <strong>No students yet</strong>
-            <p>Add a student to start managing your production roster.</p>
+    <?php if ($student_page_success): ?>
+        <div class="student-page-alert success" role="status">
+            <i class="bi bi-check-circle" aria-hidden="true"></i>
+            <?= htmlspecialchars($student_page_success, ENT_QUOTES, 'UTF-8') ?>
         </div>
-    <?php else: ?>
-        <?php foreach ($grouped_students as $class_name => $students): ?>
-            <section class="students-class-section" data-student-class>
+    <?php endif; ?>
+
+    <?php if ($student_page_error): ?>
+        <div class="student-page-alert error" role="alert">
+            <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+            <?= htmlspecialchars($student_page_error, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+    <?php endif; ?>
+
+    <section data-producer-students-live-region>
+        <?php if (empty($grouped_students)): ?>
+            <div class="empty-dashboard-state">
+                <strong>No students yet</strong>
+                <p>Add a student to start managing your production roster.</p>
+            </div>
+        <?php else: ?>
+            <?php foreach ($grouped_students as $class_name => $students): ?>
+                <section class="students-class-section" data-student-class>
                 <div class="students-class-heading">
                     <div>
                         <i class="bi bi-people-fill" aria-hidden="true"></i>
@@ -192,9 +213,19 @@ require_once '../includes/sidebar.php';
                                                 <i class="bi bi-hourglass-split" aria-hidden="true"></i>
                                             </span>
                                         <?php else: ?>
-                                            <a href="/gakumas-sms/producer/student_delete.php?id=<?= $student_id ?>" class="danger" aria-label="Remove <?= htmlspecialchars($student['name'], ENT_QUOTES, 'UTF-8') ?>">
-                                                <i class="bi bi-person-dash" aria-hidden="true"></i>
-                                            </a>
+                                            <form method="post" action="/gakumas-sms/producer/student_delete.php" class="student-release-form">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                                                <input type="hidden" name="student_id" value="<?= $student_id ?>">
+                                                <button
+                                                    type="submit"
+                                                    class="student-action-link danger"
+                                                    aria-label="Request release for <?= htmlspecialchars($student['name'], ENT_QUOTES, 'UTF-8') ?>"
+                                                    title="Request release"
+                                                    data-release-request-button
+                                                >
+                                                    <i class="bi bi-person-dash" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -202,25 +233,34 @@ require_once '../includes/sidebar.php';
                         </tbody>
                     </table>
                 </div>
-            </section>
-        <?php endforeach; ?>
+                </section>
+            <?php endforeach; ?>
 
-        <section class="empty-dashboard-state students-search-empty d-none" id="studentSearchEmpty">
-            <strong>No matching students</strong>
-            <p>Try another name, class, rank, or status.</p>
-        </section>
-    <?php endif; ?>
+            <section class="empty-dashboard-state students-search-empty d-none" id="studentSearchEmpty">
+                <strong>No matching students</strong>
+                <p>Try another name, class, rank, or status.</p>
+            </section>
+        <?php endif; ?>
+    </section>
 </main>
 
 <script>
 // Gets all student rows and the search controls
 const studentSearch = document.getElementById('studentSearch');
-const studentRows = Array.from(document.querySelectorAll('.student-row'));
-const studentClassSections = Array.from(document.querySelectorAll('[data-student-class]'));
-const studentSearchEmpty = document.getElementById('studentSearchEmpty');
-const studentSortButtons = Array.from(document.querySelectorAll('.student-sort-button'));
 const pendingStudentsButton = document.getElementById('pendingStudentsButton');
+let producerStudentsLiveRegion = document.querySelector('[data-producer-students-live-region]');
+let studentRows = [];
+let studentClassSections = [];
+let studentSearchEmpty = null;
+let producerStudentsPollInProgress = false;
 let showPendingOnly = false;
+
+function refreshStudentDomReferences() {
+    producerStudentsLiveRegion = document.querySelector('[data-producer-students-live-region]');
+    studentRows = Array.from(document.querySelectorAll('.student-row'));
+    studentClassSections = Array.from(document.querySelectorAll('[data-student-class]'));
+    studentSearchEmpty = document.getElementById('studentSearchEmpty');
+}
 
 // Row is visibly only if matches the search and pending filter
 function updateStudentVisibility() {
@@ -264,55 +304,116 @@ if (pendingStudentsButton) {
     });
 }
 
-// Sorting Logic
-studentSortButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        const table = button.closest('table');
-        const tbody = table?.querySelector('tbody');
-        const columnIndex = button.closest('th')?.cellIndex;
-        const currentDirection = button.dataset.sortDirection || 'asc';
-        const directionMultiplier = currentDirection === 'asc' ? 1 : -1;
+document.addEventListener('click', (event) => {
+    const releaseButton = event.target.closest('[data-release-request-button]');
+    const sortButton = event.target.closest('.student-sort-button');
 
-        if (!tbody || columnIndex === undefined) {
+    if (releaseButton) {
+        if (!window.confirm('Send a release request to this student? The relationship will only end if the student accepts.')) {
+            event.preventDefault();
+        }
+
+        return;
+    }
+
+    if (!sortButton) {
+        return;
+    }
+
+    const table = sortButton.closest('table');
+    const tbody = table?.querySelector('tbody');
+    const columnIndex = sortButton.closest('th')?.cellIndex;
+    const currentDirection = sortButton.dataset.sortDirection || 'asc';
+    const directionMultiplier = currentDirection === 'asc' ? 1 : -1;
+
+    if (!tbody || columnIndex === undefined) {
+        return;
+    }
+
+    const rows = Array.from(tbody.querySelectorAll('.student-row'));
+    const sortColumn = sortButton.dataset.sortColumn;
+
+    rows.sort((firstRow, secondRow) => {
+        const firstValue = firstRow.cells[columnIndex]?.dataset.sortValue ?? firstRow.cells[columnIndex]?.textContent ?? '';
+        const secondValue = secondRow.cells[columnIndex]?.dataset.sortValue ?? secondRow.cells[columnIndex]?.textContent ?? '';
+
+        //Sort as numbers
+        if (['vocal', 'dance', 'visual'].includes(sortColumn)) {
+            return (Number(firstValue) - Number(secondValue)) * directionMultiplier;
+        }
+
+        // Sort as text
+        return firstValue.trim().localeCompare(secondValue.trim(), undefined, {
+            numeric: true,
+            sensitivity: 'base'
+        }) * directionMultiplier;
+    });
+
+    // Changes the visible order in the table
+    rows.forEach((row) => tbody.appendChild(row));
+
+    const nextDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+    const icon = sortButton.querySelector('i');
+
+    sortButton.dataset.sortDirection = nextDirection;
+    sortButton.setAttribute('aria-label', `Sort ${sortColumn} ${nextDirection === 'asc' ? 'ascending' : 'descending'}`);
+
+    // Change the sort icon
+    if (icon) {
+        const isNumeric = ['vocal', 'dance', 'visual'].includes(sortColumn);
+        icon.className = `bi ${isNumeric
+            ? (nextDirection === 'asc' ? 'bi-sort-numeric-down' : 'bi-sort-numeric-up')
+            : (nextDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up')}`;
+    }
+});
+
+async function pollProducerStudents() {
+    if (!producerStudentsLiveRegion || producerStudentsPollInProgress || document.hidden) {
+        return;
+    }
+
+    producerStudentsPollInProgress = true;
+
+    try {
+        const response = await fetch('/gakumas-sms/producer/students.php', {
+            headers: { Accept: 'text/html' },
+            cache: 'no-store',
+        });
+
+        if (response.redirected && !response.url.includes('/producer/students.php')) {
+            window.location.assign(response.url);
             return;
         }
 
-        const rows = Array.from(tbody.querySelectorAll('.student-row'));
-        const sortColumn = button.dataset.sortColumn;
-
-        rows.sort((firstRow, secondRow) => {
-            const firstValue = firstRow.cells[columnIndex]?.dataset.sortValue ?? firstRow.cells[columnIndex]?.textContent ?? '';
-            const secondValue = secondRow.cells[columnIndex]?.dataset.sortValue ?? secondRow.cells[columnIndex]?.textContent ?? '';
-
-            //Sort as numbers
-            if (['vocal', 'dance', 'visual'].includes(sortColumn)) {
-                return (Number(firstValue) - Number(secondValue)) * directionMultiplier;
-            }
-
-            // Sort as text
-            return firstValue.trim().localeCompare(secondValue.trim(), undefined, {
-                numeric: true,
-                sensitivity: 'base'
-            }) * directionMultiplier;
-        });
-
-        // Changes the visible order in the table
-        rows.forEach((row) => tbody.appendChild(row));
-
-        const nextDirection = currentDirection === 'asc' ? 'desc' : 'asc';
-        const icon = button.querySelector('i');
-
-        button.dataset.sortDirection = nextDirection;
-        button.setAttribute('aria-label', `Sort ${sortColumn} ${nextDirection === 'asc' ? 'ascending' : 'descending'}`);
-
-        // Change the sort icon
-        if (icon) {
-            const isNumeric = ['vocal', 'dance', 'visual'].includes(sortColumn);
-            icon.className = `bi ${isNumeric
-                ? (nextDirection === 'asc' ? 'bi-sort-numeric-down' : 'bi-sort-numeric-up')
-                : (nextDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up')}`;
+        if (!response.ok) {
+            return;
         }
-    });
+
+        const html = await response.text();
+        const freshDocument = new DOMParser().parseFromString(html, 'text/html');
+        const freshLiveRegion = freshDocument.querySelector('[data-producer-students-live-region]');
+
+        if (!freshLiveRegion) {
+            return;
+        }
+
+        producerStudentsLiveRegion.replaceChildren(...Array.from(freshLiveRegion.childNodes));
+        refreshStudentDomReferences();
+        updateStudentVisibility();
+    } catch (error) {
+        // Temporary polling errors are retried on the next interval.
+    } finally {
+        producerStudentsPollInProgress = false;
+    }
+}
+
+refreshStudentDomReferences();
+updateStudentVisibility();
+window.setInterval(pollProducerStudents, 3000);
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        pollProducerStudents();
+    }
 });
 </script>
 

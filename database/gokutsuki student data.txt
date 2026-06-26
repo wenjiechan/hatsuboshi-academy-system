@@ -2,27 +2,27 @@
 
 ---
 
-# 1. Kaya Rinha
+# 1. Rinha Kaya
 
 ## Users table
 
 ```text
 ID: 20
-Username: kaya_rinha
+Username: Rinha Kaya
 Password: rinha001
 Role: student
 Avatar: NULL
 Theme Primary Color: #5A3FA8
-Theme Secondary Color: #C9B8FF
+Theme Secondary Color: #7B65B9
 ```
 
 ## Students table
 
 ```text
 User ID: 20
-Name: Kaya Rinha
+Name: Rinha Kaya
 Japanese Name: 賀陽 燐羽
-Birthday: 2008-12-12
+Birthday: 2000-12-12
 Zodiac: Sagittarius
 Blood Type: AB
 Height: 162
@@ -48,14 +48,14 @@ Former leader of the middle-school No.1 unit SyngUp!. She was once connected to 
 
 ---
 
-# 2. Aoi Nadeshiko
+# 2. Nadeshiko Aoi
 
 ## Users table
 
 ```text
 ID: 21
-Username: aoi_nadeshiko
-Password: aoi001
+Username: Nadeshiko Aoi
+Password: nadeshiko001
 Role: student
 Avatar: NULL
 Theme Primary Color: #4A90E2
@@ -66,9 +66,9 @@ Theme Secondary Color: #BFDFFF
 
 ```text
 User ID: 21
-Name: Aoi Nadeshiko
+Name: Nadeshiko Aoi
 Japanese Name: 藍井 撫子
-Birthday: 2008-05-18
+Birthday: 2000-05-18
 Zodiac: Taurus
 Blood Type: A
 Height: 158
@@ -94,13 +94,13 @@ A first-year idol from Gokutsuki Academy. She is a B-rank idol from the upper le
 
 ---
 
-# 3. Shirakusa Shion
+# 3. Shion Shirakusa
 
 ## Users table
 
 ```text
 ID: 22
-Username: shirakusa_shion
+Username: Shion Shirakusa
 Password: shion001
 Role: student
 Avatar: NULL
@@ -112,9 +112,9 @@ Theme Secondary Color: #D8C8F0
 
 ```text
 User ID: 22
-Name: Shirakusa Shion
+Name: Shion Shirakusa
 Japanese Name: 白草 四音
-Birthday: 2008-09-04
+Birthday: 2000-09-04
 Zodiac: Virgo
 Blood Type: AB
 Height: 160
@@ -140,13 +140,13 @@ A first-year idol from Gokutsuki Academy. She reigns as an A-rank idol, with fir
 
 ---
 
-# 4. Shirakusa Gekka
+# 4. Gekka Shirakusa
 
 ## Users table
 
 ```text
 ID: 23
-Username: shirakusa_gekka
+Username: Gekka Shirakusa
 Password: gekka001
 Role: student
 Avatar: NULL
@@ -158,9 +158,9 @@ Theme Secondary Color: #C7D3E8
 
 ```text
 User ID: 23
-Name: Shirakusa Gekka
+Name: Gekka Shirakusa
 Japanese Name: 白草 月花
-Birthday: 2006-11-21
+Birthday: 2000-11-21
 Zodiac: Scorpio
 Blood Type: O
 Height: 168

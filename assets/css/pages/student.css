@@ -82,6 +82,48 @@
     color: white;
 }
 
+.students-back-icon {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--primary) 22%, white);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 8%, white);
+    color: var(--primary);
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.students-back-icon:hover {
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+}
+
+.student-page-alert {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    font-weight: 800;
+}
+
+.student-page-alert.success {
+    border: 1px solid color-mix(in srgb, var(--success) 24%, white);
+    background: color-mix(in srgb, var(--success) 10%, white);
+    color: #2f7a46;
+}
+
+.student-page-alert.error {
+    border: 1px solid color-mix(in srgb, var(--error) 24%, white);
+    background: color-mix(in srgb, var(--error) 9%, white);
+    color: #a63c3c;
+}
+
 .students-class-section {
     overflow: hidden;
     height: auto;
@@ -284,6 +326,7 @@
 }
 
 .student-actions a,
+.student-actions button.student-action-link,
 .student-action-pending {
     display: inline-flex;
     align-items: center;
@@ -300,18 +343,30 @@
     text-decoration: none;
 }
 
-.student-actions a:hover {
+.student-release-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.student-actions button.student-action-link {
+    border: 0;
+}
+
+.student-actions a:hover,
+.student-actions button.student-action-link:hover {
     background: var(--primary);
     color: white;
     text-decoration: none;
 }
 
-.student-actions a.danger {
+.student-actions a.danger,
+.student-actions button.student-action-link.danger {
     background: #ffe5e5;
     color: var(--error);
 }
 
-.student-actions a.danger:hover {
+.student-actions a.danger:hover,
+.student-actions button.student-action-link.danger:hover {
     background: var(--error);
     color: white;
 }
@@ -324,6 +379,157 @@
 
 .students-search-empty {
     min-height: 220px;
+}
+
+.unassigned-student-section {
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-soft);
+}
+
+.unassigned-student-list {
+    display: grid;
+    padding: 8px;
+}
+
+.unassigned-student-list-header,
+.unassigned-student-button {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.4fr) minmax(110px, 0.6fr) 80px 80px 80px 32px;
+    gap: 12px;
+    align-items: center;
+}
+
+.unassigned-student-list-header {
+    min-height: 36px;
+    padding: 0 12px;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.unassigned-student-list-header span {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.unassigned-student-track {
+    border-radius: var(--radius-sm);
+}
+
+.unassigned-student-button {
+    width: 100%;
+    min-height: 66px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-primary);
+    text-align: left;
+    transition: background var(--transition), color var(--transition);
+}
+
+.unassigned-student-button:hover,
+.unassigned-student-button[aria-expanded="true"] {
+    background: color-mix(in srgb, var(--primary) 8%, white);
+}
+
+.unassigned-student-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.unassigned-student-name > span {
+    display: grid;
+    min-width: 0;
+}
+
+.unassigned-student-name strong,
+.unassigned-student-name small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.unassigned-student-name small {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.unassigned-student-button > span:not(.unassigned-student-name) {
+    color: var(--text-secondary);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.unassigned-student-chevron {
+    color: var(--text-muted);
+    transition: transform var(--transition);
+}
+
+.unassigned-student-button[aria-expanded="true"] .unassigned-student-chevron {
+    transform: rotate(180deg);
+}
+
+.unassigned-student-details {
+    display: grid;
+    gap: 14px;
+    margin: 0 12px 10px 24px;
+    padding: 18px;
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: color-mix(in srgb, var(--secondary) 14%, white);
+}
+
+.student-readonly-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.student-readonly-grid div,
+.student-readonly-notes div {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--secondary) 7%, white);
+}
+
+.student-readonly-grid span,
+.student-readonly-notes span {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.74rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.student-readonly-grid strong {
+    display: block;
+    margin-top: 5px;
+    color: var(--text-primary);
+}
+
+.student-readonly-notes {
+    display: grid;
+    gap: 12px;
+}
+
+.student-readonly-notes p {
+    margin: 6px 0 0;
+    color: var(--text-primary);
+    line-height: 1.55;
+}
+
+.unassigned-request-form {
+    display: flex;
+    justify-content: flex-end;
 }
 
 @media (max-width: 767.98px) {
@@ -352,6 +558,52 @@
     .students-class-heading {
         display: grid;
         gap: 10px;
+    }
+
+    .unassigned-student-list-header {
+        display: none;
+    }
+
+    .unassigned-student-button {
+        grid-template-columns: minmax(0, 1fr) 64px 28px;
+        grid-template-areas:
+            "name vocal chevron"
+            "class dance ."
+            "class visual .";
+        gap: 3px 10px;
+        min-height: 82px;
+    }
+
+    .unassigned-student-name {
+        grid-area: name;
+    }
+
+    .unassigned-student-button > span:nth-child(2) {
+        grid-area: class;
+    }
+
+    .unassigned-student-button > span:nth-child(3) {
+        grid-area: vocal;
+    }
+
+    .unassigned-student-button > span:nth-child(4) {
+        grid-area: dance;
+    }
+
+    .unassigned-student-button > span:nth-child(5) {
+        grid-area: visual;
+    }
+
+    .unassigned-student-chevron {
+        grid-area: chevron;
+    }
+
+    .unassigned-student-details {
+        margin-left: 24px;
+    }
+
+    .student-readonly-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 

@@ -225,7 +225,7 @@ require_once '../includes/sidebar.php';
                             <div class="col-md-4">
                                 <label for="avatar" class="form-label">Avatar</label>
                                 <input type="file" id="avatar" name="avatar" class="form-control"
-                                    accept="image/jpeg,image/png,image/webp" required>
+                                    accept="image/jpeg,image/png,image/webp">
                             </div>
                     </fieldset>
 

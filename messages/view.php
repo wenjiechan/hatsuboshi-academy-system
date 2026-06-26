@@ -144,6 +144,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     $is_own_message = (int) ($message['sender_id'] ?? 0) === $user_id;
                     $is_deleted_message = !empty($message['deleted_at']);
                     $type_label = chat_message_type_label((string) $message['message_type']);
+                    $is_pending_producer_request = !$is_deleted_message
+                        && in_array($message['message_type'], [
+                            MESSAGE_TYPE_PRODUCER_ADD_REQUEST,
+                            MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST,
+                        ], true)
+                        && ($message['related_type'] ?? '') === 'producer_student_request'
+                        && in_array(($message['request_type'] ?? ''), ['add', 'remove'], true)
+                        && ($message['request_status'] ?? '') === 'pending'
+                        && $_SESSION['role'] === 'student'
+                        && !$is_own_message;
                     ?>
                     <article
                         class="chat-message<?= $is_own_message ? ' own' : '' ?><?= $type_label ? ' special' : '' ?><?= $is_deleted_message ? ' deleted' : '' ?>"
@@ -166,6 +176,22 @@ require_once __DIR__ . '/../includes/sidebar.php';
                             </p>
 
                             <div class="chat-message-meta">
+                                <?php if (
+                                    !$is_deleted_message
+                                    && in_array($message['message_type'], [
+                                        MESSAGE_TYPE_PRODUCER_ADD_REQUEST,
+                                        MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST,
+                                    ], true)
+                                    && !empty($message['request_status'])
+                                ): ?>
+                                    <span
+                                        class="chat-request-status chat-request-status-<?= htmlspecialchars((string) $message['request_status'], ENT_QUOTES, 'UTF-8') ?>"
+                                        data-request-status
+                                    >
+                                        <?= htmlspecialchars(ucwords(str_replace('_', ' ', (string) $message['request_status'])), ENT_QUOTES, 'UTF-8') ?>
+                                    </span>
+                                <?php endif; ?>
+
                                 <?php if (!$is_deleted_message && !empty($message['edited_at'])): ?>
                                     <span data-message-edited>Edited</span>
                                 <?php endif; ?>
@@ -235,6 +261,28 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                         <button type="button" class="message-edit-cancel" data-message-edit-cancel>Cancel</button>
                                         <button type="submit" class="message-edit-save">Save</button>
                                     </div>
+                                </form>
+                            <?php endif; ?>
+
+                            <?php if ($is_pending_producer_request): ?>
+                                <form
+                                    method="post"
+                                    action="/gakumas-sms/messages/request_action.php"
+                                    class="chat-request-actions"
+                                    data-request-action-form
+                                >
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                                    <input type="hidden" name="request_id" value="<?= (int) $message['request_id'] ?>">
+
+                                    <button type="submit" name="action" value="reject" class="chat-request-button reject">
+                                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                        Reject
+                                    </button>
+
+                                    <button type="submit" name="action" value="accept" class="chat-request-button accept">
+                                        <i class="bi bi-check-lg" aria-hidden="true"></i>
+                                        Accept
+                                    </button>
                                 </form>
                             <?php endif; ?>
                         </div>

@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/student_edit_validation.php';
 require_once __DIR__ . '/theme_settings_helpers.php';
+require_once __DIR__ . '/messages_helpers.php';
+require_once __DIR__ . '/notifications_helpers.php';
 
 function e(?string $value): string
 {
@@ -105,6 +107,93 @@ function admin_student_find(array $students, int $student_id): ?array
     }
 
     return null;
+}
+
+function admin_student_load_relationship(PDO $pdo, int $student_id): ?array
+{
+    $stmt = $pdo->prepare(
+        'SELECT
+            s.id AS student_id,
+            s.name AS student_name,
+            s.user_id AS student_user_id,
+            s.producer_id,
+            producer.username AS producer_name
+         FROM students s
+         LEFT JOIN users producer
+            ON producer.id = s.producer_id
+           AND producer.role = "producer"
+         WHERE s.id = ?
+         LIMIT 1'
+    );
+    $stmt->execute([$student_id]);
+    $relationship = $stmt->fetch();
+
+    if (!$relationship || empty($relationship['producer_id'])) {
+        return null;
+    }
+
+    return $relationship;
+}
+
+function admin_student_system_admin_id(PDO $pdo): int
+{
+    $admin_stmt = $pdo->query(
+        'SELECT id
+         FROM users
+         WHERE role = "admin"
+           AND is_active = 1
+         ORDER BY id
+         LIMIT 1'
+    );
+
+    return (int) $admin_stmt->fetchColumn();
+}
+
+function admin_student_notify_relationship_ended(PDO $pdo, array $relationship, int $admin_user_id): void
+{
+    $student_id = (int) $relationship['student_id'];
+    $student_user_id = (int) $relationship['student_user_id'];
+    $producer_user_id = (int) $relationship['producer_id'];
+    $student_name = (string) ($relationship['student_name'] ?? 'the student');
+    $producer_name = (string) ($relationship['producer_name'] ?? 'the producer');
+
+    $messages = [
+        $student_user_id => sprintf(
+            'Your producer relationship with %s has ended. You are currently unassigned until an administrator assigns a new producer.',
+            $producer_name
+        ),
+        $producer_user_id => sprintf(
+            'Your producer relationship with %s has ended. This student has been removed from your roster.',
+            $student_name
+        ),
+    ];
+
+    foreach ($messages as $recipient_user_id => $body) {
+        $conversation_id = find_or_create_system_conversation($pdo, $admin_user_id, (int) $recipient_user_id);
+        $message_id = send_conversation_message(
+            $pdo,
+            $conversation_id,
+            $admin_user_id,
+            $body,
+            MESSAGE_TYPE_SYSTEM,
+            'student',
+            $student_id
+        );
+
+        if (!is_conversation_muted($pdo, $conversation_id, (int) $recipient_user_id)) {
+            create_notification(
+                $pdo,
+                (int) $recipient_user_id,
+                NOTIFICATION_TYPE_NEW_MESSAGE,
+                'Relationship ended',
+                'Admin sent you a system message.',
+                'message',
+                $message_id,
+                '/gakumas-sms/messages/view.php?id=' . $conversation_id,
+                'new_message:' . $message_id . ':' . (int) $recipient_user_id
+            );
+        }
+    }
 }
 
 function admin_student_validate_producer(PDO $pdo, ?int $producer_id): ?string
@@ -225,7 +314,7 @@ function admin_student_post_profile_defaults(): array
     $today_day = (int) date('j');
 
     return [
-        'birthday' => date('Y-m-d'),
+        'birthday' => sprintf('2000-%02d-%02d', $today_month, $today_day),
         'zodiac' => student_edit_zodiac_from_month_day($today_month, $today_day),
     ];
 }
@@ -322,10 +411,6 @@ function admin_student_create(PDO $pdo, bool &$show_create_form): string
 
     if ($required_profile_error !== '') {
         return $required_profile_error;
-    }
-
-    if (empty($_FILES['avatar']['name'])) {
-        return 'Avatar is required when creating a student.';
     }
 
     if ($producer_error !== null) {
@@ -545,6 +630,18 @@ function admin_student_update(PDO $pdo): string
 function admin_student_remove_producer(PDO $pdo): string
 {
     $student_id = (int) ($_POST['student_id'] ?? 0);
+    $relationship = admin_student_load_relationship($pdo, $student_id);
+    $system_admin_id = admin_student_system_admin_id($pdo);
+
+    if ($relationship === null) {
+        return 'This student does not currently have a producer assigned.';
+    }
+
+    if ($system_admin_id <= 0) {
+        return 'No active admin account is available to send the system message.';
+    }
+
+    admin_student_notify_relationship_ended($pdo, $relationship, $system_admin_id);
 
     $stmt = $pdo->prepare(
         "UPDATE students

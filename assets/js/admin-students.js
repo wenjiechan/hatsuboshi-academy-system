@@ -135,7 +135,7 @@ updateAdminStudentVisibility();
         'July', 'August', 'September', 'October', 'November', 'December',
     ];
 
-    const currentYear = new Date().getFullYear();
+    const currentYear = 2000;
 
     function zodiacFromMonthDay(month, day) {
         if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return 'Aquarius';

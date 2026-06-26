@@ -101,7 +101,9 @@ function validate_student_edit_profile(array $post, array $student): array
         $birthday_parts = student_edit_parse_month_day($birthday_input);
 
         if ($birthday_parts) {
-            $birthday_year = (int) date('Y');
+            $birthday_year = !empty($student['birthday'])
+                ? (int) date('Y', strtotime((string) $student['birthday']))
+                : 2000;
             $birthday = sprintf('%04d-%02d-%02d', (int) $birthday_year, $birthday_parts['month'], $birthday_parts['day']);
             $zodiac = student_edit_zodiac_from_month_day($birthday_parts['month'], $birthday_parts['day']);
         }

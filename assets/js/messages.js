@@ -278,6 +278,99 @@ document.addEventListener('DOMContentLoaded', () => {
             return menu;
         };
 
+        const createRequestStatusBadge = (message) => {
+            if (
+                !['producer_add_request', 'producer_remove_request'].includes(message.message_type)
+                || !message.request_status
+            ) {
+                return null;
+            }
+
+            const badge = document.createElement('span');
+            badge.className = `chat-request-status chat-request-status-${message.request_status}`;
+            badge.dataset.requestStatus = '';
+            badge.textContent = String(message.request_status)
+                .replaceAll('_', ' ')
+                .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+            return badge;
+        };
+
+        const createRequestActionForm = (message) => {
+            if (!message.can_respond_request || !message.request_id) {
+                return null;
+            }
+
+            const form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/gakumas-sms/messages/request_action.php';
+            form.className = 'chat-request-actions';
+            form.dataset.requestActionForm = '';
+
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = 'csrf_token';
+            csrf.value = conversationThread.dataset.csrfToken || '';
+            form.append(csrf);
+
+            const requestId = document.createElement('input');
+            requestId.type = 'hidden';
+            requestId.name = 'request_id';
+            requestId.value = String(message.request_id);
+            form.append(requestId);
+
+            const rejectButton = document.createElement('button');
+            rejectButton.type = 'submit';
+            rejectButton.name = 'action';
+            rejectButton.value = 'reject';
+            rejectButton.className = 'chat-request-button reject';
+            rejectButton.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>Reject';
+
+            const acceptButton = document.createElement('button');
+            acceptButton.type = 'submit';
+            acceptButton.name = 'action';
+            acceptButton.value = 'accept';
+            acceptButton.className = 'chat-request-button accept';
+            acceptButton.innerHTML = '<i class="bi bi-check-lg" aria-hidden="true"></i>Accept';
+
+            form.append(rejectButton, acceptButton);
+            return form;
+        };
+
+        const updateRequestMessageStatus = (requestId, requestStatus) => {
+            const requestArticle = Array.from(conversationThread.querySelectorAll('.chat-message'))
+                .find((article) => {
+                    const requestInput = article.querySelector('input[name="request_id"]');
+
+                    return requestInput?.value === String(requestId);
+                });
+
+            if (!requestArticle) {
+                return;
+            }
+
+            const statusText = String(requestStatus)
+                .replaceAll('_', ' ')
+                .replace(/\b\w/g, (letter) => letter.toUpperCase());
+            const meta = requestArticle.querySelector('.chat-message-meta');
+            let statusBadge = requestArticle.querySelector('[data-request-status]');
+
+            if (!statusBadge && meta) {
+                statusBadge = document.createElement('span');
+                statusBadge.dataset.requestStatus = '';
+                meta.prepend(statusBadge);
+            }
+
+            if (statusBadge) {
+                statusBadge.className = `chat-request-status chat-request-status-${requestStatus}`;
+                statusBadge.textContent = statusText;
+            }
+
+            if (requestStatus !== 'pending') {
+                requestArticle.querySelector('[data-request-action-form]')?.remove();
+            }
+        };
+
         // Create a full chat message element using JavaScript
         const createMessageElement = (message) => {
             const typeLabel = messageTypeLabels[message.message_type] || '';
@@ -302,6 +395,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const meta = document.createElement('div');
             meta.className = 'chat-message-meta';
+
+            const requestStatusBadge = createRequestStatusBadge(message);
+
+            if (requestStatusBadge) {
+                meta.append(requestStatusBadge);
+            }
 
             if (message.edited_at) {
                 const edited = document.createElement('span');
@@ -374,6 +473,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 controls.append(cancelButton, saveButton);
                 form.append(controls);
                 bubble.append(form);
+            }
+
+            const requestActionForm = createRequestActionForm(message);
+
+            if (requestActionForm) {
+                bubble.append(requestActionForm);
             }
 
             article.append(bubble);
@@ -463,6 +568,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     renderDeletedMessage(article);
                 });
+
+                if (Array.isArray(data.request_statuses)) {
+                    data.request_statuses.forEach((request) => {
+                        updateRequestMessageStatus(request.request_id, request.request_status);
+                    });
+                }
 
                 // Update polling cursors
                 lastMessageId = Number.parseInt(data.next_after_id, 10) || lastMessageId;
@@ -554,6 +665,82 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+
+        conversationThread.addEventListener('submit', async (event) => {
+            const requestForm = event.target.closest('[data-request-action-form]');
+
+            if (!requestForm) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const submitter = event.submitter || requestForm.querySelector('button[type="submit"]:focus');
+            const formData = new FormData(requestForm);
+
+            if (submitter?.name) {
+                formData.set(submitter.name, submitter.value);
+            }
+
+            requestForm.querySelectorAll('button').forEach((button) => {
+                button.disabled = true;
+            });
+
+            try {
+                const requestUrl = requestForm.getAttribute('action') || '/gakumas-sms/messages/request_action.php';
+                const response = await fetch(requestUrl, {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData,
+                });
+                const responseText = await response.text();
+                let data = {};
+
+                try {
+                    data = responseText ? JSON.parse(responseText) : {};
+                } catch (parseError) {
+                    if (response.redirected) {
+                        window.location.assign(response.url);
+                        return;
+                    }
+
+                    throw new Error('The server returned an HTML page instead of JSON. Please refresh and try again.');
+                }
+
+                if (response.status === 401 && data.redirect_url) {
+                    window.location.assign(data.redirect_url);
+                    return;
+                }
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'The request could not be updated.');
+                }
+
+                updateRequestMessageStatus(data.request_id, data.request_status);
+
+                if (data.message && !conversationThread.querySelector(`[data-message-id="${data.message.id}"]`)) {
+                    conversationThread.append(createMessageElement(data.message));
+                    lastMessageId = Math.max(lastMessageId, Number.parseInt(data.message.id, 10) || 0);
+                    conversationThread.dataset.lastMessageId = String(lastMessageId);
+                }
+
+                conversationThread.scrollTop = conversationThread.scrollHeight;
+            } catch (error) {
+                requestForm.querySelectorAll('button').forEach((button) => {
+                    button.disabled = false;
+                });
+
+                if (messageSendError) {
+                    messageSendError.textContent = error instanceof Error
+                        ? error.message
+                        : 'The request could not be updated.';
+                    messageSendError.hidden = false;
+                }
+            }
+        });
 
         // Every 3 seconds it checks for message updates
         window.setInterval(pollMessages, 3000);
