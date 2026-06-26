@@ -1,2 +1,2 @@
 <?php
-echo password_hash('rinha001', PASSWORD_DEFAULT);
+echo password_hash('', PASSWORD_DEFAULT);
