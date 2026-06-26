@@ -1,0 +1,771 @@
+/* ---------- Admin student management ---------- */
+.admin-students-main {
+    display: grid;
+    gap: 22px;
+}
+
+.admin-students-main .admin-students-content {
+    display: grid;
+    gap: 22px;
+}
+
+.admin-students-main .admin-students-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 22px;
+    padding: 24px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--secondary) 20%, white), rgba(255, 255, 255, 0.96));
+    box-shadow: var(--shadow-soft);
+}
+
+.admin-students-main .admin-students-hero h2 {
+    margin: 0;
+    font-size: 1.55rem;
+}
+
+.admin-students-main .admin-students-hero p:not(.dashboard-eyebrow) {
+    margin: 6px 0 0;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.admin-students-main .admin-students-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(96px, 1fr));
+    gap: 10px;
+}
+
+.admin-students-main .admin-students-summary-grid div {
+    min-width: 96px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.74);
+    text-align: center;
+}
+
+.admin-students-main .admin-students-summary-grid span {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.admin-students-main .admin-students-summary-grid strong {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.admin-students-main .students-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 0;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-soft);
+}
+
+.admin-students-main .students-search {
+    flex: 1 1 320px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    max-width: 560px;
+    margin-right: auto;
+    padding: 0 14px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, white);
+    border-radius: var(--radius-pill);
+    background: white;
+    color: var(--text-secondary);
+}
+
+.admin-students-main .students-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-weight: 700;
+}
+
+.admin-students-main .students-search input::placeholder {
+    color: var(--text-muted);
+}
+
+.admin-students-main .students-add-button,
+.admin-students-main .students-pending-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.admin-students-main .students-pending-button {
+    padding: 8px 14px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+}
+
+.admin-students-main .students-pending-button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.admin-students-main .profile-card {
+    position: relative;
+    padding: 24px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--shadow-soft);
+}
+
+.admin-students-main .profile-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.admin-students-main .profile-card-heading i {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 14%, white);
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.admin-students-main .profile-card-heading h2 {
+    margin: 0;
+    font-size: 1.18rem;
+}
+
+.admin-students-main .admin-form-sections {
+    display: grid;
+    gap: 0;
+}
+
+.admin-students-main .admin-form-section {
+    min-width: 0;
+    margin: 0;
+    padding: 18px 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.admin-students-main .admin-form-section:first-child {
+    padding-top: 8px;
+}
+
+.admin-students-main .admin-form-section:last-child {
+    padding-bottom: 4px;
+}
+
+.admin-students-main .admin-form-section legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: auto;
+    margin: 0 0 10px;
+    padding: 0;
+    border: 0;
+    color: var(--text-primary);
+    font-size: 1.08rem;
+    font-weight: 900;
+}
+
+.admin-students-main .admin-form-section legend i {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 14%, white);
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.admin-students-main .admin-form-section legend span {
+    display: block;
+}
+
+.admin-students-main .form-label {
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.admin-students-main .admin-form-row-break {
+    height: 0;
+    min-height: 0;
+    padding: 0;
+}
+
+.admin-students-main .form-control,
+.admin-students-main .form-select {
+    min-height: 42px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-weight: 650;
+}
+
+.admin-students-main .form-control:focus,
+.admin-students-main .form-select:focus {
+    border-color: color-mix(in srgb, var(--primary) 56%, white);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.admin-students-main textarea.form-control {
+    resize: vertical;
+}
+
+.admin-students-main .input-group-text {
+    border-color: color-mix(in srgb, var(--primary) 14%, white);
+    background: color-mix(in srgb, var(--secondary) 12%, white);
+    color: var(--text-secondary);
+    font-weight: 800;
+}
+
+.admin-students-main .form-control-color {
+    width: 100%;
+    max-width: none;
+    padding: 6px;
+}
+
+.admin-students-main .profile-three-size {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+}
+
+.admin-students-main .profile-three-size-separator {
+    color: var(--text-secondary);
+    font-weight: 900;
+}
+
+.admin-students-main .profile-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.admin-students-main .admin-student-list {
+    display: grid;
+    gap: 22px;
+}
+
+.admin-students-main .students-class-section {
+    overflow: hidden;
+    height: auto;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-soft);
+}
+
+.admin-students-main .students-class-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+}
+
+.admin-students-main .students-class-heading div {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 12px;
+}
+
+.admin-students-main .students-class-heading i {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 14%, white);
+    color: var(--primary);
+}
+
+.admin-students-main .students-class-heading h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    overflow-wrap: anywhere;
+}
+
+.admin-students-main .students-class-heading > span {
+    flex: 0 0 auto;
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.admin-students-main .students-table-wrap {
+    overflow-x: auto;
+    padding: 8px;
+}
+
+.admin-students-main .students-table {
+    min-width: 760px;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-students-main .students-table thead th {
+    height: 36px;
+    border: 0;
+    padding: 0 12px;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.admin-students-main .student-sort-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-left: 6px;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+    font-size: 0.82rem;
+    line-height: 1;
+}
+
+.admin-students-main .student-sort-button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.admin-students-main .students-table tbody td {
+    height: 58px;
+    border: 0;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-weight: 650;
+}
+
+.admin-students-main .students-table tbody tr {
+    transition: background var(--transition), color var(--transition);
+}
+
+.admin-students-main .students-table tbody tr:hover {
+    background: color-mix(in srgb, var(--primary) 9%, white);
+}
+
+.admin-students-main .students-table tbody tr:hover td:first-child {
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.admin-students-main .students-table tbody tr:hover td:last-child {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.admin-students-main .student-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.admin-students-main .student-avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    object-position: top center;
+    border: 2px solid rgba(255, 255, 255, 0.94);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--secondary) 24%, white);
+    box-shadow: 0 6px 14px color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+.admin-students-main .student-name-cell div {
+    display: grid;
+    min-width: 0;
+}
+
+.admin-students-main .student-name-cell strong,
+.admin-students-main .student-name-cell small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-students-main .student-name-cell strong {
+    color: var(--text-primary);
+    font-size: 0.96rem;
+}
+
+.admin-students-main .student-name-cell small {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.admin-students-main .student-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.admin-students-main .student-status-removal-pending {
+    background: #fff3cd;
+    color: #946200;
+}
+
+.admin-students-main .student-status-released {
+    background: #eeeeee;
+    color: #666666;
+}
+
+.admin-students-main .student-status-unassigned {
+    background: color-mix(in srgb, var(--secondary) 18%, white);
+    color: var(--text-secondary);
+}
+
+.admin-students-main .student-actions {
+    white-space: nowrap;
+}
+
+.admin-students-main .student-actions form {
+    display: inline-flex;
+    margin: 0 0 0 8px;
+}
+
+.admin-students-main .student-action-button,
+.admin-students-main .student-action-muted {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+.admin-students-main .student-action-button + .student-action-muted,
+.admin-students-main .student-action-muted + .student-action-button {
+    margin-left: 8px;
+}
+
+.admin-students-main .student-action-button:hover {
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+}
+
+.admin-students-main .student-action-button.danger {
+    background: #ffe5e5;
+    color: var(--error);
+}
+
+.admin-students-main .student-action-button.danger:hover {
+    background: var(--error);
+    color: white;
+}
+
+.admin-students-main .student-action-muted {
+    background: color-mix(in srgb, var(--text-muted) 12%, white);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.admin-students-main .admin-cancel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--text-muted) 14%, white);
+    color: var(--text-secondary);
+    font-weight: 850;
+}
+
+.admin-students-main .admin-cancel-button:hover {
+    background: var(--text-secondary);
+    color: white;
+}
+
+@media (max-width: 767.98px) {
+    .admin-students-main .admin-students-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-students-main .admin-students-summary-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .admin-students-main .students-toolbar {
+        display: grid;
+        align-items: stretch;
+        justify-content: stretch;
+    }
+
+    .admin-students-main .students-search {
+        max-width: none;
+    }
+
+    .admin-students-main .students-add-button,
+    .admin-students-main .students-pending-button {
+        width: fit-content;
+    }
+
+    .admin-students-main .profile-card {
+        padding: 18px;
+    }
+
+    .admin-students-main .students-class-heading {
+        display: grid;
+        gap: 10px;
+        padding: 18px;
+    }
+
+    .admin-students-main .profile-form-actions {
+        justify-content: stretch;
+    }
+
+    .admin-students-main .profile-form-actions .btn {
+        flex: 1 1 180px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .admin-students-main .student-name-cell strong,
+    .admin-students-main .student-name-cell small {
+        white-space: normal;
+    }
+}
+
+.admin-students-main .student-birthday-picker {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--secondary) 8%, white);
+}
+
+.admin-students-main .student-birthday-controls {
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-students-main .student-birthday-preview {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: var(--radius-pill);
+    background: white;
+    color: var(--primary);
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.admin-students-main .student-birthday-weekdays,
+.admin-students-main .student-birthday-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.admin-students-main .student-birthday-weekdays span {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 850;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.admin-students-main .student-birthday-day {
+    min-height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: white;
+    color: var(--text-secondary);
+    font-weight: 850;
+    transition: background var(--transition), color var(--transition), transform var(--transition);
+}
+
+.admin-students-main .student-birthday-day:hover {
+    background: color-mix(in srgb, var(--primary) 12%, white);
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.admin-students-main .student-birthday-day.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 8px 14px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.admin-students-main .profile-card.is-calendar-open {
+    z-index: 30;
+}
+
+.admin-students-main .profile-birthday-picker {
+    position: relative;
+}
+
+.admin-students-main .profile-birthday-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    text-align: left;
+}
+
+.admin-students-main .profile-birthday-popover {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% + 8px);
+    left: 0;
+    width: min(320px, 86vw);
+    padding: 14px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: white;
+    box-shadow: 0 18px 36px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.admin-students-main .profile-birthday-controls {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) 36px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.admin-students-main .profile-calendar-nav {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--secondary) 10%, white);
+    color: var(--primary);
+}
+
+.admin-students-main .profile-calendar-nav:hover {
+    background: color-mix(in srgb, var(--primary) 12%, white);
+}
+
+.admin-students-main .profile-calendar-weekdays,
+.admin-students-main .profile-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.admin-students-main .profile-calendar-weekdays {
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.admin-students-main .profile-calendar-day {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-primary);
+    font-weight: 800;
+}
+
+.admin-students-main .profile-calendar-day:hover,
+.admin-students-main .profile-calendar-day.is-selected {
+    background: var(--primary);
+    color: white;
+}
+
+.admin-students-main input[data-admin-zodiac][readonly] {
+    background: color-mix(in srgb, var(--secondary) 16%, white);
+    color: var(--text-secondary);
+    border-color: color-mix(in srgb, var(--primary) 12%, white);
+    cursor: not-allowed;
+}
+
+.admin-students-main input[data-admin-zodiac][readonly]:focus {
+    background: color-mix(in srgb, var(--secondary) 16%, white);
+    border-color: color-mix(in srgb, var(--primary) 18%, white);
+    box-shadow: none;
+}
+
+@media (max-width: 575.98px) {
+    .admin-students-main .student-birthday-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-students-main .student-birthday-preview {
+        justify-content: center;
+    }
+}
