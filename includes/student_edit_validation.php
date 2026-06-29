@@ -5,11 +5,6 @@ function student_edit_blood_type_options(): array
     return ['A', 'B', 'AB', 'O'];
 }
 
-function student_edit_rank_options(): array
-{
-    return ['Debut', 'F', 'E', 'D', 'C', 'B', 'A', 'S', 'S+'];
-}
-
 function student_edit_month_options(): array
 {
     return [
@@ -121,7 +116,6 @@ function validate_student_edit_profile(array $post, array $student): array
         'height' => trim($post['height'] ?? ''),
         'weight' => trim($post['weight'] ?? ''),
         'school_year' => $class_code !== '' ? 'Class ' . $class_code : '',
-        'rank' => trim($post['rank'] ?? ''),
         'vocal' => max(0, (int) ($post['vocal'] ?? 0)),
         'dance' => max(0, (int) ($post['dance'] ?? 0)),
         'visual' => max(0, (int) ($post['visual'] ?? 0)),
@@ -168,8 +162,6 @@ function validate_student_edit_profile(array $post, array $student): array
         $error = 'Each Three Size value must be between 40 and 150.';
     } elseif ($class_code !== '' && !preg_match('/^\d+-\d+$/', $class_code)) {
         $error = 'Class must use a format like 1-1.';
-    } elseif ($data['rank'] !== '' && !in_array($data['rank'], student_edit_rank_options(), true)) {
-        $error = 'Please choose a valid rank.';
     }
 
     return [

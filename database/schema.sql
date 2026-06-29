@@ -290,10 +290,29 @@ CREATE TABLE `students` (
   `hobbies` text DEFAULT NULL,
   `special_skill` text DEFAULT NULL,
   `school_year` varchar(20) DEFAULT NULL,
-  `rank` varchar(10) NOT NULL DEFAULT 'Debut',
   `vocal` int(11) NOT NULL DEFAULT 0,
   `dance` int(11) NOT NULL DEFAULT 0,
   `visual` int(11) NOT NULL DEFAULT 0,
+  `rank` varchar(10) GENERATED ALWAYS AS (
+    CASE
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 35000 THEN 'S5'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 26000 THEN 'S4'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 23000 THEN 'SSS+'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 20000 THEN 'SSS'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 16000 THEN 'SS'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 14500 THEN 'S+'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 13000 THEN 'S'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 12000 THEN 'A+'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 11000 THEN 'A'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 10000 THEN 'B+'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 9000 THEN 'B'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 7500 THEN 'C+'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 6500 THEN 'C'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 5000 THEN 'D'
+      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 3000 THEN 'E'
+      ELSE 'Debut'
+    END
+  ) STORED,
   `bio` text DEFAULT NULL,
   `producer_id` int(11) DEFAULT NULL,
   `producer_status` enum('active','removal_pending','released','unassigned') DEFAULT 'unassigned',

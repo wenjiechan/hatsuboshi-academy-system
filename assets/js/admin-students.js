@@ -24,6 +24,23 @@ document.querySelectorAll('[data-producer-toggle]').forEach((toggle) => {
     updateProducerPicker();
 });
 
+// Preview the database-generated rank while an admin changes performance stats.
+document.querySelectorAll('[data-student-rank]').forEach((rankField) => {
+    const form = rankField.closest('form');
+    const statFields = ['vocal', 'dance', 'visual'].map((name) => form?.querySelector(`[name="${name}"]`));
+
+    if (!form || statFields.some((field) => !field) || typeof window.calculateStudentRank !== 'function') {
+        return;
+    }
+
+    const updateRankPreview = () => {
+        rankField.value = window.calculateStudentRank(...statFields.map((field) => field.value));
+    };
+
+    statFields.forEach((field) => field.addEventListener('input', updateRankPreview));
+    updateRankPreview();
+});
+
 // Gets the search input and all student rows
 const adminStudentSearch = document.getElementById('adminStudentSearch');
 const adminStudentRows = Array.from(document.querySelectorAll('.student-row'));

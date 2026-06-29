@@ -74,7 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                  weight = ?,
                  three_size = ?,
                  school_year = ?,
-                 rank = ?,
                  vocal = ?,
                  dance = ?,
                  visual = ?
@@ -92,7 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $student_values['weight'] !== '' ? (int) $student_values['weight'] : null,
             $student_values['three_size'] !== '' ? $student_values['three_size'] : null,
             $student_values['school_year'] !== '' ? $student_values['school_year'] : null,
-            $student_values['rank'] !== '' ? $student_values['rank'] : 'Debut',
             $student_values['vocal'],
             $student_values['dance'],
             $student_values['visual'],
@@ -134,7 +132,6 @@ $birthday_month_value = $birthday_timestamp ? (int) date('n', $birthday_timestam
 $birthday_day_value = $birthday_timestamp ? (int) date('j', $birthday_timestamp) : 1;
 $birthday_months = student_edit_month_options();
 $blood_type_options = student_edit_blood_type_options();
-$rank_options = student_edit_rank_options();
 $three_size_parts = student_edit_split_three_size($student['three_size'] ?? '');
 $school_year_code = student_edit_class_code($student['school_year'] ?? '');
 ?>
@@ -332,13 +329,8 @@ $school_year_code = student_edit_class_code($student['school_year'] ?? '');
 
                 <div class="col-md-4">
                     <label for="rank" class="form-label">Rank</label>
-                    <select id="rank" name="rank" class="form-select profile-editable" disabled>
-                        <?php foreach ($rank_options as $rank_option): ?>
-                            <option value="<?= e($rank_option) ?>" <?= $student['rank'] === $rank_option ? 'selected' : '' ?>>
-                                <?= e($rank_option) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                    <input type="text" id="rank" class="form-control" value="<?= e($student['rank']) ?>" readonly
+                        data-student-rank>
                 </div>
 
                 <div class="col-md-4">
@@ -417,6 +409,7 @@ $school_year_code = student_edit_class_code($student['school_year'] ?? '');
     </form>
 </main>
 
+<script src="/gakumas-sms/assets/js/student-rank.js"></script>
 <script src="/gakumas-sms/assets/js/student-edit-profile.js"></script>
 
 <?php require_once '../includes/footer.php'; ?>

@@ -6,6 +6,8 @@ const profileFormActions = document.getElementById('profileFormActions');
 const profileEditableFields = Array.from(document.querySelectorAll('.profile-editable'));
 const birthdayField = document.getElementById('birthday');
 const zodiacField = document.getElementById('zodiac');
+const rankField = document.querySelector('[data-student-rank]');
+const statFields = ['vocal', 'dance', 'visual'].map((id) => document.getElementById(id));
 const birthdayPicker = document.querySelector('.profile-birthday-picker');
 const birthdayPickerButton = document.getElementById('birthdayPickerButton');
 const birthdayPickerLabel = document.getElementById('birthdayPickerLabel');
@@ -81,6 +83,14 @@ function updateZodiacPreview() {
     }
 
     zodiacField.value = zodiacFromMonthDay(birthday.month, birthday.day);
+}
+
+function updateRankPreview() {
+    if (!rankField || statFields.some((field) => !field) || typeof window.calculateStudentRank !== 'function') {
+        return;
+    }
+
+    rankField.value = window.calculateStudentRank(...statFields.map((field) => field.value));
 }
 
 // Birthday picker
@@ -234,6 +244,8 @@ if (profileCancelButton) {
             zodiacField.value = originalZodiacValue;
         }
 
+        updateRankPreview();
+
         if (threeSizeField) {
             threeSizeField.value = originalThreeSizeValue;
         }
@@ -244,6 +256,10 @@ if (profileCancelButton) {
 
 threeSizeInputs.forEach((field) => {
     field.addEventListener('input', syncThreeSizeValue);
+});
+
+statFields.filter(Boolean).forEach((field) => {
+    field.addEventListener('input', updateRankPreview);
 });
 
 if (birthdayPickerButton && birthdayPickerPopover) {
@@ -300,4 +316,5 @@ document.addEventListener('click', (event) => {
 });
 
 renderBirthdayDays();
+updateRankPreview();
 })();

@@ -760,6 +760,19 @@
     box-shadow: none;
 }
 
+.admin-students-main input[data-student-rank][readonly] {
+    background: color-mix(in srgb, var(--secondary) 16%, white);
+    color: var(--text-secondary);
+    border-color: color-mix(in srgb, var(--primary) 12%, white);
+    cursor: not-allowed;
+}
+
+.admin-students-main input[data-student-rank][readonly]:focus {
+    background: color-mix(in srgb, var(--secondary) 16%, white);
+    border-color: color-mix(in srgb, var(--primary) 18%, white);
+    box-shadow: none;
+}
+
 @media (max-width: 575.98px) {
     .admin-students-main .student-birthday-controls {
         grid-template-columns: 1fr;

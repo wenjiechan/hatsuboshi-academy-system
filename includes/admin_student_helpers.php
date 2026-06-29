@@ -253,7 +253,6 @@ function admin_student_validate_required_profile(array $data): string
         'weight' => 'Weight is required.',
         'three_size' => 'Three size is required.',
         'school_year' => 'Class is required.',
-        'rank' => 'Rank is required.',
     ] as $key => $message) {
         if (($data[$key] ?? '') === '') {
             return $message;
@@ -450,10 +449,10 @@ function admin_student_create(PDO $pdo, bool &$show_create_form): string
         $student_stmt = $pdo->prepare(
             'INSERT INTO students
                 (user_id, name, name_jp, birthday, zodiac, blood_type, height, weight, three_size,
-                 hometown, hobbies, special_skill, school_year, rank, vocal, dance, visual, bio,
+                 hometown, hobbies, special_skill, school_year, vocal, dance, visual, bio,
                  producer_id, producer_status)
              VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $student_stmt->execute([
             $user_id,
@@ -469,7 +468,6 @@ function admin_student_create(PDO $pdo, bool &$show_create_form): string
             $student_values['hobbies'] !== '' ? $student_values['hobbies'] : null,
             $student_values['special_skill'] !== '' ? $student_values['special_skill'] : null,
             $student_values['school_year'] !== '' ? $student_values['school_year'] : null,
-            $student_values['rank'] !== '' ? $student_values['rank'] : 'Debut',
             $student_values['vocal'],
             $student_values['dance'],
             $student_values['visual'],
@@ -562,7 +560,6 @@ function admin_student_update(PDO $pdo): string
                  hobbies = ?,
                  special_skill = ?,
                  school_year = ?,
-                 rank = ?,
                  vocal = ?,
                  dance = ?,
                  visual = ?,
@@ -584,7 +581,6 @@ function admin_student_update(PDO $pdo): string
             $student_values['hobbies'] !== '' ? $student_values['hobbies'] : null,
             $student_values['special_skill'] !== '' ? $student_values['special_skill'] : null,
             $student_values['school_year'] !== '' ? $student_values['school_year'] : null,
-            $student_values['rank'] !== '' ? $student_values['rank'] : 'Debut',
             $student_values['vocal'],
             $student_values['dance'],
             $student_values['visual'],

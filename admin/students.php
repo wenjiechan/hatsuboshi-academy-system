@@ -30,7 +30,6 @@ $create_birthday_display = date('F d', $create_birthday_timestamp);
 
 $birthday_months = student_edit_month_options();
 $blood_type_options = student_edit_blood_type_options();
-$rank_options = student_edit_rank_options();
 $today_month_value = (int) date('n');
 $today_day_value = (int) date('j');
 $today_birthday_display = date('F d');
@@ -270,11 +269,8 @@ require_once '../includes/sidebar.php';
 
                             <div class="col-md-4">
                                 <label for="rank" class="form-label">Rank</label>
-                                <select id="rank" name="rank" class="form-select" required>
-                                    <?php foreach ($rank_options as $rank_option): ?>
-                                    <option value="<?= e($rank_option) ?>"><?= e($rank_option) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <input type="text" id="rank" class="form-control" value="Debut" readonly
+                                    data-student-rank>
                             </div>
 
 
@@ -568,14 +564,8 @@ require_once '../includes/sidebar.php';
 
                             <div class="col-md-4">
                                 <label for="edit_rank" class="form-label">Rank</label>
-                                <select id="edit_rank" name="rank" class="form-select" required>
-                                    <?php foreach ($rank_options as $rank_option): ?>
-                                    <option value="<?= e($rank_option) ?>"
-                                        <?= ($edit_student['rank'] ?? '') === $rank_option ? 'selected' : '' ?>>
-                                        <?= e($rank_option) ?>
-                                    </option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <input type="text" id="edit_rank" class="form-control"
+                                    value="<?= e($edit_student['rank'] ?? 'Debut') ?>" readonly data-student-rank>
                             </div>
 
 
@@ -820,6 +810,7 @@ require_once '../includes/sidebar.php';
     </section>
 </main>
 
+<script src="/gakumas-sms/assets/js/student-rank.js"></script>
 <script src="/gakumas-sms/assets/js/admin-students.js"></script>
 
 <?php require_once '../includes/footer.php'; ?>
