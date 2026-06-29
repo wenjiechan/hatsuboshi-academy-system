@@ -27,22 +27,22 @@ function get_producer_message(PDO $pdo, array $student, array $today_schedules, 
         $message_weights['rest_day'] = 45;
     }
 
-    //Check if any stat decreased
+    // Increase the chance of a warning message if any student stat decreased.
     $decreased_stat_type = get_decreased_stat_type($student, $previous_snapshot, $stat_types);
 
     if ($decreased_stat_type !== null) {
         $message_weights['low_' . $decreased_stat_type] = 40;
     }
 
-    //Check if the student made good progress
+    // Increase the chance of a positive message if the student's total stats improved.
     if (has_good_progress($student, $previous_snapshot, $stat_types)) {
         $message_weights['good_progress'] = 30;
     }
 
-    // Pick one message type using weight
+    // Pick one message type based on the calculated weights.
     $message_type = pick_weighted_message_type($message_weights);
 
-    // Get random message from database
+    // Get one random producer message that matches the selected message type.
     return get_random_producer_message($pdo, (int) $student['id'], $message_type)
         ?: 'Keep your pace steady today. Small progress still counts.';
 }
@@ -122,7 +122,7 @@ function has_good_progress(array $student, ?array $previous_snapshot, array $sta
         $current_total += (int) ($student[$type] ?? 0);
     }
 
-    //If added current stats > previous stats. returb true
+    // Return true when the student's current total stats are higher than the previous snapshot.
     return $current_total > $previous_total;
 }
 

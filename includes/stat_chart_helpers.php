@@ -2,14 +2,14 @@
 
 function get_student_weekly_stat_chart(PDO $pdo, array $student): array
 {
-    // Define tracked stats
+    // Define the student stat columns that will be shown in the weekly chart.
     $stat_types = ['vocal', 'dance', 'visual'];
 
     ensure_daily_student_stats_table($pdo);
     save_today_student_stats($pdo, $student);
     delete_old_student_stat_snapshots($pdo, (int) $student['id']);
 
-    // Creates a 7 day range
+    // Create a 7-day range from 6 days ago until today.
     $today = new DateTimeImmutable('today');
     $start_date = $today->modify('-6 days');
     $start_date_sql = $start_date->format('Y-m-d');
@@ -18,7 +18,7 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
     // Reuse the latest known stat if no snapshot for a certain day
     $carry_values = [];
 
-    // Creates the starting values
+    // Use the student's current stats as the default starting values.
     foreach ($stat_types as $type) {
         $carry_values[$type] = (int) ($student[$type] ?? 0);
     }
@@ -26,7 +26,7 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
     // Checks whether the student has any stat record before the 7-day chart starts
     $previous_snapshot = get_previous_stat_snapshot($pdo, (int) $student['id'], $start_date_sql);
 
-    // Use the old value as the starting value
+    // If an older snapshot exists, use it as the starting value before the chart range.
     if ($previous_snapshot) {
         foreach ($stat_types as $type) {
             $carry_values[$type] = (int) $previous_snapshot[$type];
@@ -45,18 +45,18 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
     $chart_labels = [];
     $chart_data = array_fill_keys($stat_types, []);
 
-    //Each loop represents 1 day in the chart
+    // Each loop represents one day in the 7-day chart.
     for ($day = 0; $day < 7; $day++) {
         $date = $start_date->modify('+' . $day . ' days');
         $date_key = $date->format('Y-m-d');
 
-        //If that day has a snapshot , update the current values
+        // If this day has a snapshot, update the carried values.
         // If that day has no snapshot, continue using the previous value
         if (isset($weekly_snapshots[$date_key])) {
             $carry_values = $weekly_snapshots[$date_key];
         }
 
-        //Create labels for chart's x-axis
+        // Create the label for the chart's x-axis.
         $chart_labels[] = $date->format('M j');
 
         // Adds the stat value for each day
@@ -65,7 +65,7 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
         }
     }
 
-    //Return the result ready to use in a chart
+    // Return the prepared labels and stat values for the chart.
     return [
         'labels' => $chart_labels,
         'data' => $chart_data,
@@ -74,7 +74,7 @@ function get_student_weekly_stat_chart(PDO $pdo, array $student): array
     ];
 }
 
-//Ensures the snapshot table exists
+// Create the daily stat snapshot table if it does not already exist.
 function ensure_daily_student_stats_table(PDO $pdo): void
 {
     $pdo->exec(
@@ -94,7 +94,7 @@ function ensure_daily_student_stats_table(PDO $pdo): void
     );
 }
 
-//Inserts a new snapshot every time it is called
+// Create the daily stat snapshot table if it does not already exist.
 function save_today_student_stats(PDO $pdo, array $student): void
 {
     $stmt = $pdo->prepare(
@@ -110,7 +110,7 @@ function save_today_student_stats(PDO $pdo, array $student): void
     ]);
 }
 
-//Finds the latest snapshot before the 7-day window
+// Find the latest snapshot before the 7-day window.
 function get_previous_stat_snapshot(PDO $pdo, int $student_id, string $start_date_sql): ?array
 {
     $stmt = $pdo->prepare(
@@ -127,7 +127,7 @@ function get_previous_stat_snapshot(PDO $pdo, int $student_id, string $start_dat
     return $stmt->fetch() ?: null;
 }
 
-//Gets the latest snapshot for each day in the 7-day chart range
+// Get the latest saved snapshot for each day in the 7-day chart range.
 function get_weekly_stat_snapshots(PDO $pdo, int $student_id, string $start_date_sql, string $end_date_sql): array
 {
     $stmt = $pdo->prepare(
@@ -158,7 +158,7 @@ function get_weekly_stat_snapshots(PDO $pdo, int $student_id, string $start_date
     return $snapshots;
 }
 
-//Delete old snapshots but keeps one latest old snapshot
+// Delete old snapshots but keep the latest old one for carry-forward chart values.
 function delete_old_student_stat_snapshots(PDO $pdo, int $student_id): void
 {
     $keep_stmt = $pdo->prepare(

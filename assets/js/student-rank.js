@@ -1,4 +1,5 @@
 (() => {
+    // Stores the minimum rating needed for each rank
     const rankThresholds = [
         [35000, 'S5'],
         [26000, 'S4'],
@@ -17,6 +18,7 @@
         [3000, 'E'],
     ];
 
+    // Convert each stst to a number, adds them together, then multiplies by 2.3
     window.calculateStudentRank = (vocal, dance, visual) => {
         const rating = (
             Math.max(0, Number(vocal) || 0)
@@ -24,6 +26,7 @@
             + Math.max(0, Number(visual) || 0)
         ) * 2.3;
 
+        // Find the first rank where the rating is high enough
         const matchingRank = rankThresholds.find(([minimumRating]) => rating >= minimumRating);
 
         return matchingRank ? matchingRank[1] : 'Debut';

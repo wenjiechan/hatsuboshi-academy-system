@@ -54,7 +54,8 @@ $producer_display = in_array($producer_status, ['active', 'removal_pending'], tr
 $error = '';
 $success = '';
 
-// Save producer-managed profile fields.
+// Validate producer-editable profile fields, including performance stats, before saving.
+// Save the updated student profile and performance stat values.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf($_POST['csrf_token'] ?? '');
 

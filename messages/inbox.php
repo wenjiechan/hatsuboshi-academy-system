@@ -5,6 +5,7 @@ require_once __DIR__ . '/../includes/messages_helpers.php';
 
 $user_id = (int) $_SESSION['id'];
 $conversations = get_user_conversations($pdo, $user_id, true);
+// Separate active and archived conversations for the inbox tabs.
 $active_conversations = array_values(array_filter(
     $conversations,
     static fn(array $conversation): bool => empty($conversation['is_archived'])
@@ -13,12 +14,13 @@ $archived_conversations = array_values(array_filter(
     $conversations,
     static fn(array $conversation): bool => !empty($conversation['is_archived'])
 ));
+// Count unread messages from active conversations only.
 $total_unread = array_sum(array_map(
     static fn(array $conversation): int => (int) $conversation['unread_count'],
     $active_conversations
 ));
 
-// Format the latest message time nicely
+// Format the latest message time for the inbox preview.
 function format_message_inbox_time(?string $date): string
 {
     if (empty($date)) {
@@ -42,7 +44,7 @@ function format_message_inbox_time(?string $date): string
     return date('M j, Y', $timestamp);
 }
 
-// Shortens long messages for the inbox preview
+// Shorten long messages for the inbox preview.
 function message_preview(?string $body, int $limit = 110): string
 {
     $body = trim(preg_replace('/\s+/', ' ', (string) $body));
@@ -56,7 +58,7 @@ function message_preview(?string $body, int $limit = 110): string
         : $body;
 }
 
-// Deside the avatar image
+// Decide which avatar image should be shown for the conversation.
 function inbox_avatar_path(array $conversation): string
 {
     $avatar = trim((string) ($conversation['other_avatar'] ?? ''));

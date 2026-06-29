@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// Load active users that the current user can start a conversation with.
 $contacts = get_message_contacts($pdo, $user_id);
 
 $page_title = 'New Message';
@@ -52,6 +53,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         </div>
     </section>
 
+    <!--Search is handled on the page by filtering the available contact cards.-->
     <section class="compose-panel">
         <label class="messages-search-field compose-search" for="recipientSearch">
             <span class="visually-hidden">Search users</span>

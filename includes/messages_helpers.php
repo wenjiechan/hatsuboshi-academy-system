@@ -18,6 +18,7 @@ function message_dashboard_url(string $role): string
 }
 
 // Create a unique key for two users
+// Generate the same direct conversation key no matter which user starts the chat.
 function message_direct_key(int $first_user_id, int $second_user_id): string
 {
     $user_ids = [$first_user_id, $second_user_id];
@@ -46,7 +47,8 @@ function find_direct_conversation(PDO $pdo, int $first_user_id, int $second_user
     return $conversation_id === false ? null : (int) $conversation_id;
 }
 
-//Create sirect conversation
+// Create a new direct conversation between two active users.
+// Use a transaction so the conversation and both participant rows are created together.
 function create_direct_conversation(PDO $pdo, int $first_user_id, int $second_user_id): int
 {
     if ($first_user_id === $second_user_id) {
@@ -210,7 +212,7 @@ function find_or_create_system_conversation(
     }
 }
 
-// Check whether the log in user is part of the conversation
+// Check whether the logged-in user is still an active participant in the conversation.
 function is_conversation_participant(PDO $pdo, int $conversation_id, int $user_id): bool
 {
     $stmt = $pdo->prepare(
@@ -252,7 +254,7 @@ function get_message_contacts(PDO $pdo, int $current_user_id): array
     return $stmt->fetchAll();
 }
 
-// Get one active messagable user by ID
+ //Get one active user who can receive messages.
 function get_message_user(PDO $pdo, int $user_id): ?array
 {
     $stmt = $pdo->prepare(
@@ -335,6 +337,7 @@ function get_conversation_recipient_ids(PDO $pdo, int $conversation_id, int $sen
 }
 
 // Gets recipients who have not muted this conversation.
+// Return recipients who should receive a notification for a new message.
 function get_conversation_notification_recipient_ids(
     PDO $pdo,
     int $conversation_id,
@@ -407,9 +410,9 @@ function set_conversation_muted(
     return $stmt->rowCount() > 0;
 }
 
-// Gets all conversations for the current user
-// If the user has not opened the conversation after a new message, it becomes unread
-// Newest conversations appear at the top
+// Get the current user's conversations, including unread counts and latest message preview.
+// Archived conversations are excluded unless $include_archived is true.
+// Newest conversations appear first.
 function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived = false): array
 {
     $archive_sql = $include_archived ? '' : 'AND current_participant.is_archived = 0';
@@ -479,9 +482,8 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
     return $stmt->fetchAll();
 }
 
-// Gets messages inside a conversation
-// Load messages ordered from oldest to newest
-// Calculates whether the message can be edited
+// Get messages inside a conversation from oldest to newest.
+// Also calculates whether each text message can be edited or deleted by the current user.
 function get_conversation_messages(
     PDO $pdo,
     int $conversation_id,
@@ -1349,6 +1351,7 @@ function generate_automatic_birthday_messages(
     );
     $students_stmt->execute([$month_day]);
 
+    // If another request created the conversation first, reuse the existing conversation.
     $duplicate_stmt = $pdo->prepare(
         'SELECT id FROM messages WHERE dedupe_key = ? LIMIT 1'
     );

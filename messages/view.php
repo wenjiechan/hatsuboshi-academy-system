@@ -12,6 +12,7 @@ if (!$conversation_id) {
     exit;
 }
 
+// Load the selected conversation and make sure the current user can access it.
 $conversation = get_conversation_details($pdo, (int) $conversation_id, $user_id);
 
 if (!$conversation) {
@@ -19,6 +20,7 @@ if (!$conversation) {
     exit;
 }
 
+// Load messages for this conversation from oldest to newest.
 // Mark the conversation as read after loading messages
 $messages = get_conversation_messages($pdo, (int) $conversation_id, $user_id);
 mark_conversation_read($pdo, (int) $conversation_id, $user_id);
@@ -72,6 +74,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
             <div class="conversation-header-copy">
                 <h2><?= htmlspecialchars($conversation['other_display_name'] ?? 'System', ENT_QUOTES, 'UTF-8') ?></h2>
                 <p>
+                    <!--Hide the reply form for system conversations because they are read-only.-->
                     <?= $conversation['conversation_type'] === 'system'
                         ? 'System alerts'
                         : htmlspecialchars(ucfirst((string) ($conversation['other_role'] ?? 'system')), ENT_QUOTES, 'UTF-8') ?>
@@ -144,6 +147,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     $is_own_message = (int) ($message['sender_id'] ?? 0) === $user_id;
                     $is_deleted_message = !empty($message['deleted_at']);
                     $type_label = chat_message_type_label((string) $message['message_type']);
+                    // Show Accept or Reject buttons when the student receives a pending producer request.
                     $is_pending_producer_request = !$is_deleted_message
                         && in_array($message['message_type'], [
                             MESSAGE_TYPE_PRODUCER_ADD_REQUEST,

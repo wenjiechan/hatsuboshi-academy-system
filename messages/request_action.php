@@ -13,6 +13,7 @@ $expects_json = str_contains(
     'application/json'
 );
 
+// Detect whether the frontend expects a JSON response.
 function request_action_response(array $payload, int $status_code = 200): void
 {
     http_response_code($status_code);
@@ -21,6 +22,7 @@ function request_action_response(array $payload, int $status_code = 200): void
     exit;
 }
 
+// For AJAX requests, return JSON errors instead of redirecting.
 if ($expects_json) {
     if (empty($_SESSION['id']) || empty($_SESSION['role'])) {
         request_action_response([
@@ -29,6 +31,7 @@ if ($expects_json) {
         ], 401);
     }
 
+    // Only students can accept or reject producer-student requests.
     if ($_SESSION['role'] !== 'student') {
         request_action_response([
             'error' => 'Only the student can answer this request.',
@@ -53,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Validate the CSRF token before updating the request.
 $submitted_csrf = (string) ($_POST['csrf_token'] ?? '');
 
 if (!hash_equals($_SESSION['csrf_token'] ?? '', $submitted_csrf)) {
@@ -76,6 +80,7 @@ if (!$request_id || $request_id <= 0) {
     exit;
 }
 
+// Update the producer-student request and create the response message.
 try {
     $conversation_id = respond_to_producer_student_request(
         $pdo,

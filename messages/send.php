@@ -30,11 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Compares the submittes CSRF token with the session token
+// Compare the submitted CSRF token with the token stored in the session.
 $submitted_csrf = (string) ($_POST['csrf_token'] ?? '');
 
 if (!hash_equals($_SESSION['csrf_token'] ?? '', $submitted_csrf)) {
-    //Check the AJAX request
+    // Return a JSON error response for AJAX requests.
     if ($expects_json) {
         send_message_response(['error' => 'The security check could not be verified.'], 403);
     }
@@ -64,7 +64,7 @@ if (!$conversation_id || !is_conversation_participant($pdo, (int) $conversation_
 
 $conversation = get_conversation_details($pdo, (int) $conversation_id, $sender_id);
 
-// Blocks replies to system conversations
+// Block replies to system conversations because they are read-only.
 if (!$conversation || $conversation['conversation_type'] === 'system') {
     //Check the AJAX request
     if ($expects_json) {
@@ -76,7 +76,7 @@ if (!$conversation || $conversation['conversation_type'] === 'system') {
     exit;
 }
 
-// If everything valid, it sends the message
+// Send the message after all permission and validation checks pass.
 try {
     $message_id = send_conversation_message(
         $pdo,
@@ -88,7 +88,7 @@ try {
     $sender = get_message_user($pdo, $sender_id);
     $sender_name = $sender['display_name'] ?? $_SESSION['user_name'] ?? 'Someone';
 
-    // Create a notification for each recipient
+    // Notify each recipient who has not muted this conversation.
     foreach (get_conversation_notification_recipient_ids($pdo, (int) $conversation_id, $sender_id) as $recipient_id) {
         create_notification(
             $pdo,

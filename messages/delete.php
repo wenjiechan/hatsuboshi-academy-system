@@ -14,9 +14,7 @@ $sender_id = (int) $_SESSION['id'];
 $message_id = filter_input(INPUT_POST, 'message_id', FILTER_VALIDATE_INT);
 $conversation_id = filter_input(INPUT_POST, 'conversation_id', FILTER_VALIDATE_INT);
 
-// Validate message and permission
-// Prevent users from changing the form manually and 
-//trying to delete messages from conversations they do not belong to 
+// Only allow the sender to delete their own text message.
 if (
     !$message_id ||
     !$conversation_id ||
@@ -29,7 +27,7 @@ if (
     );
 }
 
-// Call the helper function to do a soft delete
+// Soft-delete the message so the conversation history remains consistent.
 try {
     delete_conversation_message(
         $pdo,
@@ -37,7 +35,7 @@ try {
         (int) $conversation_id,
         $sender_id
     );
-    // Stoer the mmessage if delete fails
+    // Store the mmessage if delete fails
 } catch (RuntimeException $exception) {
     $_SESSION['message_error'] = $exception->getMessage();
 }

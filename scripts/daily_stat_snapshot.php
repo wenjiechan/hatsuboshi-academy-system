@@ -2,10 +2,10 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/stat_chart_helpers.php';
 
-//Make sure the daily_student_stats table exists
+// Make sure the daily_student_stats table exists before saving snapshots.
 ensure_daily_student_stats_table($pdo);
 
-//Select every student
+// Select every student's current stat values.
 $students_stmt = $pdo->query(
     'SELECT id, vocal, dance, visual
      FROM students
@@ -14,7 +14,7 @@ $students_stmt = $pdo->query(
 
 $saved_count = 0;
 
-// For each student, inserts one new snapshot row for each student's current stats
+// Save one daily stat snapshot for each student.
 foreach ($students_stmt->fetchAll() as $student) {
     save_today_student_stats($pdo, $student);
     delete_old_student_stat_snapshots($pdo, (int) $student['id']);

@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 $user_id = (int) ($_SESSION['id'] ?? 0);
 $user_role = (string) ($_SESSION['role'] ?? '');
 
-// CHeck login user
+// Update the producer-student request and create the response message.
 if ($user_id <= 0) {
     messages_poll_response([
         'error' => 'Unauthenticated',
@@ -34,7 +34,7 @@ $after_id = filter_input(INPUT_GET, 'after_id', FILTER_VALIDATE_INT);
 $edited_after = (string) ($_GET['edited_after'] ?? '1970-01-01 00:00:00');
 $deleted_after = (string) ($_GET['deleted_after'] ?? '1970-01-01 00:00:00');
 
-// Validate request
+// Check that the user is logged in before polling messages.
 if (
     !$conversation_id ||
     $conversation_id <= 0 ||
@@ -54,7 +54,7 @@ if (!is_conversation_participant($pdo, (int) $conversation_id, $user_id)) {
     messages_poll_response(['error' => 'Conversation unavailable'], 403);
 }
 
-// Get new messages
+// Get messages newer than the last message ID received by the browser.
 $stmt = $pdo->prepare(
     'SELECT
         m.id,
@@ -71,11 +71,13 @@ $stmt = $pdo->prepare(
         request.status AS request_status,
         request.producer_id AS request_producer_id,
         request.student_id AS request_student_id,
-        /*A message can be edited only 
-        message belongs to current user, 
-        message type is text
-        message is not deleted
-        message was sent within 15 minutes*/
+/*
+ * A message can be edited only when:
+ * - it belongs to the current user
+ * - it is a text message
+ * - it is not deleted
+ * - it was sent within the last 15 minutes
+ */
         CASE
             WHEN m.sender_id = ?
              AND m.message_type = "text"
@@ -106,7 +108,7 @@ $stmt = $pdo->prepare(
 );
 $stmt->execute([$user_id, $user_id, (int) $conversation_id, (int) $after_id]);
 $messages = $stmt->fetchAll();
-// Get edited and deleted messages
+// Get messages that were edited or deleted after the browser's last polling cursor.
 $edited_messages = get_edited_conversation_messages(
     $pdo,
     (int) $conversation_id,
@@ -134,17 +136,17 @@ $request_status_stmt = $pdo->prepare(
 $request_status_stmt->execute([(int) $conversation_id]);
 $request_statuses = $request_status_stmt->fetchAll();
 
-// Get the current database time as cursor
+// Use the current database time as the next edit/delete polling cursor.
 $poll_cursor = (string) $pdo->query('SELECT NOW()')->fetchColumn();
 
-// Mark conversation as read
+// Use the current database time as the next edit/delete polling cursor.
 mark_conversation_read($pdo, (int) $conversation_id, $user_id);
 
-// Loops through new messages
+// Use the current database time as the next edit/delete polling cursor.
 $next_after_id = (int) $after_id;
 $response_messages = [];
 
-// Updates the latest message ID
+// Mark the conversation as read after the user receives the latest updates.
 foreach ($messages as $message) {
     $message_id = (int) $message['id'];
     $next_after_id = max($next_after_id, $message_id);

@@ -116,6 +116,7 @@ function validate_student_edit_profile(array $post, array $student): array
         'height' => trim($post['height'] ?? ''),
         'weight' => trim($post['weight'] ?? ''),
         'school_year' => $class_code !== '' ? 'Class ' . $class_code : '',
+        // Clean rank and performance stat values from the submitted form.
         'vocal' => max(0, (int) ($post['vocal'] ?? 0)),
         'dance' => max(0, (int) ($post['dance'] ?? 0)),
         'visual' => max(0, (int) ($post['visual'] ?? 0)),

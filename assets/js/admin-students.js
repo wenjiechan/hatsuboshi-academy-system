@@ -24,7 +24,7 @@ document.querySelectorAll('[data-producer-toggle]').forEach((toggle) => {
     updateProducerPicker();
 });
 
-// Preview the database-generated rank while an admin changes performance stats.
+// Update the rank preview automatically when Vocal, Dance, or Visual changes.
 document.querySelectorAll('[data-student-rank]').forEach((rankField) => {
     const form = rankField.closest('form');
     const statFields = ['vocal', 'dance', 'visual'].map((name) => form?.querySelector(`[name="${name}"]`));

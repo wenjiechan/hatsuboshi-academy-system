@@ -32,7 +32,7 @@ if (!is_conversation_participant($pdo, (int) $conversation_id, $sender_id)) {
     );
 }
 
-// Edit the message
+// Only allow the sender to edit their own text message within the edit time limit.
 try {
     edit_conversation_message(
         $pdo,
@@ -45,5 +45,6 @@ try {
     $_SESSION['message_error'] = $exception->getMessage();
 }
 
+// Return JSON for AJAX editing, otherwise redirect back to the conversation.
 header('Location: /gakumas-sms/messages/view.php?id=' . (int) $conversation_id);
 exit;
