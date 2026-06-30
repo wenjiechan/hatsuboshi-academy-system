@@ -1,0 +1,831 @@
+/* ---------- Student performance summary ---------- */
+.stats-main {
+    width: auto;
+}
+
+.stats-main > section,
+.stats-main > .rank-summary-grid,
+.stats-main > .stats-detail-grid {
+    width: 100%;
+}
+
+.stats-main .dashboard-hero {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--secondary) 42%, transparent), transparent 30%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.98), color-mix(in srgb, var(--secondary) 9%, white));
+}
+
+.stats-main .student-info {
+    display: block;
+}
+
+.stats-main .stats-heading h2 {
+    margin: 0;
+}
+
+.stats-main .stats-heading > p:last-child {
+    margin: 6px 0 0;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.stats-main .stats-heading {
+    margin-bottom: 22px;
+}
+
+.stats-main .stat-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.stats-main .stat-summary-grid .stat-row {
+    display: grid;
+    position: relative;
+    gap: 14px;
+    align-content: center;
+    min-height: 126px;
+    padding: 20px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, currentColor 13%, white);
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 10px 24px rgba(74, 59, 71, 0.07);
+}
+
+.stats-main .stat-summary-grid .stat-row::after {
+    position: absolute;
+    inset: auto -22px -34px auto;
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+    opacity: 0.08;
+}
+
+.stats-main .stat-summary-grid .stat-row + .stat-row {
+    margin-top: 0;
+}
+
+.stats-main .stat-summary-grid .stat-row strong {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+}
+
+.stats-main .stat-label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.stats-main .stat-label i {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 10px;
+    color: currentColor;
+    background: color-mix(in srgb, currentColor 11%, white);
+}
+
+.stats-main .current-rank {
+    display: grid;
+    align-content: center;
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, white);
+    border-radius: var(--radius-md);
+    background:
+        linear-gradient(150deg, color-mix(in srgb, var(--secondary) 32%, white), rgba(255, 255, 255, 0.92));
+    box-shadow: var(--shadow-soft);
+}
+
+.stats-main .current-rank h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.stats-main .current-rank-heading {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.stats-main .current-rank-heading .dashboard-eyebrow {
+    margin-bottom: 2px;
+}
+
+.stats-main .current-rank-icon {
+    display: grid;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border-radius: 14px;
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.stats-main .current-rank .stat-row {
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    box-shadow: 0 7px 18px rgba(74, 59, 71, 0.07);
+}
+
+.stats-main .current-rank-metrics {
+    display: grid;
+    gap: 10px;
+}
+
+.stats-main .current-rank-metrics .stat-row + .stat-row {
+    margin-top: 0;
+}
+
+.stats-main .stat-row.rating strong {
+    color: var(--primary);
+}
+
+/* ---------- Rank badges ---------- */
+.rank-badge {
+    --rank-accent: #94a3b8;
+    --rank-ink: #475569;
+    --rank-surface: #f1f5f9;
+    display: inline-flex;
+    position: relative;
+    min-width: 48px;
+    min-height: 34px;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 13px 4px 5px;
+    border: 1px solid color-mix(in srgb, var(--rank-accent) 58%, white);
+    border-radius: 999px;
+    overflow: hidden;
+    color: var(--rank-ink);
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96) 0 14%, transparent 15%),
+        linear-gradient(135deg, var(--rank-surface), color-mix(in srgb, var(--rank-surface) 78%, var(--rank-accent)));
+    font-size: 0.9rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.03em;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 5px 12px color-mix(in srgb, var(--rank-accent) 22%, transparent);
+}
+
+.rank-badge::before {
+    display: grid;
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 50%;
+    color: white;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--rank-accent) 68%, white), var(--rank-accent));
+    font-size: 0.62rem;
+    line-height: 1;
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--rank-accent) 70%, black);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        0 2px 6px color-mix(in srgb, var(--rank-accent) 32%, transparent);
+    content: "◆";
+}
+
+.rank-badge[data-rank="Debut"] {
+    --rank-accent: #94a3b8;
+    --rank-ink: #475569;
+    --rank-surface: #f1f5f9;
+}
+
+.rank-badge[data-rank="E"] {
+    --rank-accent: #c98b4d;
+    --rank-ink: #7c3f14;
+    --rank-surface: #fff1df;
+}
+
+.rank-badge[data-rank="D"] {
+    --rank-accent: #5bb578;
+    --rank-ink: #176534;
+    --rank-surface: #e9f9ee;
+}
+
+.rank-badge[data-rank="C"] {
+    --rank-accent: #3db7ad;
+    --rank-ink: #0f615b;
+    --rank-surface: #e5f9f7;
+}
+
+.rank-badge[data-rank="C+"] {
+    --rank-accent: #35afd0;
+    --rank-ink: #075b70;
+    --rank-surface: #e3f8fd;
+}
+
+.rank-badge[data-rank="B"] {
+    --rank-accent: #4f91e4;
+    --rank-ink: #174f9b;
+    --rank-surface: #eaf2ff;
+}
+
+.rank-badge[data-rank="B+"] {
+    --rank-accent: #6875ed;
+    --rank-ink: #3730a3;
+    --rank-surface: #eef2ff;
+}
+
+.rank-badge[data-rank="B"]::before,
+.rank-badge[data-rank="B+"]::before,
+.rank-badge[data-rank="A"]::before,
+.rank-badge[data-rank="A+"]::before {
+    content: "✦";
+}
+
+.rank-badge[data-rank="A"] {
+    --rank-accent: #9668df;
+    --rank-ink: #6130a3;
+    --rank-surface: #f4ecff;
+}
+
+.rank-badge[data-rank="A+"] {
+    --rank-accent: #d35bb7;
+    --rank-ink: #92256f;
+    --rank-surface: #fceafb;
+}
+
+.rank-badge[data-rank="S"] {
+    --rank-accent: #d9a915;
+    --rank-ink: #755100;
+    --rank-surface: #fff7ce;
+}
+
+.rank-badge[data-rank="S+"] {
+    --rank-accent: #ed9410;
+    --rank-ink: #8a4700;
+    --rank-surface: #fff0d4;
+}
+
+.rank-badge[data-rank="SS"] {
+    --rank-accent: #e96731;
+    --rank-ink: #92330f;
+    --rank-surface: #ffeadf;
+}
+
+.rank-badge[data-rank="SSS"] {
+    --rank-accent: #e84a5b;
+    --rank-ink: #9a1d2d;
+    --rank-surface: #ffe6e9;
+}
+
+.rank-badge[data-rank="SSS+"] {
+    --rank-accent: #e44999;
+    --rank-ink: #941453;
+    --rank-surface: #ffe6f3;
+}
+
+.rank-badge[data-rank="S"]::before,
+.rank-badge[data-rank="S+"]::before,
+.rank-badge[data-rank="SS"]::before,
+.rank-badge[data-rank="SSS"]::before,
+.rank-badge[data-rank="SSS+"]::before,
+.rank-badge[data-rank="S5"]::before {
+    content: "★";
+}
+
+.rank-badge[data-rank="S4"] {
+    --rank-accent: #64748b;
+    --rank-ink: #263548;
+    --rank-surface: #edf2f7;
+    border-color: #94a3b8;
+    background:
+        linear-gradient(115deg, rgba(255, 255, 255, 0.95) 0 18%, transparent 19% 52%, rgba(255, 255, 255, 0.72) 53% 63%, transparent 64%),
+        linear-gradient(135deg, #ffffff, #cbd5e1 52%, #eef2f7);
+}
+
+.rank-badge[data-rank="S4"]::before {
+    content: "✦";
+}
+
+.rank-badge[data-rank="S5"] {
+    --rank-accent: #f8cc5c;
+    --rank-ink: #ffffff;
+    border-color: rgba(255, 255, 255, 0.72);
+    color: #ffffff;
+    background:
+        linear-gradient(115deg, rgba(255, 255, 255, 0.34) 0 13%, transparent 14% 52%, rgba(255, 255, 255, 0.2) 53% 62%, transparent 63%),
+        linear-gradient(135deg, #6536db, #d83fa3 54%, #ef9a15);
+    text-shadow: 0 1px 3px rgba(61, 22, 94, 0.5);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.62),
+        0 6px 16px rgba(168, 85, 247, 0.34),
+        0 0 0 2px rgba(245, 158, 11, 0.08);
+}
+
+.rank-badge.highest-rank-badge {
+    --rank-accent: var(--primary);
+    --rank-ink: var(--text-primary);
+    --rank-surface: color-mix(in srgb, var(--secondary) 32%, white);
+}
+
+.rank-badge.highest-rank-badge::before {
+    content: "★";
+}
+
+.stats-main .stat-row.rank .rank-badge {
+    min-height: 36px;
+    padding-right: 14px;
+    font-size: 0.9rem;
+}
+
+/* ---------- Rank progress ---------- */
+.stats-main .rank-summary-grid {
+    display: grid;
+    grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+    gap: 24px;
+    align-items: stretch;
+    margin-top: 24px;
+}
+
+.stats-main .rank-progress-card {
+    margin-top: 0;
+    padding: 28px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), color-mix(in srgb, var(--secondary) 10%, white));
+    box-shadow: var(--shadow-soft);
+}
+
+.stats-main .rank-progress-heading {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stats-main .rank-progress-card h2 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.stats-main .rank-progress-rating {
+    display: grid;
+    flex: 0 0 auto;
+    gap: 2px;
+    min-width: 150px;
+    margin: 0;
+    padding: 10px 16px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: 14px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    text-align: right;
+}
+
+.stats-main .rank-progress-rating strong {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+}
+
+.stats-main .rank-progress-labels {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 28px 0 10px;
+    color: var(--text-primary);
+    font-weight: 800;
+}
+
+.stats-main .rank-progress-labels > div {
+    display: grid;
+    gap: 6px;
+}
+
+.stats-main .rank-progress-labels > div:last-child {
+    justify-items: end;
+}
+
+.stats-main .rank-progress-labels small {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.stats-main .rank-progress-track {
+    position: relative;
+    height: 16px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, white);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--secondary) 24%, white);
+    box-shadow: inset 0 2px 5px rgba(74, 59, 71, 0.08);
+}
+
+.stats-main .rank-progress-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 35%, transparent);
+    transition: width 0.35s ease;
+}
+
+.stats-main .rank-progress-remaining {
+    margin: 10px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    text-align: center;
+}
+
+.stats-main .rank-progress-remaining strong {
+    color: var(--text-primary);
+}
+
+/* ---------- Weekly stat chart ---------- */
+.stats-main .stats-detail-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: 24px;
+    align-items: stretch;
+    margin-top: 24px;
+}
+
+.stats-main .stats-preview {
+    min-width: 0;
+    height: 100%;
+    margin-top: 0;
+    padding: 28px;
+}
+
+.stats-main .stat-chart-heading {
+    align-items: center;
+}
+
+.stats-main .stat-chart-description {
+    max-width: 680px;
+    margin: 6px 0 0;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.stats-main .stat-chart-period {
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--secondary) 22%, white);
+}
+
+.stats-main .stat-chart-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 22px 0 18px;
+    padding: 0;
+    border: 0;
+}
+
+.stats-main .stat-chart-toggle {
+    --toggle-color: var(--primary);
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid color-mix(in srgb, var(--toggle-color) 22%, white);
+    border-radius: 999px;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.9);
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.stats-main .stat-chart-toggle.vocal {
+    --toggle-color: var(--vocal-color);
+}
+
+.stats-main .stat-chart-toggle.dance {
+    --toggle-color: var(--dance-color);
+}
+
+.stats-main .stat-chart-toggle.visual {
+    --toggle-color: var(--visual-color);
+}
+
+.stats-main .stat-chart-toggle:has(input:checked) {
+    border-color: color-mix(in srgb, var(--toggle-color) 62%, white);
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--toggle-color) 13%, white);
+}
+
+.stats-main .stat-chart-toggle:hover {
+    transform: translateY(-1px);
+}
+
+.stats-main .stat-chart-toggle:focus-within {
+    outline: 3px solid color-mix(in srgb, var(--toggle-color) 25%, transparent);
+    outline-offset: 2px;
+}
+
+.stats-main .stat-chart-toggle input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    accent-color: var(--toggle-color);
+}
+
+.stats-main .stat-chart-toggle > span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--toggle-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--toggle-color) 13%, transparent);
+}
+
+.stats-main .stats-chart-wrap {
+    height: clamp(300px, 42vw, 430px);
+    padding: 16px 12px 6px;
+    border: 1px solid color-mix(in srgb, var(--primary) 10%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.72);
+}
+
+/* ---------- Latest stat history ---------- */
+.stats-main .stat-history-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100%;
+    margin-top: 0;
+    padding: 28px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--shadow-soft);
+}
+
+.stats-main .stat-history-card > .empty-dashboard-state {
+    display: grid;
+    flex: 1;
+    min-height: 220px;
+    place-content: center;
+}
+
+.stats-main .stat-history-heading {
+    align-items: center;
+}
+
+.stats-main .stat-history-heading h2 {
+    margin: 0;
+}
+
+.stats-main .stat-history-heading p:last-child {
+    margin: 6px 0 0;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.stats-main .stat-history-heading > span {
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--secondary) 22%, white);
+}
+
+.stats-main .stat-history-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid color-mix(in srgb, var(--primary) 10%, white);
+    border-radius: var(--radius-md);
+}
+
+.stats-main .stat-history-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.stats-main .stat-history-table th,
+.stats-main .stat-history-table td {
+    padding: 15px 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 9%, white);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.stats-main .stat-history-table th {
+    color: var(--text-secondary);
+    background: color-mix(in srgb, var(--secondary) 13%, white);
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.stats-main .stat-history-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.stats-main .stat-history-table tbody tr:hover {
+    background: color-mix(in srgb, var(--secondary) 9%, white);
+}
+
+.stats-main .stat-history-table time {
+    display: grid;
+    gap: 2px;
+    white-space: nowrap;
+}
+
+.stats-main .stat-history-table time strong {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.stats-main .stat-history-table time span {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+}
+
+.stats-main .history-stat-badge {
+    --history-stat-color: var(--primary);
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+    padding: 7px 11px;
+    border: 1px solid color-mix(in srgb, var(--history-stat-color) 28%, white);
+    border-radius: 999px;
+    color: color-mix(in srgb, var(--history-stat-color) 75%, #1f2937);
+    background: color-mix(in srgb, var(--history-stat-color) 11%, white);
+    font-size: 0.84rem;
+    font-weight: 850;
+}
+
+.stats-main .history-stat-badge.vocal {
+    --history-stat-color: var(--vocal-color);
+}
+
+.stats-main .history-stat-badge.dance {
+    --history-stat-color: var(--dance-color);
+}
+
+.stats-main .history-stat-badge.visual {
+    --history-stat-color: var(--visual-color);
+}
+
+.stats-main .history-values {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.stats-main .history-values span,
+.stats-main .history-values i {
+    color: var(--text-secondary);
+}
+
+.stats-main .history-change {
+    display: inline-flex;
+    min-width: 58px;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 900;
+}
+
+.stats-main .history-change.positive {
+    color: #167345;
+    background: #e6f8ee;
+}
+
+.stats-main .history-change.negative {
+    color: #a42b39;
+    background: #ffe9ec;
+}
+
+.stats-main .history-change.neutral {
+    color: #64748b;
+    background: #f1f5f9;
+}
+
+.stats-main .history-reason {
+    display: inline-block;
+    max-width: 280px;
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 991.98px) {
+    .stats-main .rank-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-main .current-rank-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stats-main .stats-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .stats-main .stat-history-card {
+        padding: 18px;
+    }
+
+    .stats-main .stats-detail-grid {
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .stats-main .stat-history-heading > span {
+        display: inline-flex;
+    }
+
+    .stats-main .stats-preview {
+        padding: 18px;
+    }
+
+    .stats-main .stat-chart-period {
+        display: inline-flex;
+    }
+
+    .stats-main .stat-chart-controls {
+        margin-top: 18px;
+    }
+
+    .stats-main .stat-chart-toggle {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .stats-main .stats-chart-wrap {
+        height: 300px;
+        padding-inline: 4px;
+    }
+
+    .stats-main .rank-progress-card {
+        padding: 18px;
+    }
+
+    .stats-main .rank-summary-grid {
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .stats-main .stat-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-main .stat-summary-grid .stat-row {
+        display: flex;
+        min-height: 64px;
+        padding: 14px 16px;
+    }
+
+    .stats-main .rank-progress-heading {
+        display: grid;
+        gap: 16px;
+    }
+
+    .stats-main .rank-progress-rating {
+        grid-template-columns: 1fr auto;
+        align-items: baseline;
+        width: 100%;
+        text-align: left;
+    }
+
+    .stats-main .rank-progress-rating strong {
+        text-align: right;
+    }
+
+    .stats-main .current-rank {
+        padding: 18px;
+    }
+
+    .stats-main .current-rank-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-main .current-rank-heading {
+        margin-bottom: 16px;
+    }
+
+    .stats-main .rank-progress-labels {
+        margin-top: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stats-main .rank-progress-fill {
+        transition: none;
+    }
+}

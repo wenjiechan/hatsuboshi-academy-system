@@ -35,7 +35,6 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-  - [Background Jobs](#background-jobs)
 - [Usage](#usage)
   - [Demo Accounts](#demo-accounts)
 - [The 13 Idols](#the-13-idols)
@@ -265,11 +264,6 @@ through CSS variables.
 - **Birthday banner** on the student's dashboard
 - **Dark mode** support
 - **Click-sparkle** micro-interactions for an academy-appropriate feel
-
-### ⏰ Background Jobs
-
-- `scripts/daily_stat_snapshot.php` — snapshots stats for charting
-- `scripts/generate_notifications.php` — fires deduped schedule alerts
 
 <p align="right">(<a href="#readme-top">★ back to top</a>)</p>
 
