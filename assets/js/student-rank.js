@@ -120,4 +120,86 @@
                 : 'Highest rank achieved';
         }
     });
+
+    document.querySelectorAll('[data-rank-calculator]').forEach((calculator) => {
+        const fields = {
+            vocal: calculator.querySelector('[data-calculator-stat="vocal"]'),
+            dance: calculator.querySelector('[data-calculator-stat="dance"]'),
+            visual: calculator.querySelector('[data-calculator-stat="visual"]'),
+        };
+        const ratingOutput = calculator.querySelector('[data-calculator-rating]');
+        const rankOutput = calculator.querySelector('[data-calculator-rank]');
+
+        const updateCalculator = () => {
+            const result = window.getStudentRankProgress(
+                fields.vocal?.value,
+                fields.dance?.value,
+                fields.visual?.value
+            );
+
+            if (ratingOutput) {
+                ratingOutput.textContent = Math.round(result.rating).toLocaleString();
+            }
+
+            if (rankOutput) {
+                rankOutput.textContent = result.currentRank;
+                rankOutput.dataset.rank = result.currentRank;
+            }
+        };
+
+        Object.values(fields).forEach((field) => {
+            field?.addEventListener('input', updateCalculator);
+        });
+
+        updateCalculator();
+    });
+
+    document.querySelectorAll('[data-rank-table-body]').forEach((tableBody) => {
+        const performanceContainer = tableBody.closest('[data-student-performance]');
+        const currentRank = performanceContainer
+            ? window.calculateStudentRank(
+                performanceContainer.dataset.vocal,
+                performanceContainer.dataset.dance,
+                performanceContainer.dataset.visual
+            )
+            : null;
+
+        rankThresholds.forEach(([minimumRating, rank], index) => {
+            const nextMinimum = rankThresholds[index + 1]?.[0] ?? null;
+            const minimumStats = Math.ceil(minimumRating / 2.3);
+            const maximumStats = nextMinimum === null
+                ? null
+                : Math.ceil(nextMinimum / 2.3) - 1;
+            const row = document.createElement('tr');
+
+            if (rank === currentRank) {
+                row.classList.add('current-rank-row');
+                row.setAttribute('aria-current', 'true');
+            }
+
+            const rankCell = document.createElement('th');
+            rankCell.scope = 'row';
+            rankCell.textContent = rank;
+
+            const ratingCell = document.createElement('td');
+            ratingCell.textContent = nextMinimum === null
+                ? `${minimumRating.toLocaleString()}+`
+                : `${minimumRating.toLocaleString()}–${(nextMinimum - 1).toLocaleString()}`;
+
+            const statsCell = document.createElement('td');
+            statsCell.textContent = maximumStats === null
+                ? `${minimumStats.toLocaleString()}+`
+                : `${minimumStats.toLocaleString()}–${maximumStats.toLocaleString()}`;
+
+            const badgeCell = document.createElement('td');
+            const badge = document.createElement('span');
+            badge.className = 'rank-badge';
+            badge.dataset.rank = rank;
+            badge.textContent = rank;
+            badgeCell.appendChild(badge);
+
+            row.append(rankCell, ratingCell, statsCell, badgeCell);
+            tableBody.appendChild(row);
+        });
+    });
 })();

@@ -185,7 +185,6 @@ require_once '../includes/sidebar.php';
                 <h2>Stat Growth</h2>
                 <p class="stat-chart-description">Compare your Vocal, Dance, and Visual performance over the latest seven days.</p>
             </div>
-            <span class="stat-chart-period">Last 7 days</span>
         </div>
 
         <?php if ($has_chart_data): ?>
@@ -229,7 +228,6 @@ require_once '../includes/sidebar.php';
                 <h2 id="stat-history-title">Latest Stat History</h2>
                 <p>Review the latest changes made to your performance stats.</p>
             </div>
-            <span>Latest 10</span>
         </div>
 
         <?php if (empty($stat_history)): ?>
@@ -301,6 +299,113 @@ require_once '../includes/sidebar.php';
         <?php endif; ?>
     </section>
     </div>
+        <section class="rank-reference-card" aria-labelledby="rank-reference-title">
+        <header class="rank-reference-heading">
+            <span class="rank-reference-icon" aria-hidden="true">
+                <i class="bi bi-star-fill"></i>
+            </span>
+            <div>
+                <p class="dashboard-eyebrow">Rank Reference</p>
+                <h2 id="rank-reference-title">Understand your rating</h2>
+            </div>
+        </header>
+
+        <div class="rank-reference-grid">
+            <article class="rank-formula-panel" aria-labelledby="rank-formula-title">
+                <div class="rank-reference-panel-heading">
+                    <span aria-hidden="true"><i class="bi bi-rulers"></i></span>
+                    <div>
+                        <p class="dashboard-eyebrow">Formula</p>
+                        <h3 id="rank-formula-title">How rating is calculated</h3>
+                    </div>
+                </div>
+
+                <div class="rank-formula" aria-label="Rating equals Vocal plus Dance plus Visual, multiplied by 2.3">
+                    <strong>Rating</strong>
+                    <span>=</span>
+                    <span>(Vocal + Dance + Visual) &times; 2.3</span>
+                </div>
+
+                <p class="rank-formula-description">
+                    Add your three performance stats, then multiply the total by 2.3.
+                </p>
+                <p class="rank-formula-example">
+                    Your current rating: <strong data-current-rating>&mdash;</strong>
+                </p>
+            </article>
+
+            <form class="rank-calculator-panel" data-rank-calculator>
+                <div class="rank-reference-panel-heading">
+                    <span aria-hidden="true"><i class="bi bi-calculator-fill"></i></span>
+                    <div>
+                        <p class="dashboard-eyebrow">Rating Calculator</p>
+                        <h3>Try different stat values</h3>
+                    </div>
+                </div>
+
+                <div class="rank-calculator-fields">
+                    <label>
+                        <span>Vocal</span>
+                        <input type="number" min="0" step="1" value="<?= (int) ($student['vocal'] ?? 0) ?>"
+                            inputmode="numeric" data-calculator-stat="vocal">
+                    </label>
+                    <label>
+                        <span>Dance</span>
+                        <input type="number" min="0" step="1" value="<?= (int) ($student['dance'] ?? 0) ?>"
+                            inputmode="numeric" data-calculator-stat="dance">
+                    </label>
+                    <label>
+                        <span>Visual</span>
+                        <input type="number" min="0" step="1" value="<?= (int) ($student['visual'] ?? 0) ?>"
+                            inputmode="numeric" data-calculator-stat="visual">
+                    </label>
+                </div>
+
+                <output class="rank-calculator-result" aria-live="polite">
+                    <span>Projected rating</span>
+                    <strong data-calculator-rating>&mdash;</strong>
+                    <span class="rank-badge" data-calculator-rank>&mdash;</span>
+                </output>
+            </form>
+        </div>
+
+        <details class="rank-table-disclosure">
+            <summary>
+                <span class="rank-table-summary-heading">
+                    <span class="rank-table-summary-icon" aria-hidden="true">
+                        <i class="bi bi-table"></i>
+                    </span>
+                    <span>
+                        <strong>Full Rank Table</strong>
+                        <small>View every rank and its requirements</small>
+                    </span>
+                </span>
+                <span class="rank-table-summary-action" aria-hidden="true">
+                    <span></span>
+                    <i class="bi bi-chevron-down"></i>
+                </span>
+            </summary>
+
+            <div class="rank-table-content">
+                <p id="rank-table-note">
+                    Stats range is the combined total of Vocal, Dance, and Visual required for each rank.
+                </p>
+                <div class="rank-table-wrap">
+                    <table class="rank-reference-table" aria-describedby="rank-table-note">
+                        <thead>
+                            <tr>
+                                <th scope="col">Rank</th>
+                                <th scope="col">Rating range</th>
+                                <th scope="col">Combined stats range</th>
+                                <th scope="col">Badge</th>
+                            </tr>
+                        </thead>
+                        <tbody data-rank-table-body></tbody>
+                    </table>
+                </div>
+            </div>
+        </details>
+    </section>
 
 </main>
 <script src="/gakumas-sms/assets/js/student-rank.js" defer></script>

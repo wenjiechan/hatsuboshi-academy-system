@@ -449,6 +449,336 @@
     color: var(--text-primary);
 }
 
+/* ---------- Rank reference and calculator ---------- */
+.stats-main .rank-reference-card {
+    margin-top: 24px;
+    padding: 28px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: var(--radius-md);
+    background:
+        radial-gradient(circle at 8% 0, color-mix(in srgb, var(--secondary) 24%, transparent), transparent 28%),
+        rgba(255, 255, 255, 0.96);
+    box-shadow: var(--shadow-soft);
+}
+
+.stats-main .rank-reference-heading,
+.stats-main .rank-reference-panel-heading {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.stats-main .rank-reference-heading {
+    margin-bottom: 22px;
+}
+
+.stats-main .rank-reference-heading h2,
+.stats-main .rank-reference-panel-heading h3 {
+    margin: 0;
+}
+
+.stats-main .rank-reference-heading h2 {
+    font-size: 1.35rem;
+}
+
+.stats-main .rank-reference-panel-heading h3 {
+    font-size: 1.08rem;
+}
+
+.stats-main .rank-reference-heading .dashboard-eyebrow,
+.stats-main .rank-reference-panel-heading .dashboard-eyebrow {
+    margin-bottom: 2px;
+}
+
+.stats-main .rank-reference-icon,
+.stats-main .rank-reference-panel-heading > span {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--secondary) 24%, white);
+}
+
+.stats-main .rank-reference-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+}
+
+.stats-main .rank-reference-panel-heading > span {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+}
+
+.stats-main .rank-reference-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.stats-main .rank-formula-panel,
+.stats-main .rank-calculator-panel {
+    min-width: 0;
+    margin: 0;
+    padding: 22px;
+    border: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--secondary) 9%, white);
+}
+
+.stats-main .rank-formula {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 24px 0 14px;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--primary) 15%, white);
+    border-radius: 14px;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.88);
+    font-size: clamp(1rem, 1.7vw, 1.2rem);
+    font-weight: 800;
+}
+
+.stats-main .rank-formula strong {
+    color: var(--primary);
+}
+
+.stats-main .rank-formula-description {
+    margin: 0;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.stats-main .rank-formula-example {
+    margin: 16px 0 0;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.stats-main .rank-formula-example strong {
+    color: var(--text-primary);
+    font-size: 1.15rem;
+}
+
+.stats-main .rank-calculator-fields {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.stats-main .rank-calculator-fields label {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
+    gap: 14px;
+    align-items: center;
+    color: var(--text-secondary);
+    font-weight: 800;
+}
+
+.stats-main .rank-calculator-fields input {
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 12px;
+    border: 1px solid color-mix(in srgb, var(--primary) 20%, white);
+    border-radius: 12px;
+    color: var(--text-primary);
+    background: white;
+    font: inherit;
+    font-weight: 800;
+    text-align: right;
+}
+
+.stats-main .rank-calculator-fields input:focus {
+    border-color: var(--primary);
+    outline: 3px solid color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.stats-main .rank-calculator-result {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 12px;
+    align-items: center;
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-top: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    color: var(--text-secondary);
+    font-weight: 800;
+}
+
+.stats-main .rank-calculator-result > strong {
+    color: var(--text-primary);
+    font-size: 1.45rem;
+}
+
+.stats-main .rank-table-disclosure {
+    margin-top: 18px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.stats-main .rank-table-disclosure summary {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.stats-main .rank-table-disclosure summary::-webkit-details-marker {
+    display: none;
+}
+
+.stats-main .rank-table-disclosure summary:hover {
+    background: color-mix(in srgb, var(--secondary) 10%, white);
+}
+
+.stats-main .rank-table-disclosure summary:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--primary) 22%, transparent);
+    outline-offset: -3px;
+}
+
+.stats-main .rank-table-summary-heading,
+.stats-main .rank-table-summary-action {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.stats-main .rank-table-summary-heading > span:last-child {
+    display: grid;
+}
+
+.stats-main .rank-table-summary-heading strong {
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.stats-main .rank-table-summary-heading small {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.stats-main .rank-table-summary-icon {
+    display: grid;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border-radius: 12px;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--secondary) 24%, white);
+}
+
+.stats-main .rank-table-summary-action {
+    flex: 0 0 auto;
+    color: var(--primary);
+    font-size: 0.86rem;
+    font-weight: 900;
+}
+
+.stats-main .rank-table-summary-action > span::before {
+    content: "Expand";
+}
+
+.stats-main .rank-table-disclosure[open] .rank-table-summary-action > span::before {
+    content: "Collapse";
+}
+
+.stats-main .rank-table-summary-action i {
+    transition: transform 0.2s ease;
+}
+
+.stats-main .rank-table-disclosure[open] .rank-table-summary-action i {
+    transform: rotate(180deg);
+}
+
+.stats-main .rank-table-disclosure[open] summary {
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+}
+
+.stats-main .rank-table-content {
+    padding: 18px;
+}
+
+.stats-main .rank-table-content > p {
+    margin: 0 0 14px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.stats-main .rank-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid color-mix(in srgb, var(--primary) 10%, white);
+    border-radius: 14px;
+}
+
+.stats-main .rank-reference-table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+    background: white;
+}
+
+.stats-main .rank-reference-table th,
+.stats-main .rank-reference-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 9%, white);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.stats-main .rank-reference-table thead th {
+    color: var(--text-secondary);
+    background: color-mix(in srgb, var(--secondary) 15%, white);
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.stats-main .rank-reference-table tbody th {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.stats-main .rank-reference-table tbody td {
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.stats-main .rank-reference-table tbody tr:last-child > * {
+    border-bottom: 0;
+}
+
+.stats-main .rank-reference-table tbody tr:hover,
+.stats-main .rank-reference-table .current-rank-row {
+    background: color-mix(in srgb, var(--secondary) 12%, white);
+}
+
+.stats-main .rank-reference-table .current-rank-row > :first-child::after {
+    display: inline-flex;
+    margin-left: 8px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 11%, white);
+    content: "Current";
+    font-size: 0.68rem;
+    font-weight: 900;
+    vertical-align: middle;
+}
+
 /* ---------- Weekly stat chart ---------- */
 .stats-main .stats-detail-grid {
     display: grid;
@@ -734,9 +1064,45 @@
     .stats-main .stats-detail-grid {
         grid-template-columns: 1fr;
     }
+
+    .stats-main .rank-reference-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 575.98px) {
+    .stats-main .rank-reference-card {
+        margin-top: 16px;
+        padding: 18px;
+    }
+
+    .stats-main .rank-formula-panel,
+    .stats-main .rank-calculator-panel {
+        padding: 18px;
+    }
+
+    .stats-main .rank-calculator-fields label {
+        grid-template-columns: minmax(0, 1fr) 104px;
+    }
+
+    .stats-main .rank-calculator-result {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .stats-main .rank-calculator-result .rank-badge {
+        grid-column: 1 / -1;
+        justify-self: end;
+    }
+
+    .stats-main .rank-table-disclosure summary,
+    .stats-main .rank-table-content {
+        padding: 14px;
+    }
+
+    .stats-main .rank-table-summary-action > span {
+        display: none;
+    }
+
     .stats-main .stat-history-card {
         padding: 18px;
     }
