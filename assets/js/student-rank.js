@@ -184,12 +184,12 @@
             const ratingCell = document.createElement('td');
             ratingCell.textContent = nextMinimum === null
                 ? `${minimumRating.toLocaleString()}+`
-                : `${minimumRating.toLocaleString()}–${(nextMinimum - 1).toLocaleString()}`;
+                : `${minimumRating.toLocaleString()}\u2013${(nextMinimum - 1).toLocaleString()}`;
 
             const statsCell = document.createElement('td');
             statsCell.textContent = maximumStats === null
                 ? `${minimumStats.toLocaleString()}+`
-                : `${minimumStats.toLocaleString()}–${maximumStats.toLocaleString()}`;
+                : `${minimumStats.toLocaleString()}\u2013${maximumStats.toLocaleString()}`;
 
             const badgeCell = document.createElement('td');
             const badge = document.createElement('span');

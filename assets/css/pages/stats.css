@@ -194,7 +194,7 @@
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.45),
         0 2px 6px color-mix(in srgb, var(--rank-accent) 32%, transparent);
-    content: "◆";
+    content: "\25C6";
 }
 
 .rank-badge[data-rank="Debut"] {
@@ -243,7 +243,7 @@
 .rank-badge[data-rank="B+"]::before,
 .rank-badge[data-rank="A"]::before,
 .rank-badge[data-rank="A+"]::before {
-    content: "✦";
+    content: "\2726";
 }
 
 .rank-badge[data-rank="A"] {
@@ -294,7 +294,7 @@
 .rank-badge[data-rank="SSS"]::before,
 .rank-badge[data-rank="SSS+"]::before,
 .rank-badge[data-rank="S5"]::before {
-    content: "★";
+    content: "\2605";
 }
 
 .rank-badge[data-rank="S4"] {
@@ -308,7 +308,7 @@
 }
 
 .rank-badge[data-rank="S4"]::before {
-    content: "✦";
+    content: "\2726";
 }
 
 .rank-badge[data-rank="S5"] {
@@ -333,7 +333,7 @@
 }
 
 .rank-badge.highest-rank-badge::before {
-    content: "★";
+    content: "\2605";
 }
 
 .stats-main .stat-row.rank .rank-badge {

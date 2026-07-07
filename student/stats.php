@@ -2,6 +2,8 @@
 require_once '../includes/auth.php';
 require_role('student');
 
+header('Content-Type: text/html; charset=UTF-8');
+
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
 

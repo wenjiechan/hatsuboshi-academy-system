@@ -4,16 +4,6 @@
 const DEFAULT_THEME_PRIMARY = '#FF6B9D';
 const DEFAULT_THEME_SECONDARY = '#FFB3D1';
 
-//Add theme columns to users table
-function ensure_user_theme_columns(PDO $pdo): void
-{
-    $pdo->exec(
-        "ALTER TABLE users
-         ADD COLUMN IF NOT EXISTS theme_primary_color varchar(20) DEFAULT '#FF6B9D',
-         ADD COLUMN IF NOT EXISTS theme_secondary_color varchar(20) DEFAULT '#FFB3D1'"
-    );
-}
-
 //Validate whether the color is valid HEX format
 function normalize_theme_color(string $color, string $fallback): string
 {
@@ -29,8 +19,6 @@ function normalize_theme_color(string $color, string $fallback): string
 //Load the user theme
 function load_user_theme(PDO $pdo, int $user_id): array
 {
-    ensure_user_theme_columns($pdo);
-
     $stmt = $pdo->prepare(
         'SELECT theme_primary_color, theme_secondary_color
          FROM users
@@ -49,8 +37,6 @@ function load_user_theme(PDO $pdo, int $user_id): array
 //Saves the user theme
 function save_user_theme(PDO $pdo, int $user_id, string $primary, string $secondary): void
 {
-    ensure_user_theme_columns($pdo);
-
     $stmt = $pdo->prepare(
         'UPDATE users
          SET theme_primary_color = ?, theme_secondary_color = ?
@@ -64,4 +50,61 @@ function apply_theme_session(string $primary, string $secondary): void
 {
     $_SESSION['theme_primary_color'] = $primary;
     $_SESSION['theme_secondary_color'] = $secondary;
+}
+
+// Check the user's existing password before allowing a password change.
+function verify_current_user_password(PDO $pdo, int $user_id, string $current_password): bool
+{
+    if ($current_password === '') {
+        return false;
+    }
+
+    $stmt = $pdo->prepare('SELECT password FROM users WHERE id = ? LIMIT 1');
+    $stmt->execute([$user_id]);
+    $stored_hash = $stmt->fetchColumn();
+
+    return is_string($stored_hash) && password_verify($current_password, $stored_hash);
+}
+
+// Securely replace a verified user's password with a new hash.
+function change_verified_user_password(
+    PDO $pdo,
+    int $user_id,
+    string $new_password,
+    string $confirm_password
+): string {
+    if ($new_password === '' || $confirm_password === '') {
+        return 'Both new password fields are required.';
+    }
+
+    if (strlen($new_password) < 6) {
+        return 'The new password must be at least 6 characters.';
+    }
+
+    if (!hash_equals($new_password, $confirm_password)) {
+        return 'The new password and confirmation do not match.';
+    }
+
+    $stmt = $pdo->prepare('SELECT password FROM users WHERE id = ? LIMIT 1');
+    $stmt->execute([$user_id]);
+    $stored_hash = $stmt->fetchColumn();
+
+    if (!is_string($stored_hash)) {
+        return 'The user account could not be found.';
+    }
+
+    if (password_verify($new_password, $stored_hash)) {
+        return 'The new password must be different from the current password.';
+    }
+
+    $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
+
+    if ($new_hash === false) {
+        return 'The password could not be secured. Please try again.';
+    }
+
+    $stmt = $pdo->prepare('UPDATE users SET password = ? WHERE id = ?');
+    $stmt->execute([$new_hash, $user_id]);
+
+    return '';
 }
