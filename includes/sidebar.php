@@ -10,6 +10,7 @@ $student_nav = [
     ['label' => 'Profile', 'url' => '/gakumas-sms/student/profile.php', 'icon' => 'bi-person-circle', 'page' => 'profile.php'],
     ['label' => 'Song', 'url' => '/gakumas-sms/student/song.php', 'icon' => 'bi-music-note-list', 'page' => 'song.php'],
     ['label' => 'Stats', 'url' => '/gakumas-sms/student/stats.php', 'icon' => 'bi-bar-chart-line', 'page' => 'stats.php'],
+    ['label' => 'Request', 'url' => '/gakumas-sms/student/request.php', 'icon' => 'bi-send', 'page' => 'request.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/student/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
 
@@ -26,8 +27,8 @@ $producer_nav = [
     ['label' => 'Lessons', 'url' => '/gakumas-sms/producer/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],
     ['label' => 'Songs', 'url' => '/gakumas-sms/producer/songs.php', 'icon' => 'bi-music-note-list', 'page' => 'songs.php'],
     ['label' => 'Events', 'url' => '/gakumas-sms/producer/events.php', 'icon' => 'bi-stars', 'page' => 'events.php'],
-    ['label' => 'Messages', 'url' => '/gakumas-sms/messages/inbox.php', 'icon' => 'bi-envelope', 'page' => 'inbox.php'],
     ['label' => 'Reports', 'url' => '/gakumas-sms/producer/reports.php', 'icon' => 'bi-bar-chart-line', 'page' => 'reports.php'],
+    ['label' => 'Request', 'url' => '/gakumas-sms/producer/request.php', 'icon' => 'bi-clipboard-check', 'page' => 'request.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/producer/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
 
@@ -37,6 +38,7 @@ $admin_nav = [
     ['label' => 'Students', 'url' => '/gakumas-sms/admin/students.php', 'icon' => 'bi-people', 'page' => 'students.php'],
     ['label' => 'Producers', 'url' => '/gakumas-sms/admin/producers.php', 'icon' => 'bi-person-badge', 'page' => 'producers.php'],
     ['label' => 'Teachers', 'url' => '/gakumas-sms/admin/teachers.php', 'icon' => 'bi-mortarboard', 'page' => 'teachers.php'],
+    ['label' => 'Request', 'url' => '/gakumas-sms/admin/request.php', 'icon' => 'bi-clipboard-check', 'page' => 'request.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/admin/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
 
@@ -45,7 +47,6 @@ $teacher_nav = [
     ['label' => 'Lessons', 'url' => '/gakumas-sms/teacher/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],
     ['label' => 'Schedules', 'url' => '/gakumas-sms/teacher/schedules.php', 'icon' => 'bi-calendar-event', 'page' => 'schedules.php'],
     ['label' => 'Students', 'url' => '/gakumas-sms/teacher/students.php', 'icon' => 'bi-people', 'page' => 'students.php'],
-    ['label' => 'Messages', 'url' => '/gakumas-sms/messages/inbox.php', 'icon' => 'bi-envelope', 'page' => 'inbox.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/teacher/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
 

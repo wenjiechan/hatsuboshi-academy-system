@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2026 at 11:37 AM
+-- Generation Time: Jul 08, 2026 at 11:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -290,29 +290,10 @@ CREATE TABLE `students` (
   `hobbies` text DEFAULT NULL,
   `special_skill` text DEFAULT NULL,
   `school_year` varchar(20) DEFAULT NULL,
+  `rank` varchar(10) GENERATED ALWAYS AS (case when (`vocal` + `dance` + `visual`) * 2.3 >= 35000 then 'S5' when (`vocal` + `dance` + `visual`) * 2.3 >= 26000 then 'S4' when (`vocal` + `dance` + `visual`) * 2.3 >= 23000 then 'SSS+' when (`vocal` + `dance` + `visual`) * 2.3 >= 20000 then 'SSS' when (`vocal` + `dance` + `visual`) * 2.3 >= 16000 then 'SS' when (`vocal` + `dance` + `visual`) * 2.3 >= 14500 then 'S+' when (`vocal` + `dance` + `visual`) * 2.3 >= 13000 then 'S' when (`vocal` + `dance` + `visual`) * 2.3 >= 12000 then 'A+' when (`vocal` + `dance` + `visual`) * 2.3 >= 11000 then 'A' when (`vocal` + `dance` + `visual`) * 2.3 >= 10000 then 'B+' when (`vocal` + `dance` + `visual`) * 2.3 >= 9000 then 'B' when (`vocal` + `dance` + `visual`) * 2.3 >= 7500 then 'C+' when (`vocal` + `dance` + `visual`) * 2.3 >= 6500 then 'C' when (`vocal` + `dance` + `visual`) * 2.3 >= 5000 then 'D' when (`vocal` + `dance` + `visual`) * 2.3 >= 3000 then 'E' else 'Debut' end) STORED,
   `vocal` int(11) NOT NULL DEFAULT 0,
   `dance` int(11) NOT NULL DEFAULT 0,
   `visual` int(11) NOT NULL DEFAULT 0,
-  `rank` varchar(10) GENERATED ALWAYS AS (
-    CASE
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 35000 THEN 'S5'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 26000 THEN 'S4'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 23000 THEN 'SSS+'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 20000 THEN 'SSS'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 16000 THEN 'SS'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 14500 THEN 'S+'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 13000 THEN 'S'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 12000 THEN 'A+'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 11000 THEN 'A'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 10000 THEN 'B+'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 9000 THEN 'B'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 7500 THEN 'C+'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 6500 THEN 'C'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 5000 THEN 'D'
-      WHEN (`vocal` + `dance` + `visual`) * 2.3 >= 3000 THEN 'E'
-      ELSE 'Debut'
-    END
-  ) STORED,
   `bio` text DEFAULT NULL,
   `producer_id` int(11) DEFAULT NULL,
   `producer_status` enum('active','removal_pending','released','unassigned') DEFAULT 'unassigned',
@@ -332,6 +313,32 @@ CREATE TABLE `student_songs` (
   `song_id` int(11) NOT NULL,
   `added_by` int(11) DEFAULT NULL,
   `added_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_update_requests`
+--
+
+CREATE TABLE `student_update_requests` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `recipient_id` int(11) NOT NULL,
+  `request_type` enum('profile_update','song_add','song_remove','song_correction','other') NOT NULL,
+  `song_id` int(11) DEFAULT NULL,
+  `subject` varchar(200) NOT NULL,
+  `details` text NOT NULL,
+  `current_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`current_data`)),
+  `requested_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`requested_data`)),
+  `status` enum('pending','in_progress','approved','rejected','cancelled') NOT NULL DEFAULT 'pending',
+  `apply_mode` enum('automatic','manual') DEFAULT NULL,
+  `response` text DEFAULT NULL,
+  `handled_by` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `resolved_at` datetime DEFAULT NULL,
+  `applied_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -515,6 +522,16 @@ ALTER TABLE `student_songs`
   ADD KEY `idx_student_songs_added_by` (`added_by`);
 
 --
+-- Indexes for table `student_update_requests`
+--
+ALTER TABLE `student_update_requests`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_update_request_student` (`student_id`),
+  ADD KEY `idx_update_request_recipient` (`recipient_id`,`status`),
+  ADD KEY `idx_update_request_song` (`song_id`),
+  ADD KEY `idx_update_request_handler` (`handled_by`);
+
+--
 -- Indexes for table `teachers`
 --
 ALTER TABLE `teachers`
@@ -626,6 +643,12 @@ ALTER TABLE `student_songs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `student_update_requests`
+--
+ALTER TABLE `student_update_requests`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `teachers`
 --
 ALTER TABLE `teachers`
@@ -717,6 +740,15 @@ ALTER TABLE `student_songs`
   ADD CONSTRAINT `fk_student_songs_added_by` FOREIGN KEY (`added_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_student_songs_song` FOREIGN KEY (`song_id`) REFERENCES `songs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_student_songs_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `student_update_requests`
+--
+ALTER TABLE `student_update_requests`
+  ADD CONSTRAINT `fk_update_request_handler` FOREIGN KEY (`handled_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_update_request_recipient` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_update_request_song` FOREIGN KEY (`song_id`) REFERENCES `songs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_update_request_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `teachers`

@@ -3,15 +3,14 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2026 at 11:38 AM
+-- Generation Time: Jul 08, 2026 at 11:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS;
-SET FOREIGN_KEY_CHECKS=0;
+SET FOREIGN_KEY_CHECKS = 0;
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -23,60 +22,40 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Database: `gakumas_sms`
 --
 
--- Fixed import order: parent tables first, then child tables.
--- This keeps the original records/values unchanged.
+--
+-- Dumping data for table `users`
+--
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`, `created_at`, `updated_at`, `last_login`, `theme_primary_color`, `theme_secondary_color`) VALUES
-(1, 'Producer', '$2y$10$7BFxM6RgeDvBv6kDTKovuuIdwTzQBM4l1sI2EcNoeHa94mU0y/OM2', 'producer', '', 1, '2026-05-26 13:10:43', '2026-06-22 16:14:52', '2026-06-22 16:14:52', '#B297BA', '#C1ACC8'),
+(1, 'Producer', '$2y$10$7BFxM6RgeDvBv6kDTKovuuIdwTzQBM4l1sI2EcNoeHa94mU0y/OM2', 'producer', '', 1, '2026-05-26 13:10:43', '2026-07-08 17:02:48', '2026-07-08 17:02:48', '#B297BA', '#C1ACC8'),
 (2, 'Vocal Trainer', '$2y$10$mfACa/WYxB5KtG.u/sz0NOsEavc0F8j7fR.Zf/PF9hcEl7gdLMNdK', 'teacher', NULL, 1, '2026-05-26 13:11:33', '2026-05-27 11:39:47', NULL, '#FF6B9D', '#FFB3D1'),
-(3, 'Dance Trainer', '$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-05-28 16:42:24', '2026-05-28 16:42:24', '#FF6B9D', '#FFB3D1'),
+(3, 'Dance Trainer', '$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-07-08 11:51:51', '2026-07-08 11:51:51', '#FF6B9D', '#FFB3D1'),
 (4, 'Visual Trainer', '$2y$10$bGNC.jMo6tcO1e0f6A0q5erVt6QZ2LbnR4kS1AD47.vwZW0J3GQV6', 'teacher', NULL, 1, '2026-05-26 13:12:30', '2026-05-27 11:40:41', NULL, '#FF6B9D', '#FFB3D1'),
-(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-24 16:25:24', '2026-06-24 16:25:24', '#E30F25', '#FAD0D4'),
-(6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-06-22 10:35:40', '2026-06-22 10:35:40', '#0C7BBB', '#CEE5F1'),
-(7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-06-15 13:03:12', '2026-06-15 13:03:12', '#F8C112', '#FEF3CF'),
+(5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-29 10:31:53', '2026-06-29 10:31:53', '#E30F25', '#FAD0D4'),
+(6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-07-08 11:43:53', '2026-07-08 11:32:28', '#0C7BBB', '#3D95C9'),
+(7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-07-03 08:01:08', '2026-07-03 08:01:08', '#F8C112', '#FEF3CF'),
 (8, 'Lilja Katsuragi', '$2y$10$U0wQB4kmtvPYWWQX.9oi0OJ60HDhnd/yf.tuf71exJ8MoG8xS0FVa', 'student', 'Lilja Katsuragi.png', 1, '2026-05-26 13:13:13', '2026-06-24 13:25:42', '2026-06-24 13:25:42', '#7DC4D4', '#EAFDFF'),
-(9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-06-24 09:27:12', '2026-06-24 09:27:12', '#7CFC00', '#D6FFB3'),
-(10, 'Hiro Shinosawa', '$2y$10$yw50phXBAJaDziCBQu8ul.P/V5GmB5qKyObADsMOiw5nMBEfly4o2', 'student', 'Hiro Shinosawa.png', 1, '2026-05-26 13:13:13', '2026-06-24 08:18:05', '2026-06-24 08:18:05', '#00AFCC', '#BFEAF2'),
-(11, 'China Kuramoto', '$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy', 'student', 'China Kuramoto.png', 1, '2026-05-26 13:13:13', '2026-06-15 13:06:01', '2026-06-15 13:06:01', '#F68B1F', '#FCE0C5'),
-(12, 'Ume Hanami', '$2y$10$v48vl/ymkgldjh/sUGwPHusiC7iBAahdLG4ynPeWTGjI.MCfn2Wvq', 'student', 'Ume Hanami.png', 1, '2026-05-26 13:13:13', '2026-06-24 15:46:53', '2026-06-24 15:46:53', '#EA533A', '#FAD4CB'),
-(13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-06-15 13:05:20', '2026-06-15 13:05:20', '#7A99CF', '#D8E0EF'),
+(9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-06-25 16:26:59', '2026-06-25 16:26:59', '#7CFC00', '#D6FFB3'),
+(10, 'Hiro Shinosawa', '$2y$10$yw50phXBAJaDziCBQu8ul.P/V5GmB5qKyObADsMOiw5nMBEfly4o2', 'student', 'Hiro Shinosawa.png', 1, '2026-05-26 13:13:13', '2026-07-01 13:12:07', '2026-07-01 13:12:07', '#00AFCC', '#BFEAF2'),
+(11, 'China Kuramoto', '$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy', 'student', 'China Kuramoto.png', 1, '2026-05-26 13:13:13', '2026-07-08 12:10:17', '2026-07-08 12:10:17', '#F68B1F', '#FCE0C5'),
+(12, 'Ume Hanami', '$2y$10$J3odyrCmdaCqHIBPZczN6Ogetu1yEPjb4t5eualYarDubGf9liQpq', 'student', 'Ume Hanami.png', 1, '2026-05-26 13:13:13', '2026-07-07 17:20:13', '2026-07-07 17:16:30', '#EA533A', '#FAD4CB'),
+(13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-07-08 12:10:46', '2026-07-08 12:10:46', '#7A99CF', '#D8E0EF'),
 (14, 'Mao Arimura', '$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO', 'student', 'Mao Arimura.png', 1, '2026-05-26 13:13:13', '2026-06-24 09:14:14', '2026-06-24 09:14:14', '#7F1184', '#DCC2DE'),
 (15, 'Rinami Himesaki', '$2y$10$Mc/amUU4R6ORKAqyn6WMt.S3EcLbF5jxjIq8c83h6D0kElQpB/XZW', 'student', 'Rinami Himesaki.png', 1, '2026-05-26 13:13:13', '2026-06-15 13:07:11', '2026-06-15 13:07:11', '#F6ADC6', '#FCE6EE'),
-(16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-06-15 13:07:30', '2026-06-15 13:07:30', '#F6AE54', '#FCE6CC'),
-(17, 'Tsubame Amaya', '$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi', 'student', 'Tsubame Amaya.png', 1, '2026-05-26 13:13:13', '2026-06-15 13:07:47', '2026-06-15 13:07:47', '#7B68EE', '#D8D2FB'),
-(18, 'Kunio Juo', '$2y$10$KOwDLFqCre7g2vJEwSiu7eZbizrRFI6hNnxi8jBHF0F.EktS2qarG', 'admin', NULL, 1, '2026-06-22 16:12:30', '2026-06-22 16:14:19', '2026-06-22 16:14:19', '#FF6B9D', '#FFB3D1');
+(16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-06-30 16:15:10', '2026-06-30 16:15:10', '#F6AE54', '#FCE6CC'),
+(17, 'Tsubame Amaya', '$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi', 'student', 'Tsubame Amaya.png', 1, '2026-05-26 13:13:13', '2026-07-03 07:28:00', '2026-07-03 07:28:00', '#7B68EE', '#D8D2FB'),
+(18, 'Kunio Juo', '$2y$10$KOwDLFqCre7g2vJEwSiu7eZbizrRFI6hNnxi8jBHF0F.EktS2qarG', 'admin', NULL, 1, '2026-06-22 16:12:30', '2026-06-29 11:19:24', '2026-06-29 11:19:24', '#322F30', '#5B5959'),
+(19, 'Rinha Kaya', '$2y$10$j2W69.OZ6Qr3v3iLCLH2m.WHemUhDQmMtSeZS55PkGL3Fo6Te87xa', 'student', '/gakumas-sms/uploads/profiles/student_19_1cb47f6eab98f92f.webp', 1, '2026-06-26 14:45:34', '2026-07-08 12:31:24', '2026-07-08 12:31:24', '#5A3FA8', '#7B65B9');
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `students`
+-- Dumping data for table `songs`
 --
-
-INSERT INTO `students` (`id`, `user_id`, `name`, `name_jp`, `birthday`, `zodiac`, `blood_type`, `height`, `weight`, `three_size`, `hometown`, `hobbies`, `special_skill`, `school_year`, `rank`, `vocal`, `dance`, `visual`, `bio`, `producer_id`, `producer_status`, `created_at`, `updated_at`) VALUES
-(1, 5, 'Saki Hanami', '花海 咲季', '2000-04-02', 'Aries', 'A', 152, 45, '84/55/80', 'Aichi', 'Competitions in general', 'Exercise in general, chores in general, massages', 'Class 1-1', 'Debut', 75, 75, 80, 'A new student who topped the entrance exam and a fierce ex-athlete with an unshakeable hatred of losing. A child prodigy since youth—quick to learn, skilled at everything she tries. She\'s extremely close with her younger sister Ume Hanami, but they\'re also lifelong rivals who have competed in every sport imaginable. Saki rates Ume\'\'s talent higher than anyone else\'s and fears it.\r\n', 1, 'active', '2026-05-26 13:13:20', '2026-06-08 12:28:57'),
-(2, 6, 'Temari Tsukimura', '月村 手毬', '2000-06-03', 'Gemini', 'AB', 162, 51, '82/58/86', 'Kyoto', 'Eating delicious food (currently sealed away)', 'Singing', 'Class 1-1', 'Debut', 75, 65, 55, 'A former elite middle-school idol, once called the #1 idol of her grade. Appears cool, stoic, and sarcastic on the surface but is secretly a lazy, spoiled troublemaker—a girl with two sides. She aims for the top to break away from the self she dislikes and learn to love herself. ', 1, 'active', '2026-05-26 13:13:20', '2026-06-08 12:28:57'),
-(3, 7, 'Kotone Fujita', '藤田 ことね', '2000-04-29', 'Taurus', 'O', 156, 40, '75/55/75', 'Saitama', 'Making money', 'Dance, remembering people faces and names', 'Class 1-1', 'Debut', 65, 55, 75, 'A greedy girl who dreams of becoming \"an idol who can make money.\" She sees idol work as her one shot at turning her life around. Her grades are poor and her self-esteem is low overall, but she has full confidence in her cute face. She\'s a little uncomfortable around the student council president Sena, who keeps overestimating her for some reason.\r\n', 1, 'active', '2026-05-26 13:13:20', '2026-06-08 12:28:57'),
-(4, 8, 'Lilja Katsuragi', '葛城 リーリヤ', '2000-07-24', 'Leo', 'B', 161, 43, '82/53/80', 'Sweden', 'Baking sweets, Japanese anime', 'Baking sweets, games', 'Class 1-1', 'Debut', 55, 55, 65, 'An exchange student from overseas with no prior singing or dancing experience, who is always shrinking back as if she had no confidence. She doesn\'t look talented at first glance, but her admiration for idols is genuine, and she is an incredibly hard worker. Her father is Japanese, so she speaks the language fluently. She has a promise with her best friend Sumika to stand on the same stage together one day—the reason she enrolled at Hatsuboshi Academy. ', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
-(5, 9, 'Sumika Shiun', '紫雲 清夏', '2000-11-11', 'Scorpio', 'O', 168, 54, '89/58/85', 'Hokkaido', 'Karaoke, social media', 'Flexibility', 'Class 1-1', 'Debut', 65, 55, 65, 'A laid-back gyaru who skips class and lessons—a bit of an unserious slacker, but genuinely bright, cheerful, and able to get along with anyone, which is her real charm. She once had a celebrated ballet career and was expected to go far on the world stage, but she has no motivation for it anymore. She wholeheartedly cheers on her best friend Lilja, who is earnestly chasing her idol dream. ', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
-(6, 10, 'Hiro Shinosawa', '篠澤 広', '2000-12-21', 'Sagittarius', 'AB', 159, 41, '72/54/76', 'Akita', 'Challenging weak areas, growing houseplants', 'Academics in general, physics, mathematics, puzzles', 'Class 1-2', 'Debut', 55, 55, 60, 'A mysterious genius girl. Dissatisfied with days that are too easy and boring, she enrolled at Hatsuboshi Academy specifically to challenge her weakest areas. A true eccentric who finds joy in \"harsh, painful lessons\" and \"things that don\'t go well.\" Her reason for becoming an idol is \"because it seems like the thing I\'d be worst at.\" Despite her brilliant mind, she has extreme stamina and muscle deficits—even basic lessons leave her unsteady on her feet.\r\n', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
-(7, 11, 'China Kuramoto', '倉本 千奈', '2000-08-01', 'Leo', 'O', 148, 43, '73/56/73', 'Kanagawa', 'Drawing', 'Cheerful greetings, being liked by animals', 'Class 1-2', 'Debut', 55, 55, 60, 'A genuine, spoiled-rotten young lady (お嬢様) raised with every privilege. A cheerful, innocent girl who enrolled at Hatsuboshi dreaming of becoming \"a proper, splendid idol.\" Her actual ability level, by her own admission, is \"definitely dead last among the entire student body!\" Her sheltered upbringing has left her sweet, polite, and earnest—but completely behind her classmates in raw skill, which she takes in stride with her trademark \"Well then, I\'ll just have to do my best, won\'t I!\" attitude.\r\n', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
-(8, 12, 'Ume Hanami', '花海 佑芽', '2000-04-01', 'Aries', 'AB', 158, 50, '91/60/85', 'Aichi', 'Competing with her older sister', 'Sports in general, massages', 'Class 1-2', 'Debut', 50, 60, 60, '\'A supplementary-entry new student. Energetic to the core, with exceptional physical ability from her background as a former athlete. She absolutely adores her older sister Saki — she respects her with all her heart, treats her as her ultimate rival, and holds her up as the goal she\'s aiming for. Through Saki\'s devoted support, Ume gradually blossoms her own idol talent. \r\n', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
-(9, 13, 'Misuzu Hataya', '秦谷 美鈴', '2000-02-06', 'Aquarius', 'B', 160, 42, '73/54/74', 'Kyoto', 'Napping, taking walks', 'Cooking, ikebana, accurate body clock', 'Class 1-2', 'Debut', 65, 70, 80, 'A languid, easygoing girl who moves at her own pace. Sweet and indulgent to both herself and others, she loves taking care of people and spoiling them. Her childhood friend Temari Tsukimura — whom she calls \"Mari-chan\" — she treats like a little sister or daughter she needs to cherish and protect. A Kyoto native and former member of the elite middle-school unit \"SyngUp!\" alongside Temari. Sleeps constantly — at every opportunity.\r\n', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
-(10, 14, 'Mao Arimura', '有村 麻央', '2000-01-18', 'Capricorn', 'A', 157, 46, '85/53/85', 'Hyogo', 'Taking care of others, watching theater', 'Martial arts, dexterous handwork', 'Class 3-1', 'Debut', 75, 65, 55, 'A 3rd-year girl aiming to be a cool idol. She serves as the dormitory leader of Hatsuboshi Academy\'s idol department and is very caring. She is adored by her juniors as the \"Little Prince.\" She has a past of aspiring to be a stage musical star since childhood and working as a child actress.', 1, 'active', '2026-06-03 13:03:10', '2026-06-08 12:28:57'),
-(11, 15, 'Rinami Himesaki', '姫崎 莉波', '2000-03-05', 'Pisces', 'A', 166, 56, '90/59/93', 'Fukuoka', 'Cafe hopping, collecting cosmetics', 'Cooking, sewing and handicrafts', 'Class 3-1', 'Debut', 60, 70, 55, 'A mature-feeling 3rd-year student. Reliable, gentle, and caring—the big sister of everyone in the dorm. She was once part of a unit, but the results were not great. She is a member of the student council, serving as secretary.', 1, 'active', '2026-06-03 13:03:10', '2026-06-08 12:28:57'),
-(12, 16, 'Sena Juo', '十王 星南', '2000-12-07', 'Sagittarius', 'A', 170, 54, '88/56/86', 'Tokyo', 'Lessons, finding talented idols', 'Recognizing idol talent', 'Class 3-1', 'Debut', 130, 100, 105, 'Student council president of Hatsuboshi Academy. Known as \"the academy\'s top idol,\" admired by many students. The granddaughter of the academy principal, she was raised with elite idol education from a young age. She has a special ability to spot idol talent and immediately takes a liking to Kotone—but for some reason, Kotone keeps her distance.', 1, 'active', '2026-06-03 13:03:10', '2026-06-08 12:28:57'),
-(13, 17, 'Tsubame Amaya', '雨夜 燕', '2000-05-20', 'Taurus', 'A', 169, 51, '80/55/82', 'Tokyo', 'Calligraphy, Japanese history, reading', 'Secretarial skills in general, mathematics, calligraphy', 'Class 3-1', 'Debut', 80, 90, 70, 'Vice president of the Hatsuboshi Academy student council. The academy\'s No. 2 idol. She carries pride befitting her ability and holds herself with an arrogant attitude. She is strict with both herself and others but is caring. She sees her childhood friend Sena as a rival and has publicly declared that she will one day surpass Sena to become the \"number one star.\"', 1, 'active', '2026-06-03 13:03:10', '2026-06-08 12:28:57');
-
---
--- Dumping data for table `teachers`
---
-
-INSERT INTO `teachers` (`id`, `user_id`, `name`, `specialty`) VALUES
-(1, 2, 'Vocal Trainer', 'vocal'),
-(2, 3, 'Dance Trainer', 'dance'),
-(3, 4, 'Visual Trainer', 'visual');
 
 --
 -- Dumping data for table `songs`
@@ -281,6 +260,13 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (196, 'Star-mine [Misuzu Hataya Solo ver.]', 'Star-mine [秦谷美鈴 Solo Ver.]', '秦谷美鈴', '00:03:59', '2025-11-19', 'Remix', 'Solo version of Star-mine. Performed by Misuzu Hataya. Included on Begrazia 1st Single「Star-mine」.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (197, 'Star-mine [Sena Juo Solo ver.]', 'Star-mine [十王星南 Solo Ver.]', '十王星南', '00:03:59', '2025-11-19', 'Remix', 'Solo version of Star-mine. Performed by Sena Juo. Included on Begrazia 1st Single「Star-mine」.', 1, '2026-06-08 16:00:57', '2026-06-09 15:56:46'),
 (198, 'Gu-Su-Pi', 'グースーピー', '花海佑芽', '00:03:02', '2025-11-29', 'Solo', 'Original solo song for Ume Hanami.', 1, '2026-06-08 13:53:10', '2026-06-10 12:04:27');
+
+-- --------------------------------------------------------
+
+--
+-- Dumping data for table `songs`
+--
+
 INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_date`, `song_type`, `notes`, `created_by`, `created_at`, `updated_at`) VALUES
 (199, 'Atmosphere', 'Atmosphere', '葛城リーリヤ', '00:04:31', '2025-12-09', 'Solo', 'STEP 3 song for Lilja Katsuragi.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
 (200, 'Hatsuboshi Taisou Daiichi', '初星体操第一', 'Artist not listed', '00:02:02', '2025-12-17', 'Group', 'Sports day event song for Class Rivalry Hatsuboshi Sports Day. Performed by all Hatsuboshi Academy idols.', 1, '2026-06-08 13:53:10', '2026-06-09 16:20:09'),
@@ -388,126 +374,180 @@ INSERT INTO `songs` (`id`, `title`, `title_jp`, `artist`, `duration`, `release_d
 (310, 'Ai NEED YOU (FOR WONDERFUL STORY) [Saki Hanami Solo ver.]', 'アイ NEED YOU（FOR WONDERFUL STORY）花海咲季 Solo ver.', '花海咲季', '00:02:20', '2024-12-11', 'Remix', 'Solo version of Ai NEED YOU (FOR WONDERFUL STORY). Performed by Saki Hanami.', 1, '2026-06-10 11:36:31', '2026-06-17 12:32:36'),
 (311, 'Ai NEED YOU (FOR WONDERFUL STORY) [Temari Tsukimura Solo ver.]', 'アイ NEED YOU（FOR WONDERFUL STORY）月村手毬 Solo ver.', '月村手毬', '00:02:20', '2024-12-11', 'Remix', 'Solo version of Ai NEED YOU (FOR WONDERFUL STORY). Performed by Temari Tsukimura.', 1, '2026-06-10 11:36:31', '2026-06-17 12:32:42'),
 (312, 'Ai NEED YOU (FOR WONDERFUL STORY) [Kotone Fujita Solo ver.]', 'アイ NEED YOU（FOR WONDERFUL STORY）藤田ことね Solo ver.', '藤田ことね', '00:02:20', '2024-12-11', 'Remix', 'Solo version of Ai NEED YOU (FOR WONDERFUL STORY). Performed by Kotone Fujita.', 1, '2026-06-10 11:36:31', '2026-06-17 12:32:48'),
-(313, 'GO MY WAY!! -Saki Hanami cover-', 'GO MY WAY!! -花海咲季 cover-', '花海咲季', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Saki Hanami. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(314, 'GO MY WAY!! -Temari Tsukimura cover-', 'GO MY WAY!! -月村手毬 cover-', '月村手毬', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Temari Tsukimura. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(315, 'GO MY WAY!! -Lilja Katsuragi cover-', 'GO MY WAY!! -葛城リーリヤ cover-', '葛城リーリヤ', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Lilja Katsuragi. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(316, 'GO MY WAY!! -Sumika Shiun cover-', 'GO MY WAY!! -紫雲清夏 cover-', '紫雲清夏', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Sumika Shiun. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(317, 'GO MY WAY!! -Hiro Shinosawa cover-', 'GO MY WAY!! -篠澤広 cover-', '篠澤広', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Hiro Shinosawa. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(318, 'GO MY WAY!! -China Kuramoto cover-', 'GO MY WAY!! -倉本千奈 cover-', '倉本千奈', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by China Kuramoto. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(319, 'GO MY WAY!! -Ume Hanami cover-', 'GO MY WAY!! -花海佑芽 cover-', '花海佑芽', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Ume Hanami. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(320, 'GO MY WAY!! -Misuzu Hataya cover-', 'GO MY WAY!! -秦谷美鈴 cover-', '秦谷美鈴', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Misuzu Hataya. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(321, 'GO MY WAY!! -Mao Arimura cover-', 'GO MY WAY!! -有村麻央 cover-', '有村麻央', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Mao Arimura. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(322, 'GO MY WAY!! -Rinami Himesaki cover-', 'GO MY WAY!! -姫崎莉波 cover-', '姫崎莉波', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Rinami Himesaki. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(323, 'GO MY WAY!! -Sena Juo cover-', 'GO MY WAY!! -十王星南 cover-', '十王星南', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Sena Juo. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00'),
-(324, 'GO MY WAY!! -Tsubame Amaya cover-', 'GO MY WAY!! -雨夜燕 cover-', '雨夜燕', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Tsubame Amaya. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 00:00:00');
+(313, 'GO MY WAY!! -Saki Hanami cover-', 'GO MY WAY!! -花海咲季 cover-', '花海咲季', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Saki Hanami. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:20:14'),
+(314, 'GO MY WAY!! -Temari Tsukimura cover-', 'GO MY WAY!! -月村手毬 cover-', '月村手毬', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Temari Tsukimura. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:22:27'),
+(315, 'GO MY WAY!! -Lilja Katsuragi cover-', 'GO MY WAY!! -葛城リーリヤ cover-', '葛城リーリヤ', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Lilja Katsuragi. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:22:08'),
+(316, 'GO MY WAY!! -Sumika Shiun cover-', 'GO MY WAY!! -紫雲清夏 cover-', '紫雲清夏', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Sumika Shiun. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:21:58'),
+(317, 'GO MY WAY!! -Hiro Shinosawa cover-', 'GO MY WAY!! -篠澤広 cover-', '篠澤広', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Hiro Shinosawa. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:21:49'),
+(318, 'GO MY WAY!! -China Kuramoto cover-', 'GO MY WAY!! -倉本千奈 cover-', '倉本千奈', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by China Kuramoto. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:21:37'),
+(319, 'GO MY WAY!! -Ume Hanami cover-', 'GO MY WAY!! -花海佑芽 cover-', '花海佑芽', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Ume Hanami. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:21:26'),
+(320, 'GO MY WAY!! -Misuzu Hataya cover-', 'GO MY WAY!! -秦谷美鈴 cover-', '秦谷美鈴', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Misuzu Hataya. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:21:17'),
+(321, 'GO MY WAY!! -Mao Arimura cover-', 'GO MY WAY!! -有村麻央 cover-', '有村麻央', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Mao Arimura. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:21:09'),
+(322, 'GO MY WAY!! -Rinami Himesaki cover-', 'GO MY WAY!! -姫崎莉波 cover-', '姫崎莉波', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Rinami Himesaki. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:20:59'),
+(323, 'GO MY WAY!! -Sena Juo cover-', 'GO MY WAY!! -十王星南 cover-', '十王星南', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Sena Juo. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:20:49'),
+(324, 'GO MY WAY!! -Tsubame Amaya cover-', 'GO MY WAY!! -雨夜燕 cover-', '雨夜燕', '00:04:50', '2026-06-26', 'Cover', 'Cover song performed by Tsubame Amaya. Added during the GO MY WAY!! Live Tour Event Special Episode.', 1, '2026-06-29 00:00:00', '2026-06-29 10:20:27');
+
+-- --------------------------------------------------------
+
+--
+-- Dumping data for table `students`
+--
+
+--
+-- Dumping data for table `students`
+--
+
+INSERT INTO `students` (`id`, `user_id`, `name`, `name_jp`, `birthday`, `zodiac`, `blood_type`, `height`, `weight`, `three_size`, `hometown`, `hobbies`, `special_skill`, `school_year`, `vocal`, `dance`, `visual`, `bio`, `producer_id`, `producer_status`, `created_at`, `updated_at`) VALUES
+(1, 5, 'Saki Hanami', '花海 咲季', '2000-04-02', 'Aries', 'A', 152, 45, '84/55/80', 'Aichi', 'Competitions in general', 'Exercise in general, chores in general, massages', 'Class 1-1', 75, 75, 80, 'A new student who topped the entrance exam and a fierce ex-athlete with an unshakeable hatred of losing. A child prodigy since youth—quick to learn, skilled at everything she tries. She\'s extremely close with her younger sister Ume Hanami, but they\'re also lifelong rivals who have competed in every sport imaginable. Saki rates Ume\'\'s talent higher than anyone else\'s and fears it.\r\n', 1, 'active', '2026-05-26 13:13:20', '2026-06-08 12:28:57'),
+(2, 6, 'Temari Tsukimura', '月村 手毬', '2000-06-03', 'Gemini', 'AB', 162, 51, '82/58/86', 'Kyoto', 'Eating delicious food (currently sealed away)', 'Singing', 'Class 1-1', 75, 65, 55, 'A former elite middle-school idol, once called the #1 idol of her grade. Appears cool, stoic, and sarcastic on the surface but is secretly a lazy, spoiled troublemaker—a girl with two sides. She aims for the top to break away from the self she dislikes and learn to love herself. ', 1, 'active', '2026-05-26 13:13:20', '2026-06-08 12:28:57'),
+(3, 7, 'Kotone Fujita', '藤田 ことね', '2000-04-29', 'Taurus', 'O', 156, 40, '75/55/75', 'Saitama', 'Making money', 'Dance, remembering people faces and names', 'Class 1-1', 65, 55, 75, 'A greedy girl who dreams of becoming \"an idol who can make money.\" She sees idol work as her one shot at turning her life around. Her grades are poor and her self-esteem is low overall, but she has full confidence in her cute face. She\'s a little uncomfortable around the student council president Sena, who keeps overestimating her for some reason.\r\n', 1, 'active', '2026-05-26 13:13:20', '2026-06-29 11:18:03'),
+(4, 8, 'Lilja Katsuragi', '葛城 リーリヤ', '2000-07-24', 'Leo', 'B', 161, 43, '82/53/80', 'Sweden', 'Baking sweets, Japanese anime', 'Baking sweets, games', 'Class 1-1', 55, 55, 65, 'An exchange student from overseas with no prior singing or dancing experience, who is always shrinking back as if she had no confidence. She doesn\'t look talented at first glance, but her admiration for idols is genuine, and she is an incredibly hard worker. Her father is Japanese, so she speaks the language fluently. She has a promise with her best friend Sumika to stand on the same stage together one day—the reason she enrolled at Hatsuboshi Academy. ', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
+(5, 9, 'Sumika Shiun', '紫雲 清夏', '2000-11-11', 'Scorpio', 'O', 168, 54, '89/58/85', 'Hokkaido', 'Karaoke, social media', 'Flexibility', 'Class 1-1', 65, 55, 65, 'A laid-back gyaru who skips class and lessons—a bit of an unserious slacker, but genuinely bright, cheerful, and able to get along with anyone, which is her real charm. She once had a celebrated ballet career and was expected to go far on the world stage, but she has no motivation for it anymore. She wholeheartedly cheers on her best friend Lilja, who is earnestly chasing her idol dream. ', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
+(6, 10, 'Hiro Shinosawa', '篠澤 広', '2000-12-21', 'Sagittarius', 'AB', 159, 41, '72/54/76', 'Akita', 'Challenging weak areas, growing houseplants', 'Academics in general, physics, mathematics, puzzles', 'Class 1-2', 55, 55, 60, 'A mysterious genius girl. Dissatisfied with days that are too easy and boring, she enrolled at Hatsuboshi Academy specifically to challenge her weakest areas. A true eccentric who finds joy in \"harsh, painful lessons\" and \"things that don\'t go well.\" Her reason for becoming an idol is \"because it seems like the thing I\'d be worst at.\" Despite her brilliant mind, she has extreme stamina and muscle deficits—even basic lessons leave her unsteady on her feet.\r\n', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
+(7, 11, 'China Kuramoto', '倉本 千奈', '2000-08-01', 'Leo', 'O', 148, 43, '73/56/73', 'Kanagawa', 'Drawing', 'Cheerful greetings, being liked by animals', 'Class 1-2', 55, 55, 60, 'A genuine, spoiled-rotten young lady (お嬢様) raised with every privilege. A cheerful, innocent girl who enrolled at Hatsuboshi dreaming of becoming \"a proper, splendid idol.\" Her actual ability level, by her own admission, is \"definitely dead last among the entire student body!\" Her sheltered upbringing has left her sweet, polite, and earnest—but completely behind her classmates in raw skill, which she takes in stride with her trademark \"Well then, I\'ll just have to do my best, won\'t I!\" attitude.\r\n', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
+(8, 12, 'Ume Hanami', '花海 佑芽', '2000-04-01', 'Aries', 'AB', 158, 50, '91/60/85', 'Aichi', 'Competing with her older sister', 'Sports in general, massages', 'Class 1-2', 50, 60, 60, '\'A supplementary-entry new student. Energetic to the core, with exceptional physical ability from her background as a former athlete. She absolutely adores her older sister Saki — she respects her with all her heart, treats her as her ultimate rival, and holds her up as the goal she\'s aiming for. Through Saki\'s devoted support, Ume gradually blossoms her own idol talent. \r\n', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
+(9, 13, 'Misuzu Hataya', '秦谷 美鈴', '2000-02-06', 'Aquarius', 'B', 160, 42, '73/54/74', 'Kyoto', 'Napping, taking walks', 'Cooking, ikebana, accurate body clock', 'Class 1-2', 65, 70, 80, 'A languid, easygoing girl who moves at her own pace. Sweet and indulgent to both herself and others, she loves taking care of people and spoiling them. Her childhood friend Temari Tsukimura — whom she calls \"Mari-chan\" — she treats like a little sister or daughter she needs to cherish and protect. A Kyoto native and former member of the elite middle-school unit \"SyngUp!\" alongside Temari. Sleeps constantly — at every opportunity.\r\n', 1, 'active', '2026-05-28 17:43:41', '2026-06-08 12:28:57'),
+(10, 14, 'Mao Arimura', '有村 麻央', '2000-01-18', 'Capricorn', 'A', 157, 46, '85/53/85', 'Hyogo', 'Taking care of others, watching theater', 'Martial arts, dexterous handwork', 'Class 3-1', 75, 65, 55, 'A 3rd-year girl aiming to be a cool idol. She serves as the dormitory leader of Hatsuboshi Academy\'s idol department and is very caring. She is adored by her juniors as the \"Little Prince.\" She has a past of aspiring to be a stage musical star since childhood and working as a child actress.', 1, 'active', '2026-06-03 13:03:10', '2026-06-08 12:28:57'),
+(11, 15, 'Rinami Himesaki', '姫崎 莉波', '2000-03-05', 'Pisces', 'A', 166, 56, '90/59/93', 'Fukuoka', 'Cafe hopping, collecting cosmetics', 'Cooking, sewing and handicrafts', 'Class 3-1', 60, 70, 55, 'A mature-feeling 3rd-year student. Reliable, gentle, and caring—the big sister of everyone in the dorm. She was once part of a unit, but the results were not great. She is a member of the student council, serving as secretary.', 1, 'active', '2026-06-03 13:03:10', '2026-06-08 12:28:57'),
+(12, 16, 'Sena Juo', '十王 星南', '2000-12-07', 'Sagittarius', 'A', 170, 54, '88/56/86', 'Tokyo', 'Lessons, finding talented idols', 'Recognizing idol talent', 'Class 3-1', 130, 100, 105, 'Student council president of Hatsuboshi Academy. Known as \"the academy\'s top idol,\" admired by many students. The granddaughter of the academy principal, she was raised with elite idol education from a young age. She has a special ability to spot idol talent and immediately takes a liking to Kotone—but for some reason, Kotone keeps her distance.', 1, 'active', '2026-06-03 13:03:10', '2026-06-08 12:28:57'),
+(13, 17, 'Tsubame Amaya', '雨夜 燕', '2000-05-20', 'Taurus', 'A', 169, 51, '80/55/82', 'Tokyo', 'Calligraphy, Japanese history, reading', 'Secretarial skills in general, mathematics, calligraphy', 'Class 3-1', 80, 90, 70, 'Vice president of the Hatsuboshi Academy student council. The academy\'s No. 2 idol. She carries pride befitting her ability and holds herself with an arrogant attitude. She is strict with both herself and others but is caring. She sees her childhood friend Sena as a rival and has publicly declared that she will one day surpass Sena to become the \"number one star.\"', 1, 'active', '2026-06-03 13:03:10', '2026-06-26 15:34:15'),
+(14, 19, 'Rinha Kaya', '賀陽 燐羽', '2000-12-12', 'Sagittarius', 'AB', 162, 47, '78/56/80', NULL, NULL, NULL, 'Class 1-3', 88, 76, 92, NULL, NULL, 'unassigned', '2026-06-26 14:45:34', '2026-06-26 15:52:16');
+
+-- --------------------------------------------------------
+
+--
+-- Dumping data for table `teachers`
+--
+
+--
+-- Dumping data for table `teachers`
+--
+
+INSERT INTO `teachers` (`id`, `user_id`, `name`, `specialty`) VALUES
+(1, 2, 'Vocal Trainer', 'vocal'),
+(2, 3, 'Dance Trainer', 'dance'),
+(3, 4, 'Visual Trainer', 'visual');
+
+-- --------------------------------------------------------
+
+--
+-- Dumping data for table `daily_student_stats`
+--
+
+--
+-- Database: `gakumas_sms`
+--
 
 --
 -- Dumping data for table `daily_student_stats`
 --
 
 INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `dance`, `visual`, `created_at`, `updated_at`) VALUES
-(130, 3, '2026-06-03', 65, 55, 75, '2026-06-03 15:30:37', '2026-06-03 15:30:37'),
-(185, 9, '2026-06-08', 65, 70, 80, '2026-06-08 11:49:05', '2026-06-08 11:49:05'),
-(193, 7, '2026-06-08', 55, 55, 60, '2026-06-08 11:57:57', '2026-06-08 11:57:57'),
-(204, 13, '2026-06-08', 80, 90, 70, '2026-06-08 14:29:20', '2026-06-08 14:29:20'),
-(205, 12, '2026-06-08', 130, 100, 105, '2026-06-08 14:46:20', '2026-06-08 14:46:20'),
 (206, 11, '2026-06-08', 60, 70, 55, '2026-06-08 16:37:19', '2026-06-08 16:37:19'),
-(213, 7, '2026-06-09', 55, 55, 60, '2026-06-09 12:17:28', '2026-06-09 12:17:28'),
-(214, 12, '2026-06-09', 130, 100, 105, '2026-06-09 12:19:04', '2026-06-09 12:19:04'),
-(225, 13, '2026-06-09', 80, 90, 70, '2026-06-09 15:26:35', '2026-06-09 15:26:35'),
-(226, 9, '2026-06-09', 65, 70, 80, '2026-06-09 15:37:22', '2026-06-09 15:37:22'),
-(227, 9, '2026-06-09', 65, 70, 80, '2026-06-09 15:37:38', '2026-06-09 15:37:38'),
-(228, 9, '2026-06-09', 65, 70, 80, '2026-06-09 15:37:52', '2026-06-09 15:37:52'),
-(230, 12, '2026-06-09', 130, 100, 105, '2026-06-09 15:42:16', '2026-06-09 15:42:16'),
-(231, 7, '2026-06-09', 55, 55, 60, '2026-06-09 15:43:36', '2026-06-09 15:43:36'),
-(232, 3, '2026-06-09', 65, 55, 75, '2026-06-09 16:05:43', '2026-06-09 16:05:43'),
 (235, 11, '2026-06-09', 60, 70, 55, '2026-06-09 16:27:21', '2026-06-09 16:27:21'),
-(239, 9, '2026-06-09', 65, 70, 80, '2026-06-09 16:52:29', '2026-06-09 16:52:29'),
-(241, 9, '2026-06-10', 65, 70, 80, '2026-06-10 11:11:12', '2026-06-10 11:11:12'),
-(242, 13, '2026-06-10', 80, 90, 70, '2026-06-10 11:18:49', '2026-06-10 11:18:49'),
-(243, 12, '2026-06-10', 130, 100, 105, '2026-06-10 11:28:37', '2026-06-10 11:28:37'),
-(244, 3, '2026-06-10', 65, 55, 75, '2026-06-10 11:37:02', '2026-06-10 11:37:02'),
-(245, 1, '2026-06-15', 75, 75, 80, '2026-06-15 12:58:29', '2026-06-15 12:58:29'),
-(249, 2, '2026-06-15', 75, 65, 55, '2026-06-15 13:01:32', '2026-06-15 13:01:32'),
-(250, 3, '2026-06-15', 65, 55, 75, '2026-06-15 13:03:12', '2026-06-15 13:03:12'),
 (251, 4, '2026-06-15', 55, 55, 65, '2026-06-15 13:04:26', '2026-06-15 13:04:26'),
 (253, 5, '2026-06-15', 65, 55, 65, '2026-06-15 13:04:52', '2026-06-15 13:04:52'),
-(254, 8, '2026-06-15', 50, 60, 60, '2026-06-15 13:05:04', '2026-06-15 13:05:04'),
-(255, 9, '2026-06-15', 65, 70, 80, '2026-06-15 13:05:20', '2026-06-15 13:05:20'),
-(256, 6, '2026-06-15', 55, 55, 60, '2026-06-15 13:05:44', '2026-06-15 13:05:44'),
-(257, 7, '2026-06-15', 55, 55, 60, '2026-06-15 13:06:01', '2026-06-15 13:06:01'),
 (258, 10, '2026-06-15', 75, 65, 55, '2026-06-15 13:06:12', '2026-06-15 13:06:12'),
 (259, 11, '2026-06-15', 60, 70, 55, '2026-06-15 13:07:11', '2026-06-15 13:07:11'),
 (260, 12, '2026-06-15', 130, 100, 105, '2026-06-15 13:07:30', '2026-06-15 13:07:30'),
-(261, 13, '2026-06-15', 80, 90, 70, '2026-06-15 13:07:47', '2026-06-15 13:07:47'),
-(262, 2, '2026-06-18', 75, 65, 55, '2026-06-18 11:23:07', '2026-06-18 11:23:07'),
 (263, 4, '2026-06-19', 55, 55, 65, '2026-06-19 16:43:44', '2026-06-19 16:43:44'),
 (264, 4, '2026-06-19', 55, 55, 65, '2026-06-19 16:43:50', '2026-06-19 16:43:50'),
-(265, 2, '2026-06-19', 75, 65, 55, '2026-06-19 17:14:29', '2026-06-19 17:14:29'),
-(266, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:35:40', '2026-06-22 10:35:40'),
-(267, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:35:53', '2026-06-22 10:35:53'),
-(268, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:36:06', '2026-06-22 10:36:06'),
-(269, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:37:23', '2026-06-22 10:37:23'),
-(270, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:47:53', '2026-06-22 10:47:53'),
-(271, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:47:57', '2026-06-22 10:47:57'),
-(272, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:48:21', '2026-06-22 10:48:21'),
-(273, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:48:24', '2026-06-22 10:48:24'),
-(274, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:48:29', '2026-06-22 10:48:29'),
-(275, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:50:20', '2026-06-22 10:50:20'),
-(276, 2, '2026-06-22', 75, 65, 55, '2026-06-22 10:52:17', '2026-06-22 10:52:17'),
-(277, 2, '2026-06-22', 75, 65, 55, '2026-06-22 11:30:14', '2026-06-22 11:30:14'),
-(278, 2, '2026-06-22', 75, 65, 55, '2026-06-22 11:33:05', '2026-06-22 11:33:05'),
-(279, 2, '2026-06-22', 75, 65, 55, '2026-06-22 11:33:10', '2026-06-22 11:33:10'),
-(280, 6, '2026-06-24', 55, 55, 60, '2026-06-24 08:18:05', '2026-06-24 08:18:05'),
-(281, 6, '2026-06-24', 55, 55, 60, '2026-06-24 08:18:18', '2026-06-24 08:18:18'),
-(282, 6, '2026-06-24', 55, 55, 60, '2026-06-24 08:18:26', '2026-06-24 08:18:26'),
-(283, 6, '2026-06-24', 55, 55, 60, '2026-06-24 08:18:36', '2026-06-24 08:18:36'),
-(284, 6, '2026-06-24', 55, 55, 60, '2026-06-24 08:18:52', '2026-06-24 08:18:52'),
 (285, 6, '2026-06-24', 55, 55, 60, '2026-06-24 08:19:10', '2026-06-24 08:19:10'),
-(286, 8, '2026-06-24', 50, 60, 60, '2026-06-24 08:49:00', '2026-06-24 08:49:00'),
-(287, 8, '2026-06-24', 50, 60, 60, '2026-06-24 08:52:35', '2026-06-24 08:52:35'),
-(288, 8, '2026-06-24', 50, 60, 60, '2026-06-24 09:00:12', '2026-06-24 09:00:12'),
 (289, 10, '2026-06-24', 75, 65, 55, '2026-06-24 09:14:14', '2026-06-24 09:14:14'),
 (290, 10, '2026-06-24', 75, 65, 55, '2026-06-24 09:14:20', '2026-06-24 09:14:20'),
 (291, 5, '2026-06-24', 65, 55, 65, '2026-06-24 09:27:12', '2026-06-24 09:27:12'),
 (292, 4, '2026-06-24', 55, 55, 65, '2026-06-24 13:25:43', '2026-06-24 13:25:43'),
 (293, 4, '2026-06-24', 55, 55, 65, '2026-06-24 13:26:12', '2026-06-24 13:26:12'),
-(294, 1, '2026-06-24', 75, 75, 80, '2026-06-24 15:22:25', '2026-06-24 15:22:25'),
-(295, 1, '2026-06-24', 75, 75, 80, '2026-06-24 15:22:51', '2026-06-24 15:22:51'),
-(296, 1, '2026-06-24', 75, 75, 80, '2026-06-24 15:23:02', '2026-06-24 15:23:02'),
-(297, 1, '2026-06-24', 75, 75, 80, '2026-06-24 15:23:06', '2026-06-24 15:23:06'),
-(298, 1, '2026-06-24', 75, 75, 80, '2026-06-24 15:23:44', '2026-06-24 15:23:44'),
 (299, 8, '2026-06-24', 50, 60, 60, '2026-06-24 15:46:53', '2026-06-24 15:46:53'),
-(300, 1, '2026-06-24', 75, 75, 80, '2026-06-24 16:21:37', '2026-06-24 16:21:37'),
-(301, 1, '2026-06-24', 75, 75, 80, '2026-06-24 16:25:24', '2026-06-24 16:25:24'),
-(302, 1, '2026-06-24', 75, 75, 80, '2026-06-24 16:32:25', '2026-06-24 16:32:25');
+(302, 1, '2026-06-24', 75, 75, 80, '2026-06-24 16:32:25', '2026-06-24 16:32:25'),
+(304, 7, '2026-06-25', 55, 55, 60, '2026-06-25 09:02:08', '2026-06-25 09:02:08'),
+(306, 9, '2026-06-25', 65, 70, 80, '2026-06-25 11:37:27', '2026-06-25 11:37:27'),
+(309, 3, '2026-06-25', 65, 55, 75, '2026-06-25 11:44:20', '2026-06-25 11:44:20'),
+(310, 2, '2026-06-25', 75, 65, 55, '2026-06-25 12:29:25', '2026-06-25 12:29:25'),
+(311, 5, '2026-06-25', 65, 55, 65, '2026-06-25 16:26:59', '2026-06-25 16:26:59'),
+(337, 13, '2026-06-26', 80, 90, 70, '2026-06-26 15:42:03', '2026-06-26 15:42:03'),
+(340, 14, '2026-06-26', 88, 76, 92, '2026-06-26 15:52:21', '2026-06-26 15:52:21'),
+(341, 1, '2026-06-29', 75, 75, 80, '2026-06-29 10:31:53', '2026-06-29 10:31:53'),
+(342, 1, '2026-06-29', 75, 75, 80, '2026-06-29 10:32:04', '2026-06-29 10:32:04'),
+(343, 1, '2026-06-29', 75, 75, 80, '2026-06-29 11:15:47', '2026-06-29 11:15:47'),
+(344, 12, '2026-06-30', 130, 100, 105, '2026-06-30 16:15:11', '2026-06-30 16:15:11'),
+(345, 12, '2026-06-30', 130, 100, 105, '2026-06-30 16:15:23', '2026-06-30 16:15:23'),
+(346, 12, '2026-06-30', 130, 100, 105, '2026-06-30 16:15:52', '2026-06-30 16:15:52'),
+(347, 12, '2026-06-30', 130, 100, 105, '2026-06-30 16:30:36', '2026-06-30 16:30:36'),
+(348, 12, '2026-06-30', 130, 100, 105, '2026-06-30 16:32:42', '2026-06-30 16:32:42'),
+(349, 12, '2026-06-30', 130, 100, 105, '2026-06-30 16:32:45', '2026-06-30 16:32:45'),
+(350, 12, '2026-06-30', 130, 100, 105, '2026-06-30 16:35:08', '2026-06-30 16:35:08'),
+(351, 12, '2026-06-30', 130, 100, 105, '2026-06-30 16:36:27', '2026-06-30 16:36:27'),
+(352, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:09:35', '2026-06-30 17:09:35'),
+(353, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:17:53', '2026-06-30 17:17:53'),
+(354, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:17:58', '2026-06-30 17:17:58'),
+(355, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:18:19', '2026-06-30 17:18:19'),
+(356, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:21:28', '2026-06-30 17:21:28'),
+(357, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:25:50', '2026-06-30 17:25:50'),
+(358, 1, '2026-06-30', 75, 75, 80, '2026-06-30 17:26:49', '2026-06-30 17:26:49'),
+(359, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:34:21', '2026-06-30 17:34:21'),
+(360, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:40:52', '2026-06-30 17:40:52'),
+(361, 1, '2026-06-30', 75, 75, 80, '2026-06-30 17:44:10', '2026-06-30 17:44:10'),
+(362, 1, '2026-06-30', 75, 75, 80, '2026-06-30 17:45:11', '2026-06-30 17:45:11'),
+(363, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:45:35', '2026-06-30 17:45:35'),
+(364, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:46:48', '2026-06-30 17:46:48'),
+(365, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:46:52', '2026-06-30 17:46:52'),
+(366, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:46:56', '2026-06-30 17:46:56'),
+(367, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:46:58', '2026-06-30 17:46:58'),
+(368, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:47:02', '2026-06-30 17:47:02'),
+(369, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:49:33', '2026-06-30 17:49:33'),
+(370, 1, '2026-06-30', 75, 75, 80, '2026-06-30 17:49:59', '2026-06-30 17:49:59'),
+(371, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:50:34', '2026-06-30 17:50:34'),
+(372, 1, '2026-06-30', 75, 75, 80, '2026-06-30 17:52:16', '2026-06-30 17:52:16'),
+(373, 1, '2026-06-30', 75, 75, 80, '2026-06-30 17:52:45', '2026-06-30 17:52:45'),
+(374, 1, '2026-06-30', 75, 75, 80, '2026-06-30 17:52:51', '2026-06-30 17:52:51'),
+(375, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:52:53', '2026-06-30 17:52:53'),
+(376, 1, '2026-06-30', 75, 75, 80, '2026-06-30 17:52:58', '2026-06-30 17:52:58'),
+(377, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:53:28', '2026-06-30 17:53:28'),
+(378, 6, '2026-07-01', 55, 55, 60, '2026-07-01 13:12:07', '2026-07-01 13:12:07'),
+(379, 6, '2026-07-01', 55, 55, 60, '2026-07-01 13:12:23', '2026-07-01 13:12:23'),
+(380, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:28:00', '2026-07-03 07:28:00'),
+(381, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:28:22', '2026-07-03 07:28:22'),
+(382, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:29:05', '2026-07-03 07:29:05'),
+(383, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:29:24', '2026-07-03 07:29:24'),
+(384, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:13', '2026-07-03 07:41:13'),
+(385, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:28', '2026-07-03 07:41:28'),
+(386, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:31', '2026-07-03 07:41:31'),
+(387, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:40', '2026-07-03 07:41:40'),
+(388, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:49', '2026-07-03 07:41:49'),
+(389, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:42:04', '2026-07-03 07:42:04'),
+(390, 1, '2026-07-03', 75, 75, 80, '2026-07-03 07:47:07', '2026-07-03 07:47:07'),
+(391, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:47:18', '2026-07-03 07:47:18'),
+(392, 1, '2026-07-03', 75, 75, 80, '2026-07-03 07:47:52', '2026-07-03 07:47:52'),
+(393, 1, '2026-07-03', 75, 75, 80, '2026-07-03 07:49:01', '2026-07-03 07:49:01'),
+(394, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:49:42', '2026-07-03 07:49:42'),
+(395, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:52:48', '2026-07-03 07:52:48'),
+(396, 1, '2026-07-03', 75, 75, 80, '2026-07-03 07:58:07', '2026-07-03 07:58:07'),
+(397, 1, '2026-07-03', 75, 75, 80, '2026-07-03 07:59:03', '2026-07-03 07:59:03'),
+(398, 13, '2026-07-03', 80, 90, 70, '2026-07-03 08:00:00', '2026-07-03 08:00:00'),
+(399, 3, '2026-07-03', 65, 55, 75, '2026-07-03 08:01:08', '2026-07-03 08:01:08'),
+(400, 3, '2026-07-03', 65, 55, 75, '2026-07-03 08:01:10', '2026-07-03 08:01:10'),
+(401, 8, '2026-07-07', 50, 60, 60, '2026-07-07 16:05:57', '2026-07-07 16:05:57'),
+(402, 8, '2026-07-07', 50, 60, 60, '2026-07-07 16:06:22', '2026-07-07 16:06:22'),
+(403, 8, '2026-07-07', 50, 60, 60, '2026-07-07 16:30:45', '2026-07-07 16:30:45'),
+(404, 8, '2026-07-07', 50, 60, 60, '2026-07-07 16:30:48', '2026-07-07 16:30:48'),
+(405, 8, '2026-07-07', 50, 60, 60, '2026-07-07 17:10:12', '2026-07-07 17:10:12'),
+(406, 8, '2026-07-07', 50, 60, 60, '2026-07-07 17:16:30', '2026-07-07 17:16:30'),
+(407, 8, '2026-07-07', 50, 60, 60, '2026-07-07 17:31:20', '2026-07-07 17:31:20'),
+(408, 2, '2026-07-08', 75, 65, 55, '2026-07-08 11:32:28', '2026-07-08 11:32:28'),
+(409, 2, '2026-07-08', 75, 65, 55, '2026-07-08 11:49:03', '2026-07-08 11:49:03'),
+(410, 7, '2026-07-08', 55, 55, 60, '2026-07-08 12:10:17', '2026-07-08 12:10:17'),
+(411, 9, '2026-07-08', 65, 70, 80, '2026-07-08 12:10:46', '2026-07-08 12:10:46'),
+(412, 9, '2026-07-08', 65, 70, 80, '2026-07-08 12:10:57', '2026-07-08 12:10:57'),
+(413, 14, '2026-07-08', 88, 76, 92, '2026-07-08 12:31:24', '2026-07-08 12:31:24'),
+(414, 14, '2026-07-08', 88, 76, 92, '2026-07-08 13:45:27', '2026-07-08 13:45:27'),
+(415, 14, '2026-07-08', 88, 76, 92, '2026-07-08 13:47:13', '2026-07-08 13:47:13');
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `notifications`
+-- Dumping data for table `producer_messages`
 --
-
-INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `related_id`, `related_type`, `action_url`, `dedupe_key`, `is_read`, `read_at`, `responded_at`, `created_at`) VALUES
-(1, 5, 'schedule_start', 'Schedule starting', 'Class 1-1 Academic Studies starts at 09:00. Location: Classroom 1-1.', 16, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:16:2026-06-24', 1, '2026-06-24 15:22:53', NULL, '2026-06-24 09:00:12'),
-(2, 6, 'schedule_start', 'Schedule starting', 'Class 1-1 Academic Studies starts at 09:00. Location: Classroom 1-1.', 17, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:17:2026-06-24', 0, NULL, NULL, '2026-06-24 09:00:12'),
-(3, 7, 'schedule_start', 'Schedule starting', 'Class 1-1 Academic Studies starts at 09:00. Location: Classroom 1-1.', 18, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:18:2026-06-24', 0, NULL, NULL, '2026-06-24 09:00:12'),
-(4, 8, 'schedule_start', 'Schedule starting', 'Class 1-1 Academic Studies starts at 09:00. Location: Classroom 1-1.', 19, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:19:2026-06-24', 1, '2026-06-24 13:25:49', NULL, '2026-06-24 09:00:12'),
-(5, 9, 'schedule_start', 'Schedule starting', 'Class 1-1 Academic Studies starts at 09:00. Location: Classroom 1-1.', 20, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:20:2026-06-24', 1, '2026-06-24 09:27:16', NULL, '2026-06-24 09:00:12'),
-(6, 10, 'schedule_start', 'Schedule starting', 'Class 1-2 Academic Studies starts at 09:00. Location: Classroom 1-2.', 43, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:43:2026-06-24', 0, NULL, NULL, '2026-06-24 09:00:12'),
-(7, 11, 'schedule_start', 'Schedule starting', 'Class 1-2 Academic Studies starts at 09:00. Location: Classroom 1-2.', 44, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:44:2026-06-24', 0, NULL, NULL, '2026-06-24 09:00:12'),
-(8, 12, 'schedule_start', 'Schedule starting', 'Class 1-2 Academic Studies starts at 09:00. Location: Classroom 1-2.', 45, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:45:2026-06-24', 1, '2026-06-24 09:00:18', NULL, '2026-06-24 09:00:12'),
-(9, 13, 'schedule_start', 'Schedule starting', 'Class 1-2 Academic Studies starts at 09:00. Location: Classroom 1-2.', 46, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:46:2026-06-24', 0, NULL, NULL, '2026-06-24 09:00:12'),
-(10, 14, 'schedule_start', 'Schedule starting', 'Class 3-1 Academic Studies starts at 09:00. Location: Classroom 3-1.', 67, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:67:2026-06-24', 1, '2026-06-24 09:14:21', NULL, '2026-06-24 09:00:12'),
-(11, 15, 'schedule_start', 'Schedule starting', 'Class 3-1 Academic Studies starts at 09:00. Location: Classroom 3-1.', 68, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:68:2026-06-24', 0, NULL, NULL, '2026-06-24 09:00:12'),
-(12, 16, 'schedule_start', 'Schedule starting', 'Class 3-1 Academic Studies starts at 09:00. Location: Classroom 3-1.', 69, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:69:2026-06-24', 0, NULL, NULL, '2026-06-24 09:00:12'),
-(13, 17, 'schedule_start', 'Schedule starting', 'Class 3-1 Academic Studies starts at 09:00. Location: Classroom 3-1.', 70, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:70:2026-06-24', 0, NULL, NULL, '2026-06-24 09:00:12'),
-(14, 12, 'new_message', 'New message', 'Saki Hanami sent you a message.', 1, 'message', '/gakumas-sms/messages/view.php?id=1', 'new_message:1:12', 1, '2026-06-24 15:54:11', NULL, '2026-06-24 15:46:30'),
-(15, 15, 'schedule_start', 'Schedule starting', 'Student Council Session starts at 16:20. Location: Student Council Room.', 186, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:186:2026-06-24', 0, NULL, NULL, '2026-06-24 16:21:37'),
-(16, 16, 'schedule_start', 'Schedule starting', 'Student Council Session starts at 16:20. Location: Student Council Room.', 187, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:187:2026-06-24', 0, NULL, NULL, '2026-06-24 16:21:37'),
-(17, 17, 'schedule_start', 'Schedule starting', 'Student Council Session starts at 16:20. Location: Student Council Room.', 188, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:188:2026-06-24', 0, NULL, NULL, '2026-06-24 16:21:37'),
-(18, 11, 'schedule_start', 'Schedule starting', 'Student Council Session starts at 16:20. Location: Student Council Room.', 222, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:222:2026-06-24', 0, NULL, NULL, '2026-06-24 16:21:37'),
-(19, 12, 'schedule_start', 'Schedule starting', 'Student Council Session starts at 16:20. Location: Student Council Room.', 223, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:223:2026-06-24', 0, NULL, NULL, '2026-06-24 16:21:37'),
-(20, 13, 'schedule_start', 'Schedule starting', 'Student Council Session starts at 16:20. Location: Student Council Room.', 224, 'recurring_schedule', '/gakumas-sms/student/schedule.php', 'schedule_start:recurring_schedule:224:2026-06-24', 0, NULL, NULL, '2026-06-24 16:21:37'),
-(21, 12, 'new_message', 'New message', 'Saki Hanami sent you a message.', 2, 'message', '/gakumas-sms/messages/view.php?id=1', 'new_message:2:12', 0, NULL, NULL, '2026-06-24 16:22:14');
 
 --
 -- Dumping data for table `producer_messages`
@@ -905,6 +945,12 @@ INSERT INTO `producer_messages` (`id`, `producer_id`, `student_id`, `message_typ
 (389, 1, 13, 'birthday', 'serious', 'Happy birthday. Your assignment is to let the day honor how far you have come.'),
 (390, 1, 13, 'birthday', 'playful', 'Happy birthday. I am not ranking birthdays, so do not ask whether yours beat Sena’s.');
 
+-- --------------------------------------------------------
+
+--
+-- Dumping data for table `recurring_schedules`
+--
+
 --
 -- Dumping data for table `recurring_schedules`
 --
@@ -1137,6 +1183,12 @@ INSERT INTO `recurring_schedules` (`id`, `student_id`, `weekday`, `activity_type
 (225, 7, 5, 'meeting', 'Student Council Session', 'Student council work with China handling cheerful support and committee errands.', '16:20:00', '17:20:00', 'Student Council Room', 1, 1, '2026-06-08 11:30:35', '2026-06-08 11:30:35'),
 (226, 8, 5, 'meeting', 'Student Council Session', 'Student council work with Ume helping through energy, outreach, and practical tasks.', '16:20:00', '17:20:00', 'Student Council Room', 1, 1, '2026-06-08 11:30:35', '2026-06-08 11:30:35'),
 (227, 9, 5, 'meeting', 'Student Council Session', 'Student council work with Misuzu supporting welfare and student care requests.', '16:20:00', '17:20:00', 'Student Council Room', 1, 1, '2026-06-08 11:30:35', '2026-06-08 11:30:35');
+
+-- --------------------------------------------------------
+
+--
+-- Dumping data for table `student_songs`
+--
 
 --
 -- Dumping data for table `student_songs`
@@ -1584,9 +1636,8 @@ INSERT INTO `student_songs` (`id`, `student_id`, `song_id`, `added_by`, `added_a
 (439, 11, 322, 1, '2026-06-29 00:00:00'),
 (440, 12, 323, 1, '2026-06-29 00:00:00'),
 (441, 13, 324, 1, '2026-06-29 00:00:00');
-
+SET FOREIGN_KEY_CHECKS = 1;
 COMMIT;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
