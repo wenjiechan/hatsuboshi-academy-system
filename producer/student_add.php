@@ -7,16 +7,20 @@ require_once '../includes/theme_settings_helpers.php';
 require_once '../includes/messages_helpers.php';
 require_once '../includes/notifications_helpers.php';
 
+// Escape text before printing it into HTML.
 function e(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+// Flash messages survive the redirect after a request is submitted.
 $producer_id = (int) $_SESSION['id'];
 $success = $_SESSION['student_add_success'] ?? null;
 $error = $_SESSION['student_add_error'] ?? null;
 unset($_SESSION['student_add_success'], $_SESSION['student_add_error']);
 
+// Submitting this page does not immediately assign the student.
+// It creates a producer-student request that the student must accept first.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf((string) ($_POST['csrf_token'] ?? ''));
 
@@ -41,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// Load active unassigned students and mark any already-pending add request.
 $students_stmt = $pdo->prepare(
     'SELECT
         s.*,
@@ -61,6 +66,7 @@ $students_stmt = $pdo->prepare(
 $students_stmt->execute([$producer_id]);
 $unassigned_students = $students_stmt->fetchAll();
 
+// Load the shared producer layout.
 $page_title = 'Add Unassigned Student';
 $page_styles = ['/gakumas-sms/assets/css/pages/student.css'];
 require_once '../includes/header.php';

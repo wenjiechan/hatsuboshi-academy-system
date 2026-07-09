@@ -5,11 +5,13 @@ require_role('producer');
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
 
+// Escape text before printing it into HTML.
 function e(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+// Display TIME values as MM:SS for the song list.
 function format_song_duration(?string $duration): string
 {
     if (!$duration) {
@@ -25,6 +27,7 @@ function format_song_duration(?string $duration): string
     return sprintf('%02d:%02d', (int) $parts[1], (int) $parts[2]);
 }
 
+// Display nullable release dates in a readable format.
 function format_song_date(?string $date): string
 {
     if (!$date) {
@@ -34,6 +37,7 @@ function format_song_date(?string $date): string
     return date('M j, Y', strtotime($date));
 }
 
+// Load the current producer account and theme colors.
 $stmt = $pdo->prepare(
     'SELECT id, username, theme_primary_color, theme_secondary_color
      FROM users
@@ -56,12 +60,14 @@ if (!$producer) {
 $_SESSION['theme_primary_color'] = $producer['theme_primary_color'] ?: ($_SESSION['theme_primary_color'] ?? DEFAULT_THEME_PRIMARY);
 $_SESSION['theme_secondary_color'] = $producer['theme_secondary_color'] ?: ($_SESSION['theme_secondary_color'] ?? DEFAULT_THEME_SECONDARY);
 
+// Read the filter values from the URL so filtered views can be refreshed/bookmarked.
 $student_filter = trim((string) ($_GET['student'] ?? ''));
 $class_filter = trim((string) ($_GET['class'] ?? ''));
 $song_filter = trim((string) ($_GET['song'] ?? ''));
 $selected_student_id = isset($_GET['student_id']) ? max(0, (int) $_GET['student_id']) : 0;
 $song_like = '%' . $song_filter . '%';
 
+// Header summary counts include all students assigned to this producer, not only filtered results.
 $stats_stmt = $pdo->prepare(
     'SELECT
         COUNT(DISTINCT s.id) AS assigned_students,
@@ -80,6 +86,7 @@ $params = [$producer['id']];
 $student_select_params = [];
 $matching_song_select = 'NULL AS matching_song_titles, 0 AS matching_song_count';
 
+// Combine the three filter boxes with AND; each individual box can match related fields with OR.
 if ($student_filter !== '') {
     $where[] = '(s.name LIKE ? OR s.name_jp LIKE ?)';
     $params[] = '%' . $student_filter . '%';
@@ -92,6 +99,7 @@ if ($class_filter !== '') {
 }
 
 if ($song_filter !== '') {
+    // When searching by song, show which song titles caused each student card to match.
     $matching_song_select = 'GROUP_CONCAT(DISTINCT CASE
             WHEN so.title LIKE ? OR so.title_jp LIKE ? OR so.artist LIKE ?
             THEN so.title
@@ -120,6 +128,7 @@ if ($song_filter !== '') {
     $params[] = $song_like;
 }
 
+// Load the filtered student cards. Producers only see their own assigned students.
 $student_stmt = $pdo->prepare(
     'SELECT
         s.id,
@@ -148,6 +157,8 @@ $selected_student = null;
 $songs = [];
 
 if ($selected_student_id > 0) {
+    // Keep the selected student in sync with the active filters.
+    // If filters no longer match, the song section will not render stale results.
     $selected_where = array_merge(['s.id = ?'], $where);
     $selected_params = array_merge([$selected_student_id], $params);
 
@@ -166,6 +177,7 @@ if ($selected_student_id > 0) {
     $selected_student = $selected_stmt->fetch();
 
     if ($selected_student) {
+        // If a song filter is active, only show matching songs for the selected student.
         $selected_song_where = ['ss.student_id = ?'];
         $selected_song_params = [$selected_student['id']];
 
@@ -201,6 +213,7 @@ if ($selected_student_id > 0) {
     }
 }
 
+// Group the selected student's songs so the page matches the student song page layout.
 $category_order = ['Solo', 'Group', 'Remix', 'Cover'];
 $songs_by_category = array_fill_keys($category_order, []);
 
@@ -219,6 +232,7 @@ $category_icons = [
 $selected_total_songs = count($songs);
 $latest_release = null;
 
+// Find the latest release date from the currently visible song set.
 foreach ($songs as $song) {
     if ($song['release_date'] && (!$latest_release || $song['release_date'] > $latest_release)) {
         $latest_release = $song['release_date'];
@@ -310,11 +324,12 @@ require_once '../includes/sidebar.php';
             </div>
         <?php else: ?>
             <div class="producer-student-grid">
-                <?php foreach ($students as $student): ?>
+            <?php foreach ($students as $student): ?>
                     <?php
                     $student_id = (int) $student['id'];
                     $profile_avatar = trim((string) ($student['avatar'] ?? ''));
 
+                    // Build the student avatar path with the same local/absolute URL rules used elsewhere.
                     if ($profile_avatar !== '') {
                         $avatar_path = str_replace('\\', '/', $profile_avatar);
 
@@ -331,6 +346,8 @@ require_once '../includes/sidebar.php';
                         'song' => $song_filter,
                         'student_id' => $student_id,
                     ], static fn ($value) => $value !== '');
+
+                    // Preserve active filters and jump down to the song section after choosing a student.
                     $student_url = '/gakumas-sms/producer/songs.php?' . http_build_query($query_params) . '#studentSongs';
                     $is_selected = $selected_student && (int) $selected_student['id'] === $student_id;
                     $matching_song_titles = trim((string) ($student['matching_song_titles'] ?? ''));
@@ -432,15 +449,38 @@ require_once '../includes/sidebar.php';
 
                         <div class="song-list" role="list">
                             <div class="song-list-header" aria-hidden="true">
-                                <span>#</span>
-                                <span>Title</span>
-                                <span>Artist</span>
-                                <span>Release</span>
-                                <span>Time</span>
+                                <span>
+                                    #
+                                    <button type="button" class="song-sort-button" data-sort-column="number" data-sort-direction="asc" aria-label="Sort number ascending">
+                                        <i class="bi bi-sort-numeric-down" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                <span>
+                                    Title
+                                    <button type="button" class="song-sort-button" data-sort-column="title" data-sort-direction="asc" aria-label="Sort title ascending">
+                                        <i class="bi bi-sort-alpha-down" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                <span>
+                                    Artist
+                                </span>
+                                <span>
+                                    Release
+                                    <button type="button" class="song-sort-button" data-sort-column="release" data-sort-direction="asc" aria-label="Sort release ascending">
+                                        <i class="bi bi-sort-numeric-down" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                <span>
+                                    Time
+                                    <button type="button" class="song-sort-button" data-sort-column="duration" data-sort-direction="asc" aria-label="Sort time ascending">
+                                        <i class="bi bi-sort-numeric-down" aria-hidden="true"></i>
+                                    </button>
+                                </span>
                             </div>
 
                             <?php foreach ($songs_by_category[$category] as $index => $song): ?>
                                 <?php
+                                // Each song needs a unique collapse target for its detail panel.
                                 $collapse_id = 'producerSongDetails' . (int) $song['id'];
                                 $search_text = strtolower(
                                     implode(' ', [
@@ -455,6 +495,10 @@ require_once '../includes/sidebar.php';
 
                                 <article class="song-track"
                                     data-song-search="<?= e($search_text) ?>"
+                                    data-sort-number="<?= (int) ($index + 1) ?>"
+                                    data-sort-title="<?= e($song['title']) ?>"
+                                    data-sort-release="<?= e($song['release_date'] ?: '') ?>"
+                                    data-sort-duration="<?= e($song['duration'] ?: '') ?>"
                                     role="listitem">
                                     <button
                                         class="song-track-button collapsed"
@@ -538,6 +582,7 @@ const songSearch = document.getElementById('songSearch');
 const songTracks = Array.from(document.querySelectorAll('.song-track'));
 const songSections = Array.from(document.querySelectorAll('.song-category-section'));
 const songSearchEmpty = document.getElementById('songSearchEmpty');
+const songSortButtons = Array.from(document.querySelectorAll('.song-sort-button'));
 
 if (songSearch) {
     songSearch.addEventListener('input', () => {
@@ -563,6 +608,70 @@ if (songSearch) {
         }
     });
 }
+
+function songDurationToSeconds(duration) {
+    const parts = duration.split(':').map(Number);
+
+    if (parts.length !== 3 || parts.some(Number.isNaN)) {
+        return 0;
+    }
+
+    return (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+}
+
+songSortButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        const section = button.closest('.song-category-section');
+        const list = section?.querySelector('.song-list');
+        const currentDirection = button.dataset.sortDirection || 'asc';
+        const directionMultiplier = currentDirection === 'asc' ? 1 : -1;
+        const sortColumn = button.dataset.sortColumn;
+
+        if (!list || !sortColumn) {
+            return;
+        }
+
+        const tracks = Array.from(list.querySelectorAll('.song-track'));
+
+        tracks.sort((firstTrack, secondTrack) => {
+            const sortKey = `sort${sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1)}`;
+            const firstValue = firstTrack.dataset[sortKey] || '';
+            const secondValue = secondTrack.dataset[sortKey] || '';
+
+            if (sortColumn === 'number') {
+                return (Number(firstValue) - Number(secondValue)) * directionMultiplier;
+            }
+
+            if (sortColumn === 'duration') {
+                return (songDurationToSeconds(firstValue) - songDurationToSeconds(secondValue)) * directionMultiplier;
+            }
+
+            if (sortColumn === 'release') {
+                return (new Date(firstValue || 0) - new Date(secondValue || 0)) * directionMultiplier;
+            }
+
+            return firstValue.trim().localeCompare(secondValue.trim(), undefined, {
+                numeric: true,
+                sensitivity: 'base'
+            }) * directionMultiplier;
+        });
+
+        tracks.forEach((track) => list.appendChild(track));
+
+        const nextDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+        const icon = button.querySelector('i');
+
+        button.dataset.sortDirection = nextDirection;
+        button.setAttribute('aria-label', `Sort ${sortColumn} ${nextDirection === 'asc' ? 'ascending' : 'descending'}`);
+
+        if (icon) {
+            const isNumeric = ['number', 'release', 'duration'].includes(sortColumn);
+            icon.className = `bi ${isNumeric
+                ? (nextDirection === 'asc' ? 'bi-sort-numeric-down' : 'bi-sort-numeric-up')
+                : (nextDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up')}`;
+        }
+    });
+});
 </script>
 
 <?php require_once '../includes/footer.php'; ?>

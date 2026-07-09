@@ -6,6 +6,7 @@ require_once '../config/database.php';
 require_once '../includes/messages_helpers.php';
 require_once '../includes/notifications_helpers.php';
 
+// This endpoint only handles release-request form submissions.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /gakumas-sms/producer/students.php');
     exit;
@@ -13,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 verify_csrf((string) ($_POST['csrf_token'] ?? ''));
 
+// The relationship is not removed immediately; a student response is required.
 $producer_id = (int) $_SESSION['id'];
 $student_id = filter_input(INPUT_POST, 'student_id', FILTER_VALIDATE_INT);
 
@@ -23,6 +25,7 @@ if (!$student_id || $student_id <= 0) {
 }
 
 try {
+    // Create the pending release request and notify the student through the message system.
     create_producer_remove_student_request($pdo, $producer_id, (int) $student_id);
     $_SESSION['student_page_success'] = 'Release request sent. The student must accept before the relationship ends.';
 } catch (InvalidArgumentException | RuntimeException $exception) {

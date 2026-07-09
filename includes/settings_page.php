@@ -4,11 +4,14 @@ require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
 require_once '../includes/password_settings_helpers.php';
 
+// Shared settings controller used by admin, producer, teacher, and student wrappers.
 $page_title = 'Settings';
 $page_styles = ['/gakumas-sms/assets/css/pages/password-settings.css'];
 $success = '';
 $error = '';
 $current_role = $_SESSION['role'] ?? '';
+
+// Password changes require a recent current-password verification.
 $password_change_verified = isset($_SESSION['password_change_verified_at'])
     && (time() - (int) $_SESSION['password_change_verified_at']) <= 300;
 
@@ -17,6 +20,7 @@ if (!$password_change_verified) {
 }
 
 if ($current_role === 'student') {
+    // Students must have a linked student profile before using settings.
     $stmt = $pdo->prepare('SELECT id FROM students WHERE user_id = ? LIMIT 1');
     $stmt->execute([$_SESSION['id']]);
 
@@ -29,6 +33,7 @@ if ($current_role === 'student') {
     }
 }
 
+// Load current theme values before handling a possible save.
 $user_theme = load_user_theme($pdo, (int) $_SESSION['id']);
 $current_primary = $user_theme['primary'];
 $current_secondary = $user_theme['secondary'];
@@ -37,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf($_POST['csrf_token'] ?? '');
     $settings_action = $_POST['settings_action'] ?? '';
 
+    // Route each submitted settings form by its action button value.
     if ($settings_action === 'save_theme') {
         $current_primary = normalize_theme_color($_POST['theme_primary_color'] ?? '', DEFAULT_THEME_PRIMARY);
         $current_secondary = normalize_theme_color($_POST['theme_secondary_color'] ?? '', DEFAULT_THEME_SECONDARY);
@@ -73,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Apply latest theme values before rendering the shared layout.
 apply_theme_session($current_primary, $current_secondary);
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';

@@ -6,15 +6,18 @@ require_once '../config/database.php';
 require_once '../includes/notifications_helpers.php';
 require_once '../includes/messages_helpers.php';
 
+// Generate time-based notifications and birthday messages before the dashboard is shown.
 generate_automatic_notifications($pdo);
 generate_automatic_birthday_messages($pdo);
 
+// Load the shared admin layout.
 $page_title = 'Admin Dashboard';
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
 
 <main class="dashboard-main">
+    <!-- Placeholder dashboard content until admin overview widgets are added. -->
     <section class="today-schedule">
         <div class="section-heading">
             <div>
