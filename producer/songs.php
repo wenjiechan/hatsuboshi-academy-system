@@ -60,12 +60,118 @@ if (!$producer) {
 $_SESSION['theme_primary_color'] = $producer['theme_primary_color'] ?: ($_SESSION['theme_primary_color'] ?? DEFAULT_THEME_PRIMARY);
 $_SESSION['theme_secondary_color'] = $producer['theme_secondary_color'] ?: ($_SESSION['theme_secondary_color'] ?? DEFAULT_THEME_SECONDARY);
 
+$producer_song_success = $_SESSION['producer_song_success'] ?? null;
+$producer_song_error = $_SESSION['producer_song_error'] ?? null;
+unset($_SESSION['producer_song_success'], $_SESSION['producer_song_error']);
+
 // Read the filter values from the URL so filtered views can be refreshed/bookmarked.
 $student_filter = trim((string) ($_GET['student'] ?? ''));
 $class_filter = trim((string) ($_GET['class'] ?? ''));
 $song_filter = trim((string) ($_GET['song'] ?? ''));
 $selected_student_id = isset($_GET['student_id']) ? max(0, (int) $_GET['student_id']) : 0;
 $song_like = '%' . $song_filter . '%';
+
+// Add or remove a song assignment. The global song row is never edited here.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf((string) ($_POST['csrf_token'] ?? ''));
+
+    $action = (string) ($_POST['song_action'] ?? '');
+    $posted_student_id = filter_input(INPUT_POST, 'student_id', FILTER_VALIDATE_INT);
+    $posted_song_id = filter_input(INPUT_POST, 'song_id', FILTER_VALIDATE_INT);
+    $return_query = trim((string) ($_POST['return_query'] ?? ''));
+    $redirect_url = '/gakumas-sms/producer/songs.php';
+
+    if ($return_query !== '') {
+        parse_str(ltrim($return_query, '?'), $return_params);
+        $safe_return_params = [];
+
+        foreach (['student', 'class', 'song'] as $return_key) {
+            if (isset($return_params[$return_key]) && is_scalar($return_params[$return_key]) && trim((string) $return_params[$return_key]) !== '') {
+                $safe_return_params[$return_key] = trim((string) $return_params[$return_key]);
+            }
+        }
+
+        if (isset($return_params['student_id']) && filter_var($return_params['student_id'], FILTER_VALIDATE_INT)) {
+            $safe_return_params['student_id'] = (int) $return_params['student_id'];
+        }
+
+        if (!empty($safe_return_params)) {
+            $redirect_url .= '?' . http_build_query($safe_return_params);
+        }
+    } elseif ($posted_student_id && $posted_student_id > 0) {
+        $redirect_url .= '?student_id=' . (int) $posted_student_id;
+    }
+
+    $redirect_url .= '#studentSongs';
+
+    if (!$posted_student_id || $posted_student_id <= 0 || !$posted_song_id || $posted_song_id <= 0) {
+        $_SESSION['producer_song_error'] = 'Please choose a valid student and song.';
+        header('Location: ' . $redirect_url);
+        exit;
+    }
+
+    $ownership_stmt = $pdo->prepare(
+        'SELECT id, name
+         FROM students
+         WHERE id = ?
+           AND producer_id = ?
+         LIMIT 1'
+    );
+    $ownership_stmt->execute([$posted_student_id, $producer['id']]);
+    $owned_student = $ownership_stmt->fetch();
+
+    if (!$owned_student) {
+        $_SESSION['producer_song_error'] = 'You can only manage songs for your assigned students.';
+        header('Location: ' . $redirect_url);
+        exit;
+    }
+
+    if ($action === 'add') {
+        $song_exists_stmt = $pdo->prepare('SELECT title FROM songs WHERE id = ? LIMIT 1');
+        $song_exists_stmt->execute([$posted_song_id]);
+        $song_to_add = $song_exists_stmt->fetch();
+
+        if (!$song_to_add) {
+            $_SESSION['producer_song_error'] = 'The selected song could not be found.';
+            header('Location: ' . $redirect_url);
+            exit;
+        }
+
+        try {
+            $add_stmt = $pdo->prepare(
+                'INSERT INTO student_songs (student_id, song_id, added_by)
+                 VALUES (?, ?, ?)'
+            );
+            $add_stmt->execute([$posted_student_id, $posted_song_id, $producer['id']]);
+            $_SESSION['producer_song_success'] = 'Song added to ' . $owned_student['name'] . '.';
+        } catch (PDOException $exception) {
+            if ($exception->getCode() === '23000') {
+                $_SESSION['producer_song_error'] = 'This student already has that song.';
+            } else {
+                $_SESSION['producer_song_error'] = 'The song could not be added. Please try again.';
+            }
+        }
+    } elseif ($action === 'remove') {
+        $remove_stmt = $pdo->prepare(
+            'DELETE FROM student_songs
+             WHERE student_id = ?
+               AND song_id = ?
+             LIMIT 1'
+        );
+        $remove_stmt->execute([$posted_student_id, $posted_song_id]);
+
+        if ($remove_stmt->rowCount() > 0) {
+            $_SESSION['producer_song_success'] = 'Song removed from ' . $owned_student['name'] . '.';
+        } else {
+            $_SESSION['producer_song_error'] = 'That song is not assigned to this student.';
+        }
+    } else {
+        $_SESSION['producer_song_error'] = 'Unknown song action.';
+    }
+
+    header('Location: ' . $redirect_url);
+    exit;
+}
 
 // Header summary counts include all students assigned to this producer, not only filtered results.
 $stats_stmt = $pdo->prepare(
@@ -155,6 +261,7 @@ $students = $student_stmt->fetchAll();
 
 $selected_student = null;
 $songs = [];
+$available_songs = [];
 
 if ($selected_student_id > 0) {
     // Keep the selected student in sync with the active filters.
@@ -210,6 +317,29 @@ if ($selected_student_id > 0) {
         );
         $song_stmt->execute($selected_song_params);
         $songs = $song_stmt->fetchAll();
+
+        // Add-song search should only offer global songs the selected student does not already have.
+        // The NOT EXISTS check prevents duplicate student_songs rows from appearing in the picker.
+        $available_song_stmt = $pdo->prepare(
+            'SELECT
+                so.id,
+                so.title,
+                so.title_jp,
+                so.artist,
+                so.song_type
+             FROM songs so
+             WHERE NOT EXISTS (
+                SELECT 1
+                FROM student_songs ss_existing
+                WHERE ss_existing.song_id = so.id
+                  AND ss_existing.student_id = ?
+             )
+             ORDER BY
+                FIELD(so.song_type, "Solo", "Group", "Remix", "Cover"),
+                so.title ASC'
+        );
+        $available_song_stmt->execute([$selected_student['id']]);
+        $available_songs = $available_song_stmt->fetchAll();
     }
 }
 
@@ -244,6 +374,12 @@ $page_styles = [
     '/gakumas-sms/assets/css/pages/song.css',
     '/gakumas-sms/assets/css/pages/producer-songs.css',
 ];
+$return_query = http_build_query(array_filter([
+    'student' => $student_filter,
+    'class' => $class_filter,
+    'song' => $song_filter,
+    'student_id' => $selected_student_id,
+], static fn ($value) => $value !== '' && $value !== 0));
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
@@ -307,6 +443,20 @@ require_once '../includes/sidebar.php';
             </div>
         </form>
     </section>
+
+    <?php if ($producer_song_success): ?>
+        <div class="student-page-alert success" role="status">
+            <i class="bi bi-check-circle" aria-hidden="true"></i>
+            <?= e($producer_song_success) ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($producer_song_error): ?>
+        <div class="student-page-alert error" role="alert">
+            <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+            <?= e($producer_song_error) ?>
+        </div>
+    <?php endif; ?>
 
     <section class="producer-student-picker">
         <div class="producer-student-picker-heading">
@@ -406,6 +556,77 @@ require_once '../includes/sidebar.php';
                     <strong><?= e(format_song_date($latest_release)) ?></strong>
                 </div>
             </div>
+        </section>
+
+        <section class="producer-song-manage-panel">
+            <div>
+                <p class="dashboard-eyebrow">Manage Assignment</p>
+                <h3>Add existing song</h3>
+                <p>Search the global song library, select one result, then add it to this student.</p>
+            </div>
+
+            <?php if (empty($available_songs)): ?>
+                <div class="producer-song-manage-empty">
+                    <i class="bi bi-music-note-list" aria-hidden="true"></i>
+                    <span>Every available song is already assigned to this student.</span>
+                </div>
+            <?php else: ?>
+                <form method="post" class="producer-song-add-form" id="producerSongAddForm">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="song_action" value="add">
+                    <input type="hidden" name="student_id" value="<?= (int) $selected_student['id'] ?>">
+                    <input type="hidden" name="song_id" id="songAddSelectedId">
+                    <input type="hidden" name="return_query" value="<?= e($return_query) ?>">
+
+                    <div class="producer-song-search-picker">
+                        <label for="songAddSearch">
+                            <span>Search song</span>
+                            <input type="search" id="songAddSearch" autocomplete="off" placeholder="Type song title, Japanese title, or artist">
+                        </label>
+
+                        <!-- Search results contain only songs that are not already assigned to this student. -->
+                        <div class="producer-song-picker-list d-none" id="songAddResults" role="listbox" aria-label="Available songs">
+                            <?php foreach ($available_songs as $available_song): ?>
+                                <?php
+                                $available_search_text = strtolower(
+                                    implode(' ', [
+                                        $available_song['title'] ?? '',
+                                        $available_song['title_jp'] ?? '',
+                                        $available_song['artist'] ?? '',
+                                        $available_song['song_type'] ?? '',
+                                    ])
+                                );
+                                ?>
+                                <button
+                                    type="button"
+                                    class="producer-song-picker-option"
+                                    data-song-option
+                                    data-song-id="<?= (int) $available_song['id'] ?>"
+                                    data-song-label="<?= e($available_song['title']) ?>"
+                                    data-song-search="<?= e($available_search_text) ?>"
+                                    role="option"
+                                    aria-selected="false">
+                                    <span>
+                                        <strong><?= e($available_song['title']) ?></strong>
+                                        <?php if (!empty($available_song['title_jp']) && $available_song['title_jp'] !== $available_song['title']): ?>
+                                            <small lang="ja"><?= e($available_song['title_jp']) ?></small>
+                                        <?php endif; ?>
+                                        <small><?= e($available_song['artist'] ?: 'Unknown artist') ?></small>
+                                    </span>
+                                    <em><?= e($available_song['song_type']) ?></em>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <p class="producer-song-picker-empty d-none" id="songAddEmpty">No available songs match your search.</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="songAddSubmit" disabled>
+                        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                        Add Song
+                    </button>
+                </form>
+            <?php endif; ?>
         </section>
 
         <?php if (empty($songs)): ?>
@@ -560,6 +781,19 @@ require_once '../includes/sidebar.php';
                                                 <span>Notes</span>
                                                 <p><?= e($song['notes'] ?: 'No notes available for this song.') ?></p>
                                             </div>
+
+                                            <form method="post" class="producer-song-remove-form">
+                                                <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                                                <input type="hidden" name="song_action" value="remove">
+                                                <input type="hidden" name="student_id" value="<?= (int) $selected_student['id'] ?>">
+                                                <input type="hidden" name="song_id" value="<?= (int) $song['id'] ?>">
+                                                <input type="hidden" name="return_query" value="<?= e($return_query) ?>">
+
+                                                <button type="submit" class="producer-song-remove-button" data-confirm-remove="<?= e($song['title']) ?>">
+                                                    <i class="bi bi-trash3" aria-hidden="true"></i>
+                                                    Remove from student
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </article>
@@ -583,6 +817,13 @@ const songTracks = Array.from(document.querySelectorAll('.song-track'));
 const songSections = Array.from(document.querySelectorAll('.song-category-section'));
 const songSearchEmpty = document.getElementById('songSearchEmpty');
 const songSortButtons = Array.from(document.querySelectorAll('.song-sort-button'));
+const removeSongButtons = Array.from(document.querySelectorAll('[data-confirm-remove]'));
+const songAddSearch = document.getElementById('songAddSearch');
+const songAddOptions = Array.from(document.querySelectorAll('[data-song-option]'));
+const songAddSelectedId = document.getElementById('songAddSelectedId');
+const songAddSubmit = document.getElementById('songAddSubmit');
+const songAddEmpty = document.getElementById('songAddEmpty');
+const songAddResults = document.getElementById('songAddResults');
 
 if (songSearch) {
     songSearch.addEventListener('input', () => {
@@ -669,6 +910,72 @@ songSortButtons.forEach((button) => {
             icon.className = `bi ${isNumeric
                 ? (nextDirection === 'asc' ? 'bi-sort-numeric-down' : 'bi-sort-numeric-up')
                 : (nextDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up')}`;
+        }
+    });
+});
+
+removeSongButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+        const songTitle = button.dataset.confirmRemove || 'this song';
+        const confirmed = window.confirm(`Remove "${songTitle}" from this student? The global song will not be deleted.`);
+
+        if (!confirmed) {
+            event.preventDefault();
+        }
+    });
+});
+
+if (songAddSearch) {
+    songAddSearch.addEventListener('input', () => {
+        const query = songAddSearch.value.trim().toLowerCase();
+        let visibleOptionCount = 0;
+
+        if (songAddSelectedId) {
+            songAddSelectedId.value = '';
+        }
+
+        if (songAddSubmit) {
+            songAddSubmit.disabled = true;
+        }
+
+        songAddOptions.forEach((option) => {
+            option.classList.remove('is-selected');
+            option.setAttribute('aria-selected', 'false');
+
+            const isVisible = query !== '' && option.dataset.songSearch.includes(query);
+            option.classList.toggle('d-none', !isVisible);
+
+            if (isVisible) {
+                visibleOptionCount += 1;
+            }
+        });
+
+        if (songAddResults) {
+            songAddResults.classList.toggle('d-none', query === '');
+        }
+
+        if (songAddEmpty) {
+            songAddEmpty.classList.toggle('d-none', query === '' || visibleOptionCount > 0);
+        }
+    });
+}
+
+songAddOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+        songAddOptions.forEach((item) => {
+            item.classList.remove('is-selected');
+            item.setAttribute('aria-selected', 'false');
+        });
+
+        option.classList.add('is-selected');
+        option.setAttribute('aria-selected', 'true');
+
+        if (songAddSelectedId) {
+            songAddSelectedId.value = option.dataset.songId || '';
+        }
+
+        if (songAddSubmit) {
+            songAddSubmit.disabled = !option.dataset.songId;
         }
     });
 });

@@ -211,6 +211,228 @@
     margin-top: 0;
 }
 
+.producer-songs-main .student-page-alert {
+    display: flex;
+    gap: 0.65rem;
+    align-items: center;
+    border-radius: 18px;
+    padding: 0.9rem 1rem;
+    font-weight: 700;
+}
+
+.producer-songs-main .student-page-alert.success {
+    border: 1px solid rgba(39, 174, 96, 0.2);
+    color: #1f8f4d;
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.producer-songs-main .student-page-alert.error {
+    border: 1px solid rgba(220, 53, 69, 0.22);
+    color: #b42335;
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.producer-song-manage-panel {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.9fr) minmax(360px, 1.1fr);
+    gap: 1.4rem;
+    align-items: center;
+    padding: 1.35rem;
+    border: 1px solid color-mix(in srgb, var(--secondary, #ffb3d1) 34%, transparent);
+    border-radius: 24px;
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--secondary, #ffb3d1) 18%, transparent),
+        rgba(255, 255, 255, 0.94)
+    );
+    box-shadow: 0 18px 45px rgba(255, 107, 157, 0.08);
+}
+
+.producer-song-manage-panel > div:first-child {
+    max-width: 460px;
+}
+
+.producer-song-manage-panel h3 {
+    margin: 0 0 0.35rem;
+    color: var(--text-main, #30262c);
+}
+
+.producer-song-manage-panel p {
+    margin: 0;
+    color: var(--text-muted, #7b6f76);
+}
+
+.producer-song-add-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.85rem;
+    align-items: end;
+    width: 100%;
+    max-width: 620px;
+    justify-self: end;
+}
+
+.producer-song-search-picker {
+    position: relative;
+    display: grid;
+    gap: 0.65rem;
+}
+
+.producer-song-add-form label {
+    display: grid;
+    gap: 0.4rem;
+    color: var(--text-muted, #7b6f76);
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.producer-song-add-form input[type="search"] {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid color-mix(in srgb, var(--secondary, #ffb3d1) 45%, transparent);
+    border-radius: 16px;
+    padding: 0.65rem 0.85rem;
+    color: var(--text-main, #30262c);
+    background: rgba(255, 255, 255, 0.9);
+    outline: none;
+}
+
+.producer-song-add-form input[type="search"]:focus {
+    border-color: var(--primary, #ff6b9d);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--secondary, #ffb3d1) 34%, transparent);
+}
+
+.producer-song-picker-list {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: grid;
+    gap: 0.5rem;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 0.35rem;
+    border: 1px solid color-mix(in srgb, var(--secondary, #ffb3d1) 34%, transparent);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 18px 45px rgba(115, 76, 96, 0.16);
+}
+
+.producer-song-picker-option {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    align-items: center;
+    width: 100%;
+    border: 1px solid color-mix(in srgb, var(--secondary, #ffb3d1) 28%, transparent);
+    border-radius: 16px;
+    padding: 0.75rem 0.85rem;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.72);
+    text-align: left;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.producer-song-picker-option:hover,
+.producer-song-picker-option:focus,
+.producer-song-picker-option.is-selected {
+    border-color: var(--primary, #ff6b9d);
+    background: color-mix(in srgb, var(--secondary, #ffb3d1) 22%, white);
+    color: var(--primary, #ff6b9d);
+}
+
+.producer-song-picker-option span {
+    display: grid;
+    min-width: 0;
+}
+
+.producer-song-picker-option strong,
+.producer-song-picker-option small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.producer-song-picker-option small {
+    color: var(--text-muted, #7b6f76);
+    font-size: 0.78rem;
+}
+
+.producer-song-picker-option em {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    padding: 0.25rem 0.55rem;
+    color: var(--primary, #ff6b9d);
+    background: color-mix(in srgb, var(--secondary, #ffb3d1) 26%, transparent);
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 800;
+}
+
+.producer-song-picker-empty {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    margin: 0;
+    border: 1px solid rgba(180, 35, 53, 0.18);
+    border-radius: 16px;
+    padding: 0.75rem 0.85rem;
+    background: rgba(255, 255, 255, 0.96);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.producer-song-picker-empty {
+    color: #b42335;
+}
+
+.producer-song-add-form .btn {
+    align-self: end;
+    min-height: 44px;
+    min-width: 145px;
+}
+
+.producer-song-manage-empty {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 18px;
+    padding: 0.85rem 1rem;
+    color: var(--primary, #ff6b9d);
+    background: color-mix(in srgb, var(--secondary, #ffb3d1) 24%, transparent);
+    font-weight: 800;
+}
+
+.producer-song-remove-form {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.producer-song-remove-button {
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+    border: 1px solid rgba(220, 53, 69, 0.22);
+    border-radius: 999px;
+    padding: 0.55rem 0.9rem;
+    color: #b42335;
+    background: rgba(220, 53, 69, 0.08);
+    font-weight: 800;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.producer-song-remove-button:hover,
+.producer-song-remove-button:focus {
+    border-color: rgba(220, 53, 69, 0.45);
+    color: #fff;
+    background: #dc3545;
+}
+
 @media (max-width: 992px) {
     .producer-song-filter-form {
         grid-template-columns: 1fr;
@@ -222,6 +444,23 @@
 
     .producer-songs-summary {
         grid-template-columns: 1fr;
+    }
+
+    .producer-song-add-form {
+        grid-template-columns: 1fr;
+    }
+
+    .producer-song-add-form .btn {
+        justify-self: start;
+    }
+
+    .producer-song-manage-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .producer-song-add-form {
+        justify-self: stretch;
+        max-width: none;
     }
 }
 
