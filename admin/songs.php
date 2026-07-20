@@ -7,7 +7,6 @@ require_once '../includes/admin_song_helpers.php';
 
 // Read filter and page state from the URL so search results can be shared/bookmarked.
 $song_search = trim((string) ($_GET['song'] ?? ''));
-$artist_search = trim((string) ($_GET['artist'] ?? ''));
 $type_filter = trim((string) ($_GET['type'] ?? ''));
 $page = max(1, (int) ($_GET['page'] ?? 1));
 $per_page = 20;
@@ -109,14 +108,10 @@ $params = [];
 
 // Build the library filter WHERE clause once, then reuse it for count and page queries.
 if ($song_search !== '') {
-    $where[] = '(so.title LIKE ? OR so.title_jp LIKE ?)';
+    $where[] = '(so.title LIKE ? OR so.title_jp LIKE ? OR so.artist LIKE ?)';
     $params[] = '%' . $song_search . '%';
     $params[] = '%' . $song_search . '%';
-}
-
-if ($artist_search !== '') {
-    $where[] = 'so.artist LIKE ?';
-    $params[] = '%' . $artist_search . '%';
+    $params[] = '%' . $song_search . '%';
 }
 
 if ($type_filter !== '') {
@@ -218,13 +213,12 @@ if (!empty($song_ids)) {
 $page_title = 'Songs';
 $pagination_base_params = array_filter([
     'song' => $song_search,
-    'artist' => $artist_search,
     'type' => $type_filter,
 ], static fn ($value) => $value !== '');
 
 $page_styles = [
     '/gakumas-sms/assets/css/pages/song.css',
-    '/gakumas-sms/assets/css/pages/admin-songs.css',
+    '/gakumas-sms/assets/css/pages/admin-songs.css?v=20260720b',
 ];
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
@@ -264,13 +258,8 @@ require_once '../includes/sidebar.php';
     <section class="admin-songs-filters">
         <form method="get" class="admin-songs-filter-form">
             <label>
-                <span>Song</span>
-                <input type="search" name="song" value="<?= e($song_search) ?>" placeholder="Search title or Japanese title">
-            </label>
-
-            <label>
-                <span>Artist</span>
-                <input type="search" name="artist" value="<?= e($artist_search) ?>" placeholder="Search artist">
+                <span>Song / Artist</span>
+                <input type="search" name="song" value="<?= e($song_search) ?>" placeholder="Search title, Japanese title, or artist">
             </label>
 
             <label>
@@ -290,13 +279,13 @@ require_once '../includes/sidebar.php';
                     <i class="bi bi-search" aria-hidden="true"></i>
                     Search
                 </button>
-                <a href="/gakumas-sms/admin/songs.php" class="admin-songs-reset-button">
-                    <i class="bi bi-x-circle" aria-hidden="true"></i>
-                    Reset
-                </a>
                 <a href="/gakumas-sms/admin/songs.php?create=1#song-form" class="btn btn-primary">
                     <i class="bi bi-plus-lg" aria-hidden="true"></i>
                     Add Song
+                </a>
+                <a href="/gakumas-sms/admin/student_songs.php" class="admin-songs-reset-button">
+                    <i class="bi bi-person-lines-fill" aria-hidden="true"></i>
+                    Manage Student Songs
                 </a>
             </div>
         </form>
@@ -379,7 +368,7 @@ require_once '../includes/sidebar.php';
                         <div class="admin-song-assignment-heading">
                             <div>
                                 <span id="song-assignment-title">Who will use this song?</span>
-                                <small>Optional. Select students here and the song will be added to their student song list immediately.</small>
+                                <small>Select students here and the song will be added to their student song list immediately.</small>
                             </div>
 
                             <div class="admin-song-assignment-heading-actions">
@@ -469,6 +458,7 @@ require_once '../includes/sidebar.php';
             </form>
         </section>
     <?php endif; ?>
+
 
     <section class="admin-songs-library">
         <div class="admin-songs-library-heading">
@@ -737,7 +727,7 @@ require_once '../includes/sidebar.php';
 document.addEventListener('DOMContentLoaded', () => {
     const songSortButtons = Array.from(document.querySelectorAll('.song-sort-button'));
     const studentSearch = document.getElementById('adminSongStudentSearch');
-    const studentOptions = document.querySelectorAll('[data-student-search]');
+    const studentOptions = document.querySelectorAll('#adminSongAssignmentCollapse [data-student-search]');
     const studentCheckboxes = document.querySelectorAll('input[name="student_ids[]"]');
     const selectedCount = document.getElementById('adminSongSelectedCount');
     const clearStudents = document.getElementById('adminSongClearStudents');
@@ -807,10 +797,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    if (!studentSearch || studentOptions.length === 0) {
-        return;
-    }
-
     const updateSelectedCount = () => {
         if (!selectedCount) {
             return;
@@ -820,29 +806,32 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedCount.textContent = `(${checkedCount} selected)`;
     };
 
-    studentSearch.addEventListener('input', () => {
-        const query = studentSearch.value.trim().toLowerCase();
+    if (studentSearch && studentOptions.length > 0) {
+        studentSearch.addEventListener('input', () => {
+            const query = studentSearch.value.trim().toLowerCase();
 
-        studentOptions.forEach((option) => {
-            option.hidden = query !== '' && !option.dataset.studentSearch.includes(query);
-        });
-    });
-
-    studentCheckboxes.forEach((checkbox) => {
-        checkbox.addEventListener('change', updateSelectedCount);
-    });
-
-    if (clearStudents) {
-        clearStudents.addEventListener('click', () => {
-            studentCheckboxes.forEach((checkbox) => {
-                checkbox.checked = false;
+            studentOptions.forEach((option) => {
+                option.hidden = query !== '' && !option.dataset.studentSearch.includes(query);
             });
-
-            updateSelectedCount();
         });
+
+        studentCheckboxes.forEach((checkbox) => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+
+        if (clearStudents) {
+            clearStudents.addEventListener('click', () => {
+                studentCheckboxes.forEach((checkbox) => {
+                    checkbox.checked = false;
+                });
+
+                updateSelectedCount();
+            });
+        }
+
+        updateSelectedCount();
     }
 
-    updateSelectedCount();
 });
 </script>
 

@@ -139,8 +139,15 @@ function handle_admin_song_post(PDO $pdo, array $valid_types, array $default_for
         'selected_student_ids' => $selected_student_ids,
         'show_create_form' => false,
         'edit_song_id' => 0,
+        'manage_student_id' => 0,
     ];
 
+    // Student-song assignment actions are submitted from admin/student_songs.php.
+    if (in_array($action, ['admin_add_student_song', 'admin_remove_student_song'], true)) {
+        return handle_admin_student_song_assignment($pdo, $action, $posted_song_id, $result);
+    }
+
+    // Global song delete actions are submitted from admin/songs.php.
     if (in_array($action, ['delete_song', 'delete_song_with_usage'], true)) {
         return handle_admin_song_delete($pdo, $action, $posted_song_id, $result);
     }
@@ -191,6 +198,84 @@ function handle_admin_song_post(PDO $pdo, array $valid_types, array $default_for
     $result['show_create_form'] = $action === 'create_song';
     $result['edit_song_id'] = $action === 'update_song' ? (int) ($posted_song_id ?? 0) : 0;
 
+    return $result;
+}
+
+// Admin can manage song assignments for any active student, including unassigned students.
+function handle_admin_student_song_assignment(PDO $pdo, string $action, $posted_song_id, array $result): array
+{
+    $posted_student_id = filter_input(INPUT_POST, 'student_id', FILTER_VALIDATE_INT);
+    $result['manage_student_id'] = $posted_student_id && $posted_student_id > 0 ? (int) $posted_student_id : 0;
+
+    if (!$posted_student_id || $posted_student_id <= 0 || !$posted_song_id || $posted_song_id <= 0) {
+        $result['song_page_error'] = 'Please choose a valid student and song.';
+        return $result;
+    }
+
+    $student_stmt = $pdo->prepare(
+        'SELECT s.name
+         FROM students s
+         INNER JOIN users u ON u.id = s.user_id AND u.is_active = 1
+         WHERE s.id = ?
+         LIMIT 1'
+    );
+    $student_stmt->execute([(int) $posted_student_id]);
+    $student = $student_stmt->fetch();
+
+    if (!$student) {
+        $result['song_page_error'] = 'The selected student could not be found.';
+        return $result;
+    }
+
+    if ($action === 'admin_add_student_song') {
+        // Confirm the global song exists before creating the student_songs link.
+        $song_stmt = $pdo->prepare('SELECT title FROM songs WHERE id = ? LIMIT 1');
+        $song_stmt->execute([(int) $posted_song_id]);
+        $song = $song_stmt->fetch();
+
+        if (!$song) {
+            $result['song_page_error'] = 'The selected song could not be found.';
+            return $result;
+        }
+
+        try {
+            $add_stmt = $pdo->prepare(
+                'INSERT INTO student_songs (student_id, song_id, added_by)
+                 VALUES (?, ?, ?)'
+            );
+            $add_stmt->execute([(int) $posted_student_id, (int) $posted_song_id, (int) $_SESSION['id']]);
+            $_SESSION['admin_song_success'] = 'Song added to ' . $student['name'] . '.';
+            header('Location: /gakumas-sms/admin/student_songs.php?manage_student_id=' . (int) $posted_student_id . '#adminStudentSongs');
+            exit;
+        } catch (PDOException $exception) {
+            $result['song_page_error'] = $exception->getCode() === '23000'
+                ? 'This student already has that song.'
+                : 'The song could not be added. Please try again.';
+            return $result;
+        }
+    }
+
+    if ($action === 'admin_remove_student_song') {
+        // Remove only the assignment link. The global songs row remains untouched.
+        $remove_stmt = $pdo->prepare(
+            'DELETE FROM student_songs
+             WHERE student_id = ?
+               AND song_id = ?
+             LIMIT 1'
+        );
+        $remove_stmt->execute([(int) $posted_student_id, (int) $posted_song_id]);
+
+        if ($remove_stmt->rowCount() > 0) {
+            $_SESSION['admin_song_success'] = 'Song removed from ' . $student['name'] . '.';
+            header('Location: /gakumas-sms/admin/student_songs.php?manage_student_id=' . (int) $posted_student_id . '#adminStudentSongs');
+            exit;
+        }
+
+        $result['song_page_error'] = 'That song is not assigned to this student.';
+        return $result;
+    }
+
+    $result['song_page_error'] = 'Unknown student song action.';
     return $result;
 }
 
