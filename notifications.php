@@ -35,6 +35,7 @@ function notification_icon(string $type): string
         NOTIFICATION_TYPE_SCHEDULE_CANCELLED => 'bi-calendar-x',
         NOTIFICATION_TYPE_LESSON_UPDATED => 'bi-journal-text',
         NOTIFICATION_TYPE_NEW_MESSAGE => 'bi-envelope',
+        NOTIFICATION_TYPE_STUDENT_REQUEST => 'bi-inbox',
         default => 'bi-bell',
     };
 }
@@ -48,6 +49,7 @@ function notification_type_class(string $type): string
         NOTIFICATION_TYPE_LESSON_START,
         NOTIFICATION_TYPE_LESSON_UPDATED => 'lesson',
         NOTIFICATION_TYPE_NEW_MESSAGE => 'message',
+        NOTIFICATION_TYPE_STUDENT_REQUEST => 'request',
         default => 'schedule',
     };
 }
@@ -99,10 +101,13 @@ require_once 'includes/sidebar.php';
                 <?php
                 $type_class = notification_type_class((string) $notification['type']);
                 $is_unread = empty($notification['is_read']);
-                // Birthday-send notifications need a clearer action label than the default view link.
-                $action_label = str_contains((string) $notification['action_url'], '/messages/send_birthday.php')
-                    ? 'Click here to send a birthday message!'
-                    : 'View';
+                $action_label = match ((string) $notification['type']) {
+                    NOTIFICATION_TYPE_BIRTHDAY_TODAY => str_contains((string) $notification['action_url'], '/messages/send_birthday.php')
+                        ? 'Click here to send a birthday message!'
+                        : 'View',
+                    NOTIFICATION_TYPE_STUDENT_REQUEST => 'View Request',
+                    default => 'View',
+                };
                 ?>
                 <article class="notification-card notification-card--<?= htmlspecialchars($type_class, ENT_QUOTES, 'UTF-8') ?><?= $is_unread ? ' unread' : '' ?>">
                     <div class="notification-card-top">

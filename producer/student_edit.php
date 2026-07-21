@@ -40,7 +40,10 @@ if (!$student) {
     redirect_to_account_issue(
         'Student profile not found',
         'This student was not found, or this student is not assigned to your producer account.',
-        404
+        404,
+        '/gakumas-sms/producer/students.php',
+        'Back to Students',
+        false
     );
 }
 

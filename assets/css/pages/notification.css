@@ -223,6 +223,10 @@
     --notification-accent: #278a78;
 }
 
+.notification-card--request {
+    --notification-accent: #336fbd;
+}
+
 .notification-card-top,
 .notification-card-footer {
     display: flex;

@@ -24,7 +24,10 @@ if (
     redirect_to_account_issue(
         'Conversation unavailable',
         'You do not have permission to change this conversation.',
-        403
+        403,
+        '/gakumas-sms/messages/inbox.php',
+        'Back to Inbox',
+        false
     );
 }
 

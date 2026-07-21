@@ -18,6 +18,9 @@ if (!is_array($issue)) {
         'title' => 'Account needs attention',
         'message' => 'We could not finish loading your account page. Please log out and contact the school office if this keeps happening.',
         'status_code' => 400,
+        'action_url' => '/gakumas-sms/logout.php',
+        'action_label' => 'Logout',
+        'show_logout' => false,
     ];
 }
 
@@ -30,6 +33,9 @@ if ($status_code < 400 || $status_code > 599) {
 http_response_code($status_code);
 
 $page_title = $issue['title'] ?? 'Account needs attention';
+$action_url = $issue['action_url'] ?? '/gakumas-sms/logout.php';
+$action_label = $issue['action_label'] ?? 'Logout';
+$show_logout = (bool) ($issue['show_logout'] ?? true);
 
 // Use the theme colors saved in the session
 $theme_primary = $_SESSION['theme_primary_color'] ?? '#FF6B9D';
@@ -72,10 +78,17 @@ $body_style = sprintf(
             </p>
 
             <div class="account-issue-actions">
-                <a href="/gakumas-sms/logout.php" class="btn btn-primary">
-                    <i class="bi bi-box-arrow-right"></i>
-                    Logout
+                <a href="<?= htmlspecialchars($action_url, ENT_QUOTES, 'UTF-8') ?>" class="btn btn-primary">
+                    <i class="bi <?= $action_url === '/gakumas-sms/logout.php' ? 'bi-box-arrow-right' : 'bi-arrow-left' ?>"></i>
+                    <?= htmlspecialchars($action_label, ENT_QUOTES, 'UTF-8') ?>
                 </a>
+
+                <?php if ($show_logout && $action_url !== '/gakumas-sms/logout.php'): ?>
+                    <a href="/gakumas-sms/logout.php" class="btn btn-outline-secondary">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </a>
+                <?php endif; ?>
             </div>
         </section>
     </main>

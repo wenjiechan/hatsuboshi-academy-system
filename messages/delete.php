@@ -23,7 +23,10 @@ if (
     redirect_to_account_issue(
         'Message unavailable',
         'You do not have permission to delete this message.',
-        403
+        403,
+        '/gakumas-sms/messages/inbox.php',
+        'Back to Inbox',
+        false
     );
 }
 

@@ -4,44 +4,15 @@ require_role('student');
 
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
-require_once '../includes/student_edit_validation.php';
+require_once '../includes/student_request_helpers.php';
 
 function e(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-function format_request_song_duration(?string $duration): string
-{
-    if (!$duration) {
-        return '';
-    }
-
-    $parts = explode(':', $duration);
-
-    if (count($parts) !== 3) {
-        return $duration;
-    }
-
-    return sprintf('%02d:%02d', (int) $parts[1], (int) $parts[2]);
-}
-
-$student_stmt = $pdo->prepare(
-    'SELECT
-        s.*,
-        u.avatar,
-        u.theme_primary_color,
-        u.theme_secondary_color,
-        producer.username AS producer_name
-     FROM students s
-     INNER JOIN users u ON u.id = s.user_id
-     LEFT JOIN users producer ON producer.id = s.producer_id
-     WHERE s.user_id = ?
-     LIMIT 1'
-);
-
-$student_stmt->execute([$_SESSION['id']]);
-$student = $student_stmt->fetch();
+$request_context = load_student_request_context($pdo, (int) $_SESSION['id']);
+$student = $request_context['student'];
 
 if (!$student) {
     redirect_to_account_issue(
@@ -51,71 +22,49 @@ if (!$student) {
     );
 }
 
-$_SESSION['student_name'] = $student['name'];
-$_SESSION['avatar'] = $student['avatar'] ?? '';
-$_SESSION['theme_primary_color'] = $student['theme_primary_color'] ?: DEFAULT_THEME_PRIMARY;
-$_SESSION['theme_secondary_color'] = $student['theme_secondary_color'] ?: DEFAULT_THEME_SECONDARY;
+apply_student_request_session_theme($student);
 
-$admin_stmt = $pdo->query(
-    'SELECT id, username
-     FROM users
-     WHERE role = "admin"
-       AND is_active = 1
-     ORDER BY username ASC'
-);
-$admins = $admin_stmt->fetchAll();
+$admins = $request_context['admins'];
+$current_songs = $request_context['current_songs'];
+$available_songs = $request_context['available_songs'];
+$producer_is_available = $request_context['producer_is_available'];
+$recipient_summary = $request_context['recipient_summary'];
+$birthday_data = student_request_birthday_view_data($student);
+$birthday_display = $birthday_data['display'];
+$birthday_month_value = $birthday_data['month'];
+$birthday_day_value = $birthday_data['day'];
+$birthday_months = $birthday_data['months'];
+$request_success = $_SESSION['student_request_success'] ?? '';
+$request_error = '';
+unset($_SESSION['student_request_success']);
 
-$current_song_stmt = $pdo->prepare(
-    'SELECT
-        so.id,
-        so.title,
-        so.title_jp,
-        so.artist,
-        so.duration,
-        so.release_date,
-        so.song_type,
-        so.notes
-     FROM student_songs ss
-     INNER JOIN songs so ON so.id = ss.song_id
-     WHERE ss.student_id = ?
-     ORDER BY FIELD(so.song_type, "Solo", "Group", "Remix", "Cover"), so.title ASC'
-);
-$current_song_stmt->execute([(int) $student['id']]);
-$current_songs = $current_song_stmt->fetchAll();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf($_POST['csrf_token'] ?? '');
 
-$library_song_stmt = $pdo->prepare(
-    'SELECT
-        so.id,
-        so.title,
-        so.title_jp,
-        so.artist,
-        so.duration,
-        so.release_date,
-        so.song_type
-     FROM songs so
-     WHERE NOT EXISTS (
-        SELECT 1
-        FROM student_songs ss
-        WHERE ss.song_id = so.id
-          AND ss.student_id = ?
-     )
-     ORDER BY so.title ASC'
-);
-$library_song_stmt->execute([(int) $student['id']]);
-$available_songs = $library_song_stmt->fetchAll();
+    $request_type = (string) ($_POST['request_type'] ?? 'profile_update');
+    $message = trim((string) ($_POST['request_message'] ?? ''));
 
-$producer_is_available = !empty($student['producer_id'])
-    && in_array($student['producer_status'] ?? 'unassigned', ['active', 'removal_pending'], true);
+    $payload = match ($request_type) {
+        'profile_update' => student_request_profile_payload($_POST, $student),
+        'song_add' => student_request_song_add_payload($_POST, $available_songs),
+        'song_edit' => student_request_song_edit_payload($_POST, $current_songs),
+        'song_delete' => student_request_song_delete_payload($_POST, $current_songs),
+        default => ['error' => 'Choose a valid request type.'],
+    };
 
-$recipient_summary = $producer_is_available
-    ? 'You can send this request to your producer or admin.'
-    : 'You are unassigned, so requests go to admin only.';
+    $recipient_id = student_request_recipient_id($_POST, $student, $admins, $producer_is_available, $request_type);
 
-$birthday_timestamp = !empty($student['birthday']) ? strtotime((string) $student['birthday']) : false;
-$birthday_display = $birthday_timestamp ? date('F d', $birthday_timestamp) : '';
-$birthday_month_value = $birthday_timestamp ? (int) date('n', $birthday_timestamp) : 1;
-$birthday_day_value = $birthday_timestamp ? (int) date('j', $birthday_timestamp) : 1;
-$birthday_months = student_edit_month_options();
+    if (($payload['error'] ?? '') !== '') {
+        $request_error = $payload['error'];
+    } elseif ($recipient_id <= 0) {
+        $request_error = 'No valid recipient is available for this request.';
+    } else {
+        create_student_update_request($pdo, $student, $recipient_id, $payload, $message);
+        $_SESSION['student_request_success'] = 'Request submitted successfully.';
+        header('Location: /gakumas-sms/student/request.php');
+        exit;
+    }
+}
 
 $page_title = 'Request';
 $page_styles = ['/gakumas-sms/assets/css/pages/request.css'];
@@ -138,8 +87,21 @@ require_once '../includes/sidebar.php';
         </div>
     </section>
 
-    <form class="request-workspace" id="studentRequestForm" action="#" method="post">
+    <?php if ($request_success !== ''): ?>
+        <div class="alert alert-success" role="status">
+            <?= e($request_success) ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($request_error !== ''): ?>
+        <div class="alert alert-danger" role="alert">
+            <?= e($request_error) ?>
+        </div>
+    <?php endif; ?>
+
+    <form class="request-workspace" id="studentRequestForm" action="/gakumas-sms/student/request.php" method="post">
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+        <input type="hidden" name="request_type" id="studentRequestTypeInput" value="profile_update">
 
         <aside class="request-type-panel" aria-label="Request type">
             <button type="button" class="request-type-button is-active" data-request-type="profile_update">
@@ -187,8 +149,8 @@ require_once '../includes/sidebar.php';
 
                 <div class="request-recipient-grid">
                     <?php if ($producer_is_available): ?>
-                        <label class="request-choice">
-                            <input type="radio" name="recipient_type" value="producer" checked>
+                        <label class="request-choice" data-recipient-choice="producer">
+                            <input type="radio" name="recipient_type" value="producer" checked data-recipient-input="producer">
                             <span>
                                 <strong>Producer</strong>
                                 <small><?= e($student['producer_name'] ?: 'Assigned producer') ?></small>
@@ -196,8 +158,8 @@ require_once '../includes/sidebar.php';
                         </label>
                     <?php endif; ?>
 
-                    <label class="request-choice">
-                        <input type="radio" name="recipient_type" value="admin" <?= $producer_is_available ? '' : 'checked' ?>>
+                    <label class="request-choice" data-recipient-choice="admin">
+                        <input type="radio" name="recipient_type" value="admin" <?= $producer_is_available ? '' : 'checked' ?> data-recipient-input="admin">
                         <span>
                             <strong>Admin</strong>
                             <small><?= empty($admins) ? 'Admin team' : e($admins[0]['username']) ?></small>
@@ -326,6 +288,7 @@ require_once '../includes/sidebar.php';
                     <button type="button" class="request-mode-button is-active" data-song-add-mode="existing">Existing Song</button>
                     <button type="button" class="request-mode-button" data-song-add-mode="new">Song Not Found</button>
                 </div>
+                <input type="hidden" name="song_add_mode" id="songAddModeInput" value="existing">
 
                 <div class="request-song-add-panel is-active" data-song-add-panel="existing">
                     <label class="request-search" for="librarySongSearch">
@@ -424,27 +387,51 @@ require_once '../includes/sidebar.php';
                         <select id="editSongSelect" name="edit_song_id" class="form-select">
                             <option value="">Choose one of your songs</option>
                             <?php foreach ($current_songs as $song): ?>
-                                <option value="<?= (int) $song['id'] ?>"><?= e($song['title']) ?> &middot; <?= e($song['artist'] ?: 'Unknown artist') ?></option>
+                                <option
+                                    value="<?= (int) $song['id'] ?>"
+                                    data-title="<?= e($song['title']) ?>"
+                                    data-title-jp="<?= e($song['title_jp']) ?>"
+                                    data-artist="<?= e($song['artist']) ?>"
+                                    data-duration="<?= e(format_request_song_duration($song['duration'])) ?>"
+                                    data-song-type="<?= e($song['song_type']) ?>">
+                                    <?= e($song['title']) ?> &middot; <?= e($song['artist'] ?: 'Unknown artist') ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="col-md-6">
-                        <label for="editSongTitle" class="form-label">Corrected Title</label>
+                        <label for="editSongTitle" class="form-label">Title</label>
                         <input type="text" id="editSongTitle" name="edit_song_title" class="form-control">
                     </div>
 
                     <div class="col-md-6">
-                        <label for="editSongArtist" class="form-label">Corrected Artist</label>
+                        <label for="editSongTitleJp" class="form-label">Japanese Title</label>
+                        <input type="text" id="editSongTitleJp" name="edit_song_title_jp" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="editSongArtist" class="form-label">Artist</label>
                         <input type="text" id="editSongArtist" name="edit_song_artist" class="form-control">
                     </div>
 
-                    <div class="col-md-4">
-                        <label for="editSongDuration" class="form-label">Corrected Duration</label>
+                    <div class="col-md-3">
+                        <label for="editSongDuration" class="form-label">Duration</label>
                         <input type="text" id="editSongDuration" name="edit_song_duration" class="form-control" placeholder="03:45">
                     </div>
 
-                    <div class="col-md-8">
+                    <div class="col-md-3">
+                        <label for="editSongType" class="form-label">Type</label>
+                        <select id="editSongType" name="edit_song_type" class="form-select">
+                            <option value="">Choose type</option>
+                            <option>Solo</option>
+                            <option>Group</option>
+                            <option>Remix</option>
+                            <option>Cover</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
                         <label for="editSongReason" class="form-label">Reason</label>
                         <input type="text" id="editSongReason" name="edit_song_reason" class="form-control" placeholder="What should staff verify?">
                     </div>
@@ -489,286 +476,14 @@ require_once '../includes/sidebar.php';
                     Reset
                 </button>
 
-                <button type="button" class="btn btn-primary" disabled aria-disabled="true">
+                <button type="submit" class="btn btn-primary">
                     <i class="bi bi-send" aria-hidden="true"></i>
                     Submit Request
                 </button>
-
-                <span>Interface only</span>
             </div>
         </section>
     </form>
 </main>
 
-<script>
-const studentRequestForm = document.getElementById('studentRequestForm');
-const requestTypeButtons = Array.from(document.querySelectorAll('[data-request-type]'));
-const requestSections = Array.from(document.querySelectorAll('[data-request-section]'));
-const addModeButtons = Array.from(document.querySelectorAll('[data-song-add-mode]'));
-const addModePanels = Array.from(document.querySelectorAll('[data-song-add-panel]'));
-const requestBirthday = document.getElementById('requestBirthday');
-const requestZodiac = document.getElementById('requestZodiac');
-const requestBirthdayPicker = document.querySelector('.request-birthday-picker');
-const requestBirthdayButton = document.getElementById('requestBirthdayButton');
-const requestBirthdayLabel = document.getElementById('requestBirthdayLabel');
-const requestBirthdayPopover = document.getElementById('requestBirthdayPopover');
-const requestBirthdayMonthSelect = document.getElementById('requestBirthdayMonthSelect');
-const requestBirthdayDayGrid = document.getElementById('requestBirthdayDayGrid');
-const requestBirthdayPrevMonth = document.getElementById('requestBirthdayPrevMonth');
-const requestBirthdayNextMonth = document.getElementById('requestBirthdayNextMonth');
-const librarySongSearch = document.getElementById('librarySongSearch');
-const librarySongOptions = Array.from(document.querySelectorAll('[data-song-option]'));
-const librarySongEmpty = document.getElementById('librarySongEmpty');
-const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-];
-
-if (studentRequestForm) {
-    studentRequestForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-    });
-
-    studentRequestForm.addEventListener('reset', () => {
-        window.setTimeout(() => {
-            const birthday = parseMonthDay(requestBirthday?.value || '');
-
-            if (birthday && requestBirthdayPicker && requestBirthdayMonthSelect && requestBirthdayLabel) {
-                requestBirthdayPicker.dataset.selectedMonth = String(birthday.month);
-                requestBirthdayPicker.dataset.selectedDay = String(birthday.day);
-                requestBirthdayMonthSelect.value = String(birthday.month);
-                requestBirthdayLabel.textContent = requestBirthday.value;
-                renderRequestBirthdayDays();
-            }
-
-            updateRequestZodiac();
-        }, 0);
-    });
-}
-
-function zodiacFromMonthDay(month, day) {
-    if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return 'Aquarius';
-    if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return 'Pisces';
-    if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return 'Aries';
-    if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return 'Taurus';
-    if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'Gemini';
-    if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'Cancer';
-    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'Leo';
-    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'Virgo';
-    if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'Libra';
-    if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return 'Scorpio';
-    if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return 'Sagittarius';
-    return 'Capricorn';
-}
-
-function formatMonthDay(month, day) {
-    return `${monthNames[month - 1]} ${String(day).padStart(2, '0')}`;
-}
-
-function parseMonthDay(value) {
-    const trimmed = value.trim();
-    const textMatch = trimmed.match(/^([A-Za-z]+)\s+(\d{1,2})$/);
-
-    if (!textMatch) {
-        return null;
-    }
-
-    const monthIndex = monthNames.map((month) => month.toLowerCase()).indexOf(textMatch[1].toLowerCase());
-
-    if (monthIndex === -1) {
-        return null;
-    }
-
-    return {
-        month: monthIndex + 1,
-        day: Number(textMatch[2])
-    };
-}
-
-function updateRequestZodiac() {
-    if (!requestBirthday || !requestZodiac) {
-        return;
-    }
-
-    if (!requestBirthday.value) {
-        requestZodiac.value = '';
-        return;
-    }
-
-    const birthday = parseMonthDay(requestBirthday.value);
-
-    if (!birthday || birthday.month < 1 || birthday.month > 12 || birthday.day < 1 || birthday.day > 31) {
-        requestZodiac.value = '';
-        return;
-    }
-
-    requestZodiac.value = zodiacFromMonthDay(birthday.month, birthday.day);
-}
-
-function setRequestBirthday(month, day) {
-    if (!requestBirthday || !requestBirthdayPicker || !requestBirthdayLabel) {
-        return;
-    }
-
-    const value = formatMonthDay(month, day);
-    requestBirthdayPicker.dataset.selectedMonth = String(month);
-    requestBirthdayPicker.dataset.selectedDay = String(day);
-    requestBirthday.value = value;
-    requestBirthdayLabel.textContent = value;
-    updateRequestZodiac();
-}
-
-function closeRequestBirthdayPicker() {
-    if (requestBirthdayPopover) {
-        requestBirthdayPopover.classList.add('d-none');
-    }
-}
-
-function renderRequestBirthdayDays() {
-    if (!requestBirthdayMonthSelect || !requestBirthdayDayGrid || !requestBirthdayPicker) {
-        return;
-    }
-
-    const selectedMonth = Number(requestBirthdayMonthSelect.value);
-    const selectedDay = Number(requestBirthdayPicker.dataset.selectedDay || 1);
-    const daysInMonth = new Date(new Date().getFullYear(), selectedMonth, 0).getDate();
-    const firstWeekday = new Date(new Date().getFullYear(), selectedMonth - 1, 1).getDay();
-
-    requestBirthdayDayGrid.innerHTML = '';
-
-    for (let index = 0; index < firstWeekday; index += 1) {
-        const spacer = document.createElement('span');
-        spacer.className = 'request-calendar-spacer';
-        requestBirthdayDayGrid.appendChild(spacer);
-    }
-
-    for (let day = 1; day <= daysInMonth; day += 1) {
-        const dayButton = document.createElement('button');
-        dayButton.type = 'button';
-        dayButton.className = 'request-calendar-day';
-        dayButton.textContent = String(day);
-
-        if (day === selectedDay && selectedMonth === Number(requestBirthdayPicker.dataset.selectedMonth || 1)) {
-            dayButton.classList.add('is-selected');
-        }
-
-        dayButton.addEventListener('click', () => {
-            setRequestBirthday(selectedMonth, day);
-            renderRequestBirthdayDays();
-            closeRequestBirthdayPicker();
-        });
-
-        requestBirthdayDayGrid.appendChild(dayButton);
-    }
-}
-
-if (requestBirthday) {
-    updateRequestZodiac();
-}
-
-if (requestBirthdayButton && requestBirthdayPopover) {
-    requestBirthdayButton.addEventListener('click', () => {
-        const isOpening = requestBirthdayPopover.classList.contains('d-none');
-        requestBirthdayPopover.classList.toggle('d-none', !isOpening);
-
-        if (isOpening) {
-            renderRequestBirthdayDays();
-        }
-    });
-}
-
-if (requestBirthdayMonthSelect) {
-    requestBirthdayMonthSelect.addEventListener('change', () => {
-        const month = Number(requestBirthdayMonthSelect.value);
-        const currentDay = Math.min(
-            Number(requestBirthdayPicker?.dataset.selectedDay || 1),
-            new Date(new Date().getFullYear(), month, 0).getDate()
-        );
-
-        if (requestBirthdayPicker) {
-            requestBirthdayPicker.dataset.selectedDay = String(currentDay);
-        }
-
-        renderRequestBirthdayDays();
-    });
-}
-
-if (requestBirthdayPrevMonth && requestBirthdayMonthSelect) {
-    requestBirthdayPrevMonth.addEventListener('click', () => {
-        const currentMonth = Number(requestBirthdayMonthSelect.value);
-        requestBirthdayMonthSelect.value = String(currentMonth === 1 ? 12 : currentMonth - 1);
-        requestBirthdayMonthSelect.dispatchEvent(new Event('change'));
-    });
-}
-
-if (requestBirthdayNextMonth && requestBirthdayMonthSelect) {
-    requestBirthdayNextMonth.addEventListener('click', () => {
-        const currentMonth = Number(requestBirthdayMonthSelect.value);
-        requestBirthdayMonthSelect.value = String(currentMonth === 12 ? 1 : currentMonth + 1);
-        requestBirthdayMonthSelect.dispatchEvent(new Event('change'));
-    });
-}
-
-document.addEventListener('click', (event) => {
-    if (
-        requestBirthdayPicker
-        && requestBirthdayPopover
-        && !requestBirthdayPopover.classList.contains('d-none')
-        && !requestBirthdayPicker.contains(event.target)
-    ) {
-        closeRequestBirthdayPicker();
-    }
-});
-
-renderRequestBirthdayDays();
-
-requestTypeButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        const selectedType = button.dataset.requestType;
-
-        requestTypeButtons.forEach((item) => {
-            item.classList.toggle('is-active', item === button);
-        });
-
-        requestSections.forEach((section) => {
-            section.classList.toggle('is-active', section.dataset.requestSection === selectedType);
-        });
-    });
-});
-
-addModeButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        const selectedMode = button.dataset.songAddMode;
-
-        addModeButtons.forEach((item) => {
-            item.classList.toggle('is-active', item === button);
-        });
-
-        addModePanels.forEach((panel) => {
-            panel.classList.toggle('is-active', panel.dataset.songAddPanel === selectedMode);
-        });
-    });
-});
-
-if (librarySongSearch) {
-    librarySongSearch.addEventListener('input', () => {
-        const query = librarySongSearch.value.trim().toLowerCase();
-        let visibleCount = 0;
-
-        librarySongOptions.forEach((option) => {
-            const isVisible = !query || option.dataset.songSearch.includes(query);
-            option.classList.toggle('d-none', !isVisible);
-
-            if (isVisible) {
-                visibleCount += 1;
-            }
-        });
-
-        if (librarySongEmpty) {
-            librarySongEmpty.classList.toggle('d-none', visibleCount > 0);
-        }
-    });
-}
-</script>
-
+<script src="/gakumas-sms/assets/js/student-request.js"></script>
 <?php require_once '../includes/footer.php'; ?>

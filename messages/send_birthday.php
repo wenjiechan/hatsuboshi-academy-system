@@ -12,7 +12,10 @@ if (!$student_id) {
     redirect_to_account_issue(
         'Birthday message unavailable',
         'The birthday message link is missing the student details.',
-        400
+        400,
+        '/gakumas-sms/notifications.php',
+        'Back to Notifications',
+        false
     );
 }
 
@@ -44,7 +47,10 @@ if (
     redirect_to_account_issue(
         'Birthday message unavailable',
         'This birthday message link is not available for your account.',
-        403
+        403,
+        '/gakumas-sms/notifications.php',
+        'Back to Notifications',
+        false
     );
 }
 
@@ -74,7 +80,10 @@ if (!$sender_stmt->fetch()) {
     redirect_to_account_issue(
         'Birthday message unavailable',
         'This birthday message link is not available for your account.',
-        403
+        403,
+        '/gakumas-sms/notifications.php',
+        'Back to Notifications',
+        false
     );
 }
 

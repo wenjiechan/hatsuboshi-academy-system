@@ -9,6 +9,7 @@ const NOTIFICATION_TYPE_SCHEDULE_CANCELLED = 'schedule_cancelled';
 const NOTIFICATION_TYPE_SCHEDULE_CREATED = 'schedule_created';
 const NOTIFICATION_TYPE_LESSON_UPDATED = 'lesson_updated';
 const NOTIFICATION_TYPE_NEW_MESSAGE = 'new_message';
+const NOTIFICATION_TYPE_STUDENT_REQUEST = 'student_request';
 
 // Check the notifications table has all required columns
 function ensure_notifications_table_columns(PDO $pdo): void

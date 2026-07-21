@@ -28,7 +28,13 @@ $producer_nav = [
     ['label' => 'Songs', 'url' => '/gakumas-sms/producer/songs.php', 'icon' => 'bi-music-note-list', 'page' => 'songs.php'],
     ['label' => 'Events', 'url' => '/gakumas-sms/producer/events.php', 'icon' => 'bi-stars', 'page' => 'events.php'],
     ['label' => 'Reports', 'url' => '/gakumas-sms/producer/reports.php', 'icon' => 'bi-bar-chart-line', 'page' => 'reports.php'],
-    ['label' => 'Request', 'url' => '/gakumas-sms/producer/request.php', 'icon' => 'bi-clipboard-check', 'page' => 'request.php'],
+    [
+        'label' => 'Request',
+        'url' => '/gakumas-sms/producer/request.php',
+        'icon' => 'bi-clipboard-check',
+        'page' => 'request.php',
+        'pages' => ['request.php', 'request_view.php'],
+    ],
     ['label' => 'Settings', 'url' => '/gakumas-sms/producer/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
 

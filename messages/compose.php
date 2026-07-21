@@ -17,7 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect_to_account_issue(
             'Recipient unavailable',
             'The selected user is unavailable or cannot receive messages.',
-            400
+            400,
+            '/gakumas-sms/messages/compose.php',
+            'Back to Compose',
+            false
         );
     }
 

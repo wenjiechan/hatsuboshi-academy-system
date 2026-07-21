@@ -45,7 +45,9 @@ function require_role(string ...$allowed_roles): void {     // Restrict pages by
         redirect_to_account_issue(
             'Access denied',
             'Your account does not have permission to open that page. Please log out and sign in with the correct account.',
-            403
+            403,
+            '/gakumas-sms/logout.php',
+            'Logout'
         );
     }
 }
@@ -62,7 +64,9 @@ function verify_csrf(string $submitted): void {     // Check whether the submitt
         redirect_to_account_issue(
             'Security check failed',
             'The page security check could not be verified. Please log out, sign in again, and retry your action.',
-            403
+            403,
+            '/gakumas-sms/logout.php',
+            'Sign In Again'
         );
     }
 }

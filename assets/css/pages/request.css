@@ -323,6 +323,17 @@
     background: color-mix(in srgb, var(--primary) 8%, white);
 }
 
+.request-choice.is-disabled {
+    background: color-mix(in srgb, var(--secondary) 10%, white);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.64;
+}
+
+.request-choice.is-disabled input {
+    cursor: not-allowed;
+}
+
 .request-choice input,
 .request-song-option input {
     accent-color: var(--primary);
@@ -339,6 +350,16 @@
 .request-song-option strong,
 .request-song-option small {
     overflow-wrap: anywhere;
+}
+
+.request-recipient-note {
+    margin: 12px 0 0;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--primary) 8%, white);
+    color: var(--text-secondary);
+    font-weight: 700;
+    line-height: 1.45;
 }
 
 .request-mode-tabs {

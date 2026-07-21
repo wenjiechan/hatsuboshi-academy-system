@@ -19,7 +19,10 @@ if (!$message_id || !$conversation_id) {
     redirect_to_account_issue(
         'Message unavailable',
         'The message could not be found.',
-        404
+        404,
+        '/gakumas-sms/messages/inbox.php',
+        'Back to Inbox',
+        false
     );
 }
 
@@ -28,7 +31,10 @@ if (!is_conversation_participant($pdo, (int) $conversation_id, $sender_id)) {
     redirect_to_account_issue(
         'Conversation unavailable',
         'You do not have permission to edit messages in this conversation.',
-        403
+        403,
+        '/gakumas-sms/messages/inbox.php',
+        'Back to Inbox',
+        false
     );
 }
 
