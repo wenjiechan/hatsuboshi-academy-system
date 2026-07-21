@@ -236,12 +236,19 @@ require_once '../includes/sidebar.php';
                             <input type="hidden" name="student_id" value="<?= (int) $managed_student['id'] ?>">
                             <input type="hidden" name="song_id" id="adminStudentSongAddSelectedId">
 
-                            <div class="admin-student-song-picker">
-                                <label>
+                            <div class="admin-student-song-add-row">
+                                <label class="admin-student-song-search-field">
                                     <span>Search song</span>
                                     <input type="search" id="adminStudentSongAddSearch" autocomplete="off" placeholder="Type song title, Japanese title, or artist">
                                 </label>
 
+                                <button type="submit" class="btn btn-primary" id="adminStudentSongAddSubmit" disabled>
+                                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                                    Add Song
+                                </button>
+                            </div>
+
+                            <div class="admin-student-song-picker">
                                 <div class="admin-student-song-picker-list d-none" id="adminStudentSongAddResults" role="listbox" aria-label="Available songs">
                                     <?php foreach ($available_student_songs as $available_song): ?>
                                         <?php
@@ -275,11 +282,6 @@ require_once '../includes/sidebar.php';
 
                                 <p class="admin-student-song-picker-empty d-none" id="adminStudentSongAddEmpty">No available songs match your search.</p>
                             </div>
-
-                            <button type="submit" class="btn btn-primary" id="adminStudentSongAddSubmit" disabled>
-                                <i class="bi bi-plus-lg" aria-hidden="true"></i>
-                                Add Song
-                            </button>
                         </form>
                     <?php endif; ?>
                 </section>

@@ -7,10 +7,10 @@ $student_nav = [
     ['label' => 'Home', 'url' => '/gakumas-sms/student/dashboard.php', 'icon' => 'bi-house-heart', 'page' => 'dashboard.php'],
     ['label' => 'Lessons', 'url' => '/gakumas-sms/student/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],
     ['label' => 'Schedule', 'url' => '/gakumas-sms/student/schedule.php', 'icon' => 'bi-calendar-event', 'page' => 'schedule.php'],
-    ['label' => 'Profile', 'url' => '/gakumas-sms/student/profile.php', 'icon' => 'bi-person-circle', 'page' => 'profile.php'],
     ['label' => 'Song', 'url' => '/gakumas-sms/student/song.php', 'icon' => 'bi-music-note-list', 'page' => 'song.php'],
     ['label' => 'Stats', 'url' => '/gakumas-sms/student/stats.php', 'icon' => 'bi-bar-chart-line', 'page' => 'stats.php'],
     ['label' => 'Request', 'url' => '/gakumas-sms/student/request.php', 'icon' => 'bi-send', 'page' => 'request.php'],
+    ['label' => 'Profile', 'url' => '/gakumas-sms/student/profile.php', 'icon' => 'bi-person-circle', 'page' => 'profile.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/student/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
 
@@ -38,7 +38,13 @@ $admin_nav = [
     ['label' => 'Students', 'url' => '/gakumas-sms/admin/students.php', 'icon' => 'bi-people', 'page' => 'students.php'],
     ['label' => 'Producers', 'url' => '/gakumas-sms/admin/producers.php', 'icon' => 'bi-person-badge', 'page' => 'producers.php'],
     ['label' => 'Teachers', 'url' => '/gakumas-sms/admin/teachers.php', 'icon' => 'bi-mortarboard', 'page' => 'teachers.php'],
-    ['label' => 'Songs', 'url' => '/gakumas-sms/admin/songs.php', 'icon' => 'bi-music-note-list', 'page' => 'songs.php'],
+    [
+        'label' => 'Songs',
+        'url' => '/gakumas-sms/admin/songs.php',
+        'icon' => 'bi-music-note-list',
+        'page' => 'songs.php',
+        'pages' => ['songs.php', 'student_songs.php'],
+    ],
     ['label' => 'Request', 'url' => '/gakumas-sms/admin/request.php', 'icon' => 'bi-clipboard-check', 'page' => 'request.php'],
     ['label' => 'Settings', 'url' => '/gakumas-sms/admin/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];

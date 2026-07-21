@@ -234,7 +234,7 @@ function generate_automatic_notifications(PDO $pdo, ?DateTimeImmutable $now = nu
 
     return [
         'schedule_start' => notify_due_schedule_starts($pdo, $now),
-        'birthday_upcoming' => notify_birthdays_for_date($pdo, $now->modify('+7 days'), NOTIFICATION_TYPE_BIRTHDAY_UPCOMING),
+        'birthday_upcoming' => notify_upcoming_birthdays($pdo, $now),
         'birthday_today' => notify_birthdays_for_date($pdo, $now, NOTIFICATION_TYPE_BIRTHDAY_TODAY),
     ];
 }
@@ -297,12 +297,49 @@ function notify_due_schedule_starts(PDO $pdo, DateTimeImmutable $now): int
     return $created;
 }
 
-// Check students whose birthday month and day match the target day
-function notify_birthdays_for_date(PDO $pdo, DateTimeImmutable $date, string $type): int
+// Create one upcoming notification for the early window, then one more for tomorrow.
+function notify_upcoming_birthdays(PDO $pdo, DateTimeImmutable $now): int
+{
+    $created = 0;
+
+    for ($days_until = 2; $days_until <= 7; $days_until++) {
+        $created += notify_birthdays_for_date(
+            $pdo,
+            $now->modify('+' . $days_until . ' days'),
+            NOTIFICATION_TYPE_BIRTHDAY_UPCOMING,
+            $days_until,
+            'early'
+        );
+    }
+
+    $created += notify_birthdays_for_date(
+        $pdo,
+        $now->modify('+1 day'),
+        NOTIFICATION_TYPE_BIRTHDAY_UPCOMING,
+        1,
+        'tomorrow'
+    );
+
+    return $created;
+}
+
+// Check students whose birthday month and day match the target day.
+// The stage becomes part of the dedupe key, so early, tomorrow, and today stay separate.
+function notify_birthdays_for_date(
+    PDO $pdo,
+    DateTimeImmutable $date,
+    string $type,
+    ?int $days_until = null,
+    ?string $stage = null
+): int
 {
     $month_day = $date->format('m-d');
     $date_key = $date->format('Y-m-d');
     $created = 0;
+    $stage = $stage ?: ($type === NOTIFICATION_TYPE_BIRTHDAY_TODAY ? 'today' : 'early');
+    $upcoming_text = $days_until === 1
+        ? 'tomorrow'
+        : 'in ' . (int) $days_until . ' days';
 
     $stmt = $pdo->prepare(
         'SELECT
@@ -312,6 +349,9 @@ function notify_birthdays_for_date(PDO $pdo, DateTimeImmutable $date, string $ty
             s.producer_id,
             s.producer_status
          FROM students s
+         INNER JOIN users student_user
+            ON student_user.id = s.user_id
+           AND student_user.is_active = 1
          WHERE s.birthday IS NOT NULL
            AND DATE_FORMAT(s.birthday, "%m-%d") = ?'
     );
@@ -319,12 +359,16 @@ function notify_birthdays_for_date(PDO $pdo, DateTimeImmutable $date, string $ty
 
     foreach ($stmt->fetchAll() as $student) {
         $student_user_id = (int) $student['user_id'];
-        $student_title = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
-            ? 'Happy birthday!'
-            : 'Your birthday is coming up';
-        $student_body = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
-            ? 'Today is your birthday. Happy birthday!'
-            : 'Your birthday is in one week.';
+        if ($type === NOTIFICATION_TYPE_BIRTHDAY_TODAY) {
+            $student_title = 'Happy birthday!';
+            $student_body = 'Today is your birthday. Happy birthday!';
+        } elseif ($stage === 'tomorrow') {
+            $student_title = 'Your birthday is tomorrow';
+            $student_body = 'Your birthday is tomorrow.';
+        } else {
+            $student_title = 'Your birthday is coming up';
+            $student_body = 'Your birthday is ' . $upcoming_text . '.';
+        }
 
         $created += create_notification(
             $pdo,
@@ -335,33 +379,71 @@ function notify_birthdays_for_date(PDO $pdo, DateTimeImmutable $date, string $ty
             'student',
             (int) $student['id'],
             '/gakumas-sms/student/profile.php',
-            $type . ':' . (int) $student['id'] . ':' . $date_key . ':' . $student_user_id
+            $type . ':' . $stage . ':' . (int) $student['id'] . ':' . $date_key . ':' . $student_user_id
         ) ? 1 : 0;
 
-        if (!empty($student['producer_id']) && $student['producer_status'] === 'active') {
-            $producer_user_id = (int) $student['producer_id'];
-            $producer_title = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
-                ? 'Student birthday today'
-                : 'Student birthday coming up';
-            $producer_body = $type === NOTIFICATION_TYPE_BIRTHDAY_TODAY
-                ? sprintf('Today is %s\'s birthday.', $student['name'])
-                : sprintf('%s\'s birthday is in one week.', $student['name']);
+        // Related users receive student-facing reminders, while the birthday student gets self-facing copy.
+        foreach (get_birthday_related_notification_recipients($pdo, $student) as $recipient) {
+            $recipient_user_id = (int) $recipient['id'];
+            if ($type === NOTIFICATION_TYPE_BIRTHDAY_TODAY) {
+                $recipient_title = 'Student birthday today';
+                $recipient_body = sprintf(
+                    'Today is %s\'s birthday. Click here to send a birthday message!',
+                    $student['name']
+                );
+                $recipient_action_url = '/gakumas-sms/messages/send_birthday.php?student_id=' . (int) $student['id'];
+            } elseif ($stage === 'tomorrow') {
+                $recipient_title = 'Student birthday tomorrow';
+                $recipient_body = sprintf('%s\'s birthday is tomorrow.', $student['name']);
+                $recipient_action_url = null;
+            } else {
+                $recipient_title = 'Student birthday coming up';
+                $recipient_body = sprintf('%s\'s birthday is %s.', $student['name'], $upcoming_text);
+                $recipient_action_url = null;
+            }
 
             $created += create_notification(
                 $pdo,
-                $producer_user_id,
+                $recipient_user_id,
                 $type,
-                $producer_title,
-                $producer_body,
+                $recipient_title,
+                $recipient_body,
                 'student',
                 (int) $student['id'],
-                '/gakumas-sms/producer/students.php',
-                $type . ':' . (int) $student['id'] . ':' . $date_key . ':' . $producer_user_id
+                $recipient_action_url,
+                $type . ':' . $stage . ':' . (int) $student['id'] . ':' . $date_key . ':' . $recipient_user_id
             ) ? 1 : 0;
         }
     }
 
     return $created;
+}
+
+// Birthday-related users are all students, all teachers, all admins, and the active assigned producer.
+function get_birthday_related_notification_recipients(PDO $pdo, array $student): array
+{
+    $stmt = $pdo->prepare(
+        'SELECT DISTINCT u.id, u.role
+         FROM users u
+         WHERE u.is_active = 1
+           AND u.id <> ?
+           AND (
+                u.role IN ("student", "teacher", "admin")
+                OR (
+                    u.role = "producer"
+                    AND u.id = ?
+                    AND ? = "active"
+                )
+           )
+         ORDER BY FIELD(u.role, "student", "producer", "teacher", "admin"), u.id'
+    );
+    $stmt->execute([
+        (int) $student['user_id'],
+        (int) ($student['producer_id'] ?? 0),
+        (string) ($student['producer_status'] ?? ''),
+    ]);
+
+    return $stmt->fetchAll();
 }
 
 function notify_schedule_change(PDO $pdo, int $schedule_id, string $schedule_kind, string $type): bool

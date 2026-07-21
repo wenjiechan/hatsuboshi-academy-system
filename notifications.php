@@ -99,6 +99,10 @@ require_once 'includes/sidebar.php';
                 <?php
                 $type_class = notification_type_class((string) $notification['type']);
                 $is_unread = empty($notification['is_read']);
+                // Birthday-send notifications need a clearer action label than the default view link.
+                $action_label = str_contains((string) $notification['action_url'], '/messages/send_birthday.php')
+                    ? 'Click here to send a birthday message!'
+                    : 'View';
                 ?>
                 <article class="notification-card notification-card--<?= htmlspecialchars($type_class, ENT_QUOTES, 'UTF-8') ?><?= $is_unread ? ' unread' : '' ?>">
                     <div class="notification-card-top">
@@ -126,7 +130,7 @@ require_once 'includes/sidebar.php';
 
                         <?php if (!empty($notification['action_url'])): ?>
                             <a href="<?= htmlspecialchars($notification['action_url'], ENT_QUOTES, 'UTF-8') ?>" class="notification-card-link">
-                                View
+                                <?= htmlspecialchars($action_label, ENT_QUOTES, 'UTF-8') ?>
                                 <i class="bi bi-arrow-right"></i>
                             </a>
                         <?php endif; ?>
