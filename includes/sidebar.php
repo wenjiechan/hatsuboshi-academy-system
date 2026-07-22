@@ -51,7 +51,13 @@ $admin_nav = [
         'page' => 'songs.php',
         'pages' => ['songs.php', 'student_songs.php'],
     ],
-    ['label' => 'Request', 'url' => '/gakumas-sms/admin/request.php', 'icon' => 'bi-clipboard-check', 'page' => 'request.php'],
+    [
+        'label' => 'Request',
+        'url' => '/gakumas-sms/admin/request.php',
+        'icon' => 'bi-clipboard-check',
+        'page' => 'request.php',
+        'pages' => ['request.php', 'request_view.php'],
+    ],
     ['label' => 'Settings', 'url' => '/gakumas-sms/admin/settings.php', 'icon' => 'bi-gear', 'page' => 'settings.php'],
 ];
 

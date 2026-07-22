@@ -213,6 +213,16 @@
     background: color-mix(in srgb, var(--secondary) 14%, white);
 }
 
+.producer-request-meta .producer-request-route-direct {
+    color: #2f7a46;
+    background: color-mix(in srgb, var(--success) 12%, white);
+}
+
+.producer-request-meta .producer-request-route-forwarded {
+    color: #336fbd;
+    background: color-mix(in srgb, #336fbd 11%, white);
+}
+
 .producer-request-status {
     justify-self: end;
     color: var(--primary);
@@ -328,6 +338,20 @@
     width: 82px;
     height: 82px;
     object-position: top center;
+}
+
+.producer-request-profile-compact {
+    grid-template-columns: 52px minmax(0, 1fr);
+    margin-bottom: 0;
+}
+
+.producer-request-profile-compact .producer-request-avatar {
+    width: 52px;
+    height: 52px;
+}
+
+.producer-request-profile-compact div {
+    min-width: 0;
 }
 
 .producer-request-profile strong {

@@ -172,6 +172,30 @@ function producer_request_avatar_path(?string $avatar, ?string $student_name): s
     return $default_path;
 }
 
+function producer_request_user_avatar_path(?string $avatar, ?string $role): string
+{
+    $role = (string) ($role ?: 'student');
+    $default_path = match ($role) {
+        'producer' => '/gakumas-sms/assets/images/avatars/default_producer.webp',
+        'teacher' => '/gakumas-sms/assets/images/avatars/default_teacher.webp',
+        default => '/gakumas-sms/assets/images/avatars/default.webp',
+    };
+
+    $avatar = trim((string) $avatar);
+
+    if ($avatar === '') {
+        return $default_path;
+    }
+
+    $avatar_path = str_replace('\\', '/', $avatar);
+
+    if (str_starts_with($avatar_path, '/') || preg_match('/^https?:\/\//i', $avatar_path)) {
+        return $avatar_path;
+    }
+
+    return '/gakumas-sms/assets/images/avatars/' . rawurlencode($avatar_path);
+}
+
 function producer_request_visible_data(array $data): array
 {
     $hidden_keys = [

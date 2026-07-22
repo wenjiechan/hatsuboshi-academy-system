@@ -312,7 +312,14 @@ function student_request_recipient_role(PDO $pdo, int $recipient_id): ?string
     return $role !== false ? (string) $role : null;
 }
 
-function notify_producer_about_student_request(PDO $pdo, array $student, int $producer_id, int $request_id, string $subject): bool
+function notify_recipient_about_student_request(
+    PDO $pdo,
+    array $student,
+    int $recipient_id,
+    string $recipient_role,
+    int $request_id,
+    string $subject
+): bool
 {
     $student_name = trim((string) ($student['name'] ?? 'Student'));
     $student_class = trim((string) ($student['school_year'] ?? ''));
@@ -325,16 +332,20 @@ function notify_producer_about_student_request(PDO $pdo, array $student, int $pr
         $body .= ' ' . implode(' - ', $summary_parts) . '.';
     }
 
+    $action_url = $recipient_role === 'admin'
+        ? '/gakumas-sms/admin/request_view.php?id=' . $request_id
+        : '/gakumas-sms/producer/request_view.php?id=' . $request_id;
+
     return create_notification(
         $pdo,
-        $producer_id,
+        $recipient_id,
         NOTIFICATION_TYPE_STUDENT_REQUEST,
         'New student request',
         $body,
         'student_update_request',
         $request_id,
-        '/gakumas-sms/producer/request_view.php?id=' . $request_id,
-        'student_request:' . $request_id
+        $action_url,
+        'student_request:' . $recipient_role . ':' . $request_id
     );
 }
 
@@ -360,8 +371,17 @@ function create_student_update_request(PDO $pdo, array $student, int $recipient_
 
     $request_id = (int) $pdo->lastInsertId();
 
-    if (student_request_recipient_role($pdo, $recipient_id) === 'producer') {
-        notify_producer_about_student_request($pdo, $student, $recipient_id, $request_id, (string) $payload['subject']);
+    $recipient_role = student_request_recipient_role($pdo, $recipient_id);
+
+    if (in_array($recipient_role, ['admin', 'producer'], true)) {
+        notify_recipient_about_student_request(
+            $pdo,
+            $student,
+            $recipient_id,
+            $recipient_role,
+            $request_id,
+            (string) $payload['subject']
+        );
     }
 
     return $request_id;
