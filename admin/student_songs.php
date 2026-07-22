@@ -4,6 +4,7 @@ require_role('admin');
 
 require_once '../config/database.php';
 require_once '../includes/admin_song_helpers.php';
+require_once '../includes/admin_request_helpers.php';
 
 $page_title = 'Student Songs';
 $page_success = $_SESSION['admin_song_success'] ?? '';
@@ -11,13 +12,32 @@ $page_error = '';
 $valid_types = ['Solo', 'Group', 'Remix', 'Cover'];
 $form_values = default_admin_song_form_values();
 $manage_student_id = isset($_GET['manage_student_id']) ? max(0, (int) $_GET['manage_student_id']) : 0;
+$manual_request_id = max(0, (int) ($_GET['request_id'] ?? $_POST['request_id'] ?? 0));
+$manual_request = $manual_request_id > 0 ? load_admin_request_detail($pdo, $manual_request_id) : null;
+
+if ($manual_request) {
+    $manage_student_id = (int) ($manual_request['student_id'] ?? $manage_student_id);
+}
 unset($_SESSION['admin_song_success']);
 
 // Add/remove assignment POSTs are shared with the admin song helper.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $post_result = handle_admin_song_post($pdo, $valid_types, $form_values);
-    $page_error = $post_result['song_page_error'];
-    $manage_student_id = $post_result['manage_student_id'];
+    if (($_POST['request_action'] ?? '') === 'completed' && $manual_request) {
+        verify_csrf($_POST['csrf_token'] ?? '');
+
+        try {
+            $page_success = producer_request_handle_action($pdo, $manual_request, (int) $_SESSION['id'], 'admin', 'completed');
+            $_SESSION['admin_request_success'] = $page_success;
+            header('Location: ' . producer_request_detail_url($manual_request, 'admin'));
+            exit;
+        } catch (Throwable $exception) {
+            $page_error = $exception->getMessage();
+        }
+    } else {
+        $post_result = handle_admin_song_post($pdo, $valid_types, $form_values);
+        $page_error = $post_result['song_page_error'];
+        $manage_student_id = $post_result['manage_student_id'];
+    }
 }
 
 // Load all active students so admin can manage assigned and unassigned students.
@@ -112,6 +132,10 @@ $page_styles = [
     '/gakumas-sms/assets/css/pages/song.css',
     '/gakumas-sms/assets/css/pages/admin-songs.css?v=20260720b',
 ];
+$manual_request_requested = producer_request_context_requested_data($manual_request);
+$manual_request_closed = $manual_request && in_array((string) ($manual_request['status'] ?? ''), ['approved', 'rejected', 'cancelled'], true);
+$manual_request_back_url = $manual_request ? producer_request_detail_url($manual_request, 'admin') : '';
+$manual_request_song_id = (int) ($manual_request['song_id'] ?? ($manual_request_requested['song_id'] ?? 0));
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
@@ -177,7 +201,7 @@ require_once '../includes/sidebar.php';
                     ]));
                     ?>
                     <a
-                        href="/gakumas-sms/admin/student_songs.php?manage_student_id=<?= (int) $student['id'] ?>#adminStudentSongs"
+                        href="/gakumas-sms/admin/student_songs.php?manage_student_id=<?= (int) $student['id'] ?><?= $manual_request_id > 0 ? '&request_id=' . (int) $manual_request_id : '' ?>#adminStudentSongs"
                         class="admin-student-manage-card <?= $manage_student_id === (int) $student['id'] ? 'is-selected' : '' ?>"
                         data-manage-student-card
                         data-student-search="<?= e($student_card_search) ?>">
@@ -201,6 +225,40 @@ require_once '../includes/sidebar.php';
             <p>Their current songs and add-song search will appear here.</p>
         </section>
     <?php else: ?>
+        <?php if ($manual_request): ?>
+            <section class="admin-student-songs-card admin-songs-library manual-request-panel">
+                <div class="admin-student-songs-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">Manual Request</p>
+                        <h3><?= e(producer_request_type_label($manual_request['request_type'] ?? '')) ?></h3>
+                        <p><?= e($manual_request['details'] ?: 'No message was included with this request.') ?></p>
+                    </div>
+                    <a href="<?= e($manual_request_back_url) ?>" class="manual-request-back" aria-label="Back to request">
+                        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                    </a>
+                </div>
+
+                <dl class="manual-request-data">
+                    <?php foreach (producer_request_visible_data($manual_request_requested) as $key => $value): ?>
+                        <div>
+                            <dt><?= e(producer_request_field_label((string) $key)) ?></dt>
+                            <dd><?= e(producer_request_display_value((string) $key, $value)) ?></dd>
+                        </div>
+                    <?php endforeach; ?>
+                </dl>
+
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                    <input type="hidden" name="request_action" value="completed">
+                    <button type="submit" class="btn btn-primary" <?= $manual_request_closed ? 'disabled' : '' ?>>
+                        <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                        Mark Request Completed
+                    </button>
+                </form>
+            </section>
+        <?php endif; ?>
+
         <!-- Selected student workspace: add songs above, review/remove current songs below. -->
         <section class="admin-student-songs-card admin-songs-library">
             <div class="admin-managed-student-panel">
@@ -217,7 +275,7 @@ require_once '../includes/sidebar.php';
                     <strong><?= count($managed_student_songs) ?> song<?= count($managed_student_songs) === 1 ? '' : 's' ?></strong>
                 </section>
 
-                <section class="admin-student-song-add">
+                <section class="admin-student-song-add<?= $manual_request && ($manual_request['request_type'] ?? '') === 'song_add' ? ' request-field-highlight' : '' ?>">
                     <div>
                         <p class="dashboard-eyebrow">Manage Assignment</p>
                         <h4>Add existing song</h4>
@@ -235,6 +293,9 @@ require_once '../includes/sidebar.php';
                             <input type="hidden" name="action" value="admin_add_student_song">
                             <input type="hidden" name="student_id" value="<?= (int) $managed_student['id'] ?>">
                             <input type="hidden" name="song_id" id="adminStudentSongAddSelectedId">
+                            <?php if ($manual_request): ?>
+                                <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                            <?php endif; ?>
 
                             <div class="admin-student-song-add-row">
                                 <label class="admin-student-song-search-field">
@@ -314,7 +375,7 @@ require_once '../includes/sidebar.php';
 
                                 <?php foreach ($managed_student_songs as $index => $song): ?>
                                     <?php $collapse_id = 'adminManagedSongDetails' . (int) $song['id']; ?>
-                                    <article class="song-track admin-managed-song-track" role="listitem">
+                                    <article class="song-track admin-managed-song-track<?= $manual_request_song_id === (int) $song['id'] ? ' request-field-highlight' : '' ?>" role="listitem">
                                         <button
                                             class="song-track-button collapsed"
                                             type="button"
@@ -357,6 +418,9 @@ require_once '../includes/sidebar.php';
                                                     <input type="hidden" name="action" value="admin_remove_student_song">
                                                     <input type="hidden" name="student_id" value="<?= (int) $managed_student['id'] ?>">
                                                     <input type="hidden" name="song_id" value="<?= (int) $song['id'] ?>">
+                                                    <?php if ($manual_request): ?>
+                                                        <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                                                    <?php endif; ?>
                                                     <button type="submit" class="admin-song-small-button admin-song-danger-button" data-admin-remove-student-song="<?= e($song['title']) ?>">
                                                         <i class="bi bi-trash3" aria-hidden="true"></i>
                                                         Remove from student

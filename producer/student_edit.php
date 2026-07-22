@@ -5,6 +5,7 @@ require_role('producer');
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
 require_once '../includes/student_edit_validation.php';
+require_once '../includes/producer_request_helpers.php';
 
 function e(?string $value): string
 {
@@ -56,55 +57,71 @@ $producer_display = in_array($producer_status, ['active', 'removal_pending'], tr
 
 $error = '';
 $success = '';
+$manual_request_id = max(0, (int) ($_GET['request_id'] ?? $_POST['request_id'] ?? 0));
+$manual_request = $manual_request_id > 0 ? load_producer_request_detail($pdo, (int) $_SESSION['id'], $manual_request_id) : null;
+
+if ($manual_request && (int) $manual_request['student_id'] !== $student_id) {
+    $manual_request = null;
+}
 
 // Validate producer-editable profile fields, including performance stats, before saving.
 // Save the updated student profile and performance stat values.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf($_POST['csrf_token'] ?? '');
 
-    $validation = validate_student_edit_profile($_POST, $student);
-    $error = $validation['error'];
-    $student_values = $validation['data'];
+    if (($_POST['request_action'] ?? '') === 'completed' && $manual_request) {
+        try {
+            $_SESSION['producer_request_success'] = producer_request_handle_action($pdo, $manual_request, (int) $_SESSION['id'], 'producer', 'completed');
+            header('Location: ' . producer_request_detail_url($manual_request, 'producer'));
+            exit;
+        } catch (Throwable $exception) {
+            $error = $exception->getMessage();
+        }
+    } else {
+        $validation = validate_student_edit_profile($_POST, $student);
+        $error = $validation['error'];
+        $student_values = $validation['data'];
 
-    if ($error === '') {
-        $update_stmt = $pdo->prepare(
-            'UPDATE students
-             SET name = ?,
-                 name_jp = ?,
-                 birthday = ?,
-                 zodiac = ?,
-                 blood_type = ?,
-                 height = ?,
-                 weight = ?,
-                 three_size = ?,
-                 school_year = ?,
-                 vocal = ?,
-                 dance = ?,
-                 visual = ?
-             WHERE id = ?
-             AND producer_id = ?'
-        );
+        if ($error === '') {
+            $update_stmt = $pdo->prepare(
+                'UPDATE students
+                 SET name = ?,
+                     name_jp = ?,
+                     birthday = ?,
+                     zodiac = ?,
+                     blood_type = ?,
+                     height = ?,
+                     weight = ?,
+                     three_size = ?,
+                     school_year = ?,
+                     vocal = ?,
+                     dance = ?,
+                     visual = ?
+                 WHERE id = ?
+                 AND producer_id = ?'
+            );
 
-        $update_stmt->execute([
-            $student_values['name'],
-            $student_values['name_jp'] !== '' ? $student_values['name_jp'] : null,
-            $student_values['birthday'] !== '' ? $student_values['birthday'] : null,
-            $student_values['zodiac'] !== '' ? $student_values['zodiac'] : null,
-            $student_values['blood_type'] !== '' ? $student_values['blood_type'] : null,
-            $student_values['height'] !== '' ? (int) $student_values['height'] : null,
-            $student_values['weight'] !== '' ? (int) $student_values['weight'] : null,
-            $student_values['three_size'] !== '' ? $student_values['three_size'] : null,
-            $student_values['school_year'] !== '' ? $student_values['school_year'] : null,
-            $student_values['vocal'],
-            $student_values['dance'],
-            $student_values['visual'],
-            $student_id,
-            $_SESSION['id'],
-        ]);
+            $update_stmt->execute([
+                $student_values['name'],
+                $student_values['name_jp'] !== '' ? $student_values['name_jp'] : null,
+                $student_values['birthday'] !== '' ? $student_values['birthday'] : null,
+                $student_values['zodiac'] !== '' ? $student_values['zodiac'] : null,
+                $student_values['blood_type'] !== '' ? $student_values['blood_type'] : null,
+                $student_values['height'] !== '' ? (int) $student_values['height'] : null,
+                $student_values['weight'] !== '' ? (int) $student_values['weight'] : null,
+                $student_values['three_size'] !== '' ? $student_values['three_size'] : null,
+                $student_values['school_year'] !== '' ? $student_values['school_year'] : null,
+                $student_values['vocal'],
+                $student_values['dance'],
+                $student_values['visual'],
+                $student_id,
+                $_SESSION['id'],
+            ]);
 
-        $stmt->execute([$student_id, $_SESSION['id']]);
-        $student = $stmt->fetch();
-        $success = 'Student profile updated successfully.';
+            $stmt->execute([$student_id, $_SESSION['id']]);
+            $student = $stmt->fetch();
+            $success = 'Student profile updated successfully.';
+        }
     }
 }
 
@@ -138,12 +155,65 @@ $birthday_months = student_edit_month_options();
 $blood_type_options = student_edit_blood_type_options();
 $three_size_parts = student_edit_split_three_size($student['three_size'] ?? '');
 $school_year_code = student_edit_class_code($student['school_year'] ?? '');
+$manual_request_requested = producer_request_context_requested_data($manual_request);
+$manual_request_changed = producer_request_context_changed_data($manual_request);
+$manual_request_closed = $manual_request && in_array((string) ($manual_request['status'] ?? ''), ['approved', 'rejected', 'cancelled'], true);
+$manual_request_url_suffix = $manual_request ? '&request_id=' . (int) $manual_request['id'] : '';
+$manual_request_back_url = $manual_request ? producer_request_detail_url($manual_request, 'producer') : '';
+// Highlight only fields included in the changed request payload.
+$request_field_class = static fn(string $field): string => array_key_exists($field, $manual_request_changed) ? ' request-field-highlight' : '';
 ?>
 
 <main class="dashboard-main profile-main"
     style="--primary: <?= e($student_theme_primary) ?>; --secondary: <?= e($student_theme_secondary) ?>;">
-    <form action="/gakumas-sms/producer/student_edit.php?id=<?= $student_id ?>" method="post" class="profile-form">
+    <?php if ($manual_request): ?>
+        <section class="card profile-card manual-request-panel">
+            <div class="profile-card-heading manual-request-heading">
+                <div>
+                    <i class="bi bi-inbox" aria-hidden="true"></i>
+                    <h2><?= e(producer_request_type_label($manual_request['request_type'] ?? '')) ?></h2>
+                </div>
+
+                <a href="<?= e($manual_request_back_url) ?>" class="manual-request-back" aria-label="Back to request">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                </a>
+            </div>
+
+            <div class="manual-request-body">
+                <section>
+                    <h3>Request Message</h3>
+                    <p><?= e($manual_request['details'] ?: 'No message was included with this request.') ?></p>
+                </section>
+
+                <section>
+                    <h3>Requested Changes</h3>
+                    <dl class="manual-request-data">
+                        <?php foreach ($manual_request_changed as $key => $value): ?>
+                            <div>
+                                <dt><?= e(producer_request_field_label((string) $key)) ?></dt>
+                                <dd><?= e(producer_request_display_value((string) $key, $value)) ?></dd>
+                            </div>
+                        <?php endforeach; ?>
+                    </dl>
+                </section>
+            </div>
+
+            <form method="post" action="/gakumas-sms/producer/student_edit.php?id=<?= $student_id ?>&request_id=<?= (int) $manual_request['id'] ?>">
+                <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                <input type="hidden" name="request_action" value="completed">
+                <button type="submit" class="btn btn-primary" <?= $manual_request_closed ? 'disabled' : '' ?>>
+                    <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                    Mark Request Completed
+                </button>
+            </form>
+        </section>
+    <?php endif; ?>
+
+    <form action="/gakumas-sms/producer/student_edit.php?id=<?= $student_id ?><?= e($manual_request_url_suffix) ?>" method="post" class="profile-form" <?= $manual_request ? 'data-manual-request-edit="true"' : '' ?>>
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+        <?php if ($manual_request): ?>
+            <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+        <?php endif; ?>
 
         <section class="profile-hero card">
             <div class="profile-avatar-wrap">
@@ -184,19 +254,19 @@ $school_year_code = student_edit_class_code($student['school_year'] ?? '');
             </div>
 
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-6<?= e($request_field_class('name')) ?>">
                     <label for="name" class="form-label">Name</label>
                     <input type="text" id="name" name="name" class="form-control profile-editable"
                         value="<?= e($student['name']) ?>" maxlength="100" required readonly>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6<?= e($request_field_class('name_jp')) ?>">
                     <label for="name_jp" class="form-label">Japanese Name</label>
                     <input type="text" id="name_jp" name="name_jp" class="form-control profile-editable"
                         value="<?= e($student['name_jp']) ?>" maxlength="100" readonly>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4<?= e($request_field_class('birthday')) ?>">
                     <label for="birthday" class="form-label">Birthday</label>
                     <div class="profile-birthday-picker" data-selected-month="<?= $birthday_month_value ?>"
                         data-selected-day="<?= $birthday_day_value ?>">
@@ -244,13 +314,13 @@ $school_year_code = student_edit_class_code($student['school_year'] ?? '');
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4<?= e($request_field_class('zodiac')) ?>">
                     <label for="zodiac" class="form-label">Zodiac</label>
                     <input type="text" id="zodiac" name="zodiac" class="form-control"
                         value="<?= e($student['zodiac']) ?>" readonly>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4<?= e($request_field_class('blood_type')) ?>">
                     <label for="blood_type" class="form-label">Blood Type</label>
                     <select id="blood_type" name="blood_type" class="form-select profile-editable" disabled>
                         <option value="">Not set</option>
@@ -262,7 +332,7 @@ $school_year_code = student_edit_class_code($student['school_year'] ?? '');
                     </select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4<?= e($request_field_class('height')) ?>">
                     <label for="hometown" class="form-label">Hometown</label>
                     <input type="text" id="hometown" name="hometown" class="form-control profile"
                         value="<?= e($student['hometown']) ?>" readonly>
@@ -277,7 +347,7 @@ $school_year_code = student_edit_class_code($student['school_year'] ?? '');
             </div>
 
             <div class="row g-3">
-                <div class="col-md-4">
+                <div class="col-md-4<?= e($request_field_class('weight')) ?>">
                     <label for="height" class="form-label">Height</label>
                     <input type="text" id="height" name="height" class="form-control profile-editable"
                         value="<?= e((string) $student['height']) ?> cm"
@@ -286,7 +356,7 @@ $school_year_code = student_edit_class_code($student['school_year'] ?? '');
                         max="220" readonly>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4<?= e($request_field_class('three_size')) ?>">
                     <label for="weight" class="form-label">Weight</label>
                     <input type="text" id="weight" name="weight" class="form-control profile-editable"
                         value="<?= e((string) $student['weight']) ?> kg"
@@ -295,7 +365,7 @@ $school_year_code = student_edit_class_code($student['school_year'] ?? '');
                         max="150" readonly>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4<?= e($request_field_class('school_year')) ?>">
                     <label for="three_size" class="form-label">Three Size</label>
                     <input type="hidden" id="three_size" name="three_size" value="<?= e($student['three_size']) ?>">
                     <div class="profile-three-size">

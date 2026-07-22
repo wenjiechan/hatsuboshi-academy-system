@@ -3,6 +3,57 @@
     gap: 2rem;
 }
 
+.admin-songs-main .manual-request-panel {
+    border-color: color-mix(in srgb, var(--primary, #7c3aed) 35%, #ffffff);
+    background: color-mix(in srgb, var(--primary, #7c3aed) 8%, #ffffff);
+}
+
+.admin-songs-main .request-field-highlight {
+    border-color: color-mix(in srgb, var(--primary, #7c3aed) 35%, #ffffff);
+    background: color-mix(in srgb, var(--primary, #7c3aed) 8%, #ffffff);
+}
+
+.admin-songs-main .manual-request-back {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--primary, #7c3aed);
+    text-decoration: none;
+}
+
+.admin-songs-main .manual-request-back:hover,
+.admin-songs-main .manual-request-back:focus {
+    background: color-mix(in srgb, var(--primary, #7c3aed) 10%, #ffffff);
+    color: var(--primary, #7c3aed);
+}
+
+.admin-songs-main .manual-request-data {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 0 0 16px;
+}
+
+.admin-songs-main .manual-request-data div {
+    border: 1px solid color-mix(in srgb, var(--primary, #7c3aed) 24%, #e5e7eb);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.admin-songs-main .manual-request-data dt {
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.admin-songs-main .manual-request-data dd {
+    margin: 4px 0 0;
+    font-weight: 700;
+}
+
 .admin-songs-hero,
 .admin-songs-filters,
 .admin-student-songs-card,

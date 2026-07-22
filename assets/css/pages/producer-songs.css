@@ -2,6 +2,58 @@
     gap: 1.5rem;
 }
 
+.producer-songs-main .manual-request-panel {
+    border-color: color-mix(in srgb, var(--primary, #7c3aed) 35%, #ffffff);
+    background: color-mix(in srgb, var(--primary, #7c3aed) 8%, #ffffff);
+}
+
+.producer-songs-main .request-field-highlight {
+    border-color: color-mix(in srgb, var(--primary, #7c3aed) 35%, #ffffff);
+    background: color-mix(in srgb, var(--primary, #7c3aed) 8%, #ffffff);
+}
+
+.producer-songs-main .manual-request-back {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--primary, #7c3aed);
+    text-decoration: none;
+    justify-self: end;
+}
+
+.producer-songs-main .manual-request-back:hover,
+.producer-songs-main .manual-request-back:focus {
+    background: color-mix(in srgb, var(--primary, #7c3aed) 10%, #ffffff);
+    color: var(--primary, #7c3aed);
+}
+
+.producer-songs-main .manual-request-data {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 0;
+}
+
+.producer-songs-main .manual-request-data div {
+    border: 1px solid color-mix(in srgb, var(--primary, #7c3aed) 24%, #e5e7eb);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.producer-songs-main .manual-request-data dt {
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.producer-songs-main .manual-request-data dd {
+    margin: 4px 0 0;
+    font-weight: 700;
+}
+
 .producer-songs-summary {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }

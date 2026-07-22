@@ -4,6 +4,7 @@ require_role('producer');
 
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
+require_once '../includes/producer_request_helpers.php';
 
 // Escape text before printing it into HTML.
 function e(?string $value): string
@@ -69,11 +70,30 @@ $student_filter = trim((string) ($_GET['student'] ?? ''));
 $class_filter = trim((string) ($_GET['class'] ?? ''));
 $song_filter = trim((string) ($_GET['song'] ?? ''));
 $selected_student_id = isset($_GET['student_id']) ? max(0, (int) $_GET['student_id']) : 0;
+$manual_request_id = max(0, (int) ($_GET['request_id'] ?? $_POST['request_id'] ?? 0));
+$manual_request = $manual_request_id > 0 ? load_producer_request_detail($pdo, (int) $producer['id'], $manual_request_id) : null;
+
+if ($manual_request) {
+    $selected_student_id = (int) ($manual_request['student_id'] ?? $selected_student_id);
+}
+
 $song_like = '%' . $song_filter . '%';
 
 // Add or remove a song assignment. The global song row is never edited here.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf((string) ($_POST['csrf_token'] ?? ''));
+
+    if (($_POST['request_action'] ?? '') === 'completed' && $manual_request) {
+        try {
+            $_SESSION['producer_song_success'] = producer_request_handle_action($pdo, $manual_request, (int) $producer['id'], 'producer', 'completed');
+            $_SESSION['producer_request_success'] = $_SESSION['producer_song_success'];
+        } catch (Throwable $exception) {
+            $_SESSION['producer_request_error'] = $exception->getMessage();
+        }
+
+        header('Location: ' . producer_request_detail_url($manual_request, 'producer'));
+        exit;
+    }
 
     $action = (string) ($_POST['song_action'] ?? '');
     $posted_student_id = filter_input(INPUT_POST, 'student_id', FILTER_VALIDATE_INT);
@@ -93,6 +113,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (isset($return_params['student_id']) && filter_var($return_params['student_id'], FILTER_VALIDATE_INT)) {
             $safe_return_params['student_id'] = (int) $return_params['student_id'];
+        }
+
+        if (isset($return_params['request_id']) && filter_var($return_params['request_id'], FILTER_VALIDATE_INT)) {
+            $safe_return_params['request_id'] = (int) $return_params['request_id'];
         }
 
         if (!empty($safe_return_params)) {
@@ -379,7 +403,12 @@ $return_query = http_build_query(array_filter([
     'class' => $class_filter,
     'song' => $song_filter,
     'student_id' => $selected_student_id,
+    'request_id' => $manual_request_id,
 ], static fn ($value) => $value !== '' && $value !== 0));
+$manual_request_requested = producer_request_context_requested_data($manual_request);
+$manual_request_closed = $manual_request && in_array((string) ($manual_request['status'] ?? ''), ['approved', 'rejected', 'cancelled'], true);
+$manual_request_back_url = $manual_request ? producer_request_detail_url($manual_request, 'producer') : '';
+$manual_request_song_id = (int) ($manual_request['song_id'] ?? ($manual_request_requested['song_id'] ?? 0));
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
@@ -495,6 +524,7 @@ require_once '../includes/sidebar.php';
                         'class' => $class_filter,
                         'song' => $song_filter,
                         'student_id' => $student_id,
+                        'request_id' => $manual_request_id,
                     ], static fn ($value) => $value !== '');
 
                     // Preserve active filters and jump down to the song section after choosing a student.
@@ -558,7 +588,39 @@ require_once '../includes/sidebar.php';
             </div>
         </section>
 
-        <section class="producer-song-manage-panel">
+        <?php if ($manual_request): ?>
+            <section class="producer-song-manage-panel manual-request-panel">
+                <div>
+                    <p class="dashboard-eyebrow">Manual Request</p>
+                    <h3><?= e(producer_request_type_label($manual_request['request_type'] ?? '')) ?></h3>
+                    <p><?= e($manual_request['details'] ?: 'No message was included with this request.') ?></p>
+                </div>
+                <a href="<?= e($manual_request_back_url) ?>" class="manual-request-back" aria-label="Back to request">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                </a>
+
+                <dl class="manual-request-data">
+                    <?php foreach (producer_request_visible_data($manual_request_requested) as $key => $value): ?>
+                        <div>
+                            <dt><?= e(producer_request_field_label((string) $key)) ?></dt>
+                            <dd><?= e(producer_request_display_value((string) $key, $value)) ?></dd>
+                        </div>
+                    <?php endforeach; ?>
+                </dl>
+
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                    <input type="hidden" name="request_action" value="completed">
+                    <button type="submit" class="btn btn-primary" <?= $manual_request_closed ? 'disabled' : '' ?>>
+                        <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                        Mark Request Completed
+                    </button>
+                </form>
+            </section>
+        <?php endif; ?>
+
+        <section class="producer-song-manage-panel<?= $manual_request && ($manual_request['request_type'] ?? '') === 'song_add' ? ' request-field-highlight' : '' ?>">
             <div>
                 <p class="dashboard-eyebrow">Manage Assignment</p>
                 <h3>Add existing song</h3>
@@ -577,6 +639,9 @@ require_once '../includes/sidebar.php';
                     <input type="hidden" name="student_id" value="<?= (int) $selected_student['id'] ?>">
                     <input type="hidden" name="song_id" id="songAddSelectedId">
                     <input type="hidden" name="return_query" value="<?= e($return_query) ?>">
+                    <?php if ($manual_request): ?>
+                        <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                    <?php endif; ?>
 
                     <div class="producer-song-search-picker">
                         <label for="songAddSearch">
@@ -714,7 +779,7 @@ require_once '../includes/sidebar.php';
                                 );
                                 ?>
 
-                                <article class="song-track"
+                                <article class="song-track<?= $manual_request_song_id === (int) $song['id'] ? ' request-field-highlight' : '' ?>"
                                     data-song-search="<?= e($search_text) ?>"
                                     data-sort-number="<?= (int) ($index + 1) ?>"
                                     data-sort-title="<?= e($song['title']) ?>"
@@ -788,6 +853,9 @@ require_once '../includes/sidebar.php';
                                                 <input type="hidden" name="student_id" value="<?= (int) $selected_student['id'] ?>">
                                                 <input type="hidden" name="song_id" value="<?= (int) $song['id'] ?>">
                                                 <input type="hidden" name="return_query" value="<?= e($return_query) ?>">
+                                                <?php if ($manual_request): ?>
+                                                    <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                                                <?php endif; ?>
 
                                                 <button type="submit" class="producer-song-remove-button" data-confirm-remove="<?= e($song['title']) ?>">
                                                     <i class="bi bi-trash3" aria-hidden="true"></i>

@@ -346,10 +346,10 @@ function admin_student_flash_success(): string
     return $success;
 }
 
-function admin_student_redirect_with_success(string $message): void
+function admin_student_redirect_with_success(string $message, ?string $url = null): void
 {
     $_SESSION['admin_students_success'] = $message;
-    header('Location: /gakumas-sms/admin/students.php');
+    header('Location: ' . ($url ?: '/gakumas-sms/admin/students.php'));
     exit;
 }
 
@@ -611,7 +611,11 @@ function admin_student_update(PDO $pdo): string
         }
 
         $pdo->commit();
-        admin_student_redirect_with_success('Student profile updated successfully.');
+        $request_id = max(0, (int) ($_POST['request_id'] ?? 0));
+        $redirect_url = $request_id > 0
+            ? '/gakumas-sms/admin/students.php?edit=' . $student_id . '&request_id=' . $request_id . '#edit-student'
+            : null;
+        admin_student_redirect_with_success('Student profile updated successfully.', $redirect_url);
         return '';
     } catch (Throwable $exception) {
         if ($pdo->inTransaction()) {

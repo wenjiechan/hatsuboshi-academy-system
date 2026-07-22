@@ -189,7 +189,11 @@ function handle_admin_song_post(PDO $pdo, array $valid_types, array $default_for
             );
             $update_stmt->execute([...$save_values, (int) $posted_song_id]);
             $_SESSION['admin_song_success'] = 'Song updated successfully.';
-            header('Location: /gakumas-sms/admin/songs.php');
+            $request_id = max(0, (int) ($_POST['request_id'] ?? 0));
+            $redirect_url = $request_id > 0
+                ? '/gakumas-sms/admin/songs.php?edit=' . (int) $posted_song_id . '&request_id=' . $request_id . '#song-form'
+                : '/gakumas-sms/admin/songs.php';
+            header('Location: ' . $redirect_url);
             exit;
         }
     }
@@ -205,6 +209,8 @@ function handle_admin_song_post(PDO $pdo, array $valid_types, array $default_for
 function handle_admin_student_song_assignment(PDO $pdo, string $action, $posted_song_id, array $result): array
 {
     $posted_student_id = filter_input(INPUT_POST, 'student_id', FILTER_VALIDATE_INT);
+    $request_id = max(0, (int) ($_POST['request_id'] ?? 0));
+    $request_query = $request_id > 0 ? '&request_id=' . $request_id : '';
     $result['manage_student_id'] = $posted_student_id && $posted_student_id > 0 ? (int) $posted_student_id : 0;
 
     if (!$posted_student_id || $posted_student_id <= 0 || !$posted_song_id || $posted_song_id <= 0) {
@@ -245,7 +251,7 @@ function handle_admin_student_song_assignment(PDO $pdo, string $action, $posted_
             );
             $add_stmt->execute([(int) $posted_student_id, (int) $posted_song_id, (int) $_SESSION['id']]);
             $_SESSION['admin_song_success'] = 'Song added to ' . $student['name'] . '.';
-            header('Location: /gakumas-sms/admin/student_songs.php?manage_student_id=' . (int) $posted_student_id . '#adminStudentSongs');
+            header('Location: /gakumas-sms/admin/student_songs.php?manage_student_id=' . (int) $posted_student_id . $request_query . '#adminStudentSongs');
             exit;
         } catch (PDOException $exception) {
             $result['song_page_error'] = $exception->getCode() === '23000'
@@ -267,7 +273,7 @@ function handle_admin_student_song_assignment(PDO $pdo, string $action, $posted_
 
         if ($remove_stmt->rowCount() > 0) {
             $_SESSION['admin_song_success'] = 'Song removed from ' . $student['name'] . '.';
-            header('Location: /gakumas-sms/admin/student_songs.php?manage_student_id=' . (int) $posted_student_id . '#adminStudentSongs');
+            header('Location: /gakumas-sms/admin/student_songs.php?manage_student_id=' . (int) $posted_student_id . $request_query . '#adminStudentSongs');
             exit;
         }
 

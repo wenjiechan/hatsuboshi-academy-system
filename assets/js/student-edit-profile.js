@@ -317,4 +317,9 @@ document.addEventListener('click', (event) => {
 
 renderBirthdayDays();
 updateRankPreview();
+
+// Manual request links should land directly in edit mode so reviewers can act immediately.
+if (document.querySelector('[data-manual-request-edit="true"]')) {
+    setProfileEditMode(true);
+}
 })();

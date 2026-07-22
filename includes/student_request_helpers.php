@@ -144,6 +144,30 @@ function student_request_find_by_id(array $rows, int $id): ?array
     return null;
 }
 
+function student_request_normalized_value(mixed $value): string
+{
+    return trim((string) $value);
+}
+
+function student_request_changed_values(array $current, array $requested): array
+{
+    $changes = [];
+
+    // Store only real changes so reviewers see a focused request and empty submissions are rejected.
+    foreach ($requested as $key => $value) {
+        if (!array_key_exists($key, $current) || student_request_normalized_value($value) !== student_request_normalized_value($current[$key])) {
+            $changes[$key] = $value;
+        }
+    }
+
+    return $changes;
+}
+
+function student_request_only_keys(array $data, array $keys): array
+{
+    return array_intersect_key($data, array_flip($keys));
+}
+
 function student_request_recipient_id(array $post, array $student, array $admins, bool $producer_is_available, string $request_type): int
 {
     if ($request_type === 'song_edit') {
@@ -186,13 +210,19 @@ function student_request_profile_payload(array $post, array $student): array
         'school_year' => $student['school_year'] ?? '',
     ];
 
+    $changes = student_request_changed_values($current, $requested);
+    $changed_keys = array_keys($changes);
+
+    // Keep current_data aligned with requested_data so request panels compare only changed fields.
     return [
-        'error' => $requested['name'] === '' ? 'Name is required for a profile update request.' : '',
+        'error' => $requested['name'] === ''
+            ? 'Name is required for a profile update request.'
+            : (empty($changes) ? 'Change at least one profile field before sending a request.' : ''),
         'db_type' => 'profile_update',
         'song_id' => null,
         'subject' => 'Profile Update Request',
-        'current_data' => $current,
-        'requested_data' => $requested,
+        'current_data' => student_request_only_keys($current, $changed_keys),
+        'requested_data' => $changes,
     ];
 }
 
@@ -252,26 +282,46 @@ function student_request_song_edit_payload(array $post, array $current_songs): a
     $song_id = (int) ($post['edit_song_id'] ?? 0);
     $song = student_request_find_by_id($current_songs, $song_id);
 
+    $current = $song ? [
+        'title' => $song['title'] ?? '',
+        'title_jp' => $song['title_jp'] ?? '',
+        'artist' => $song['artist'] ?? '',
+        'duration' => format_request_song_duration($song['duration'] ?? ''),
+        'song_type' => $song['song_type'] ?? '',
+    ] : [];
+    $requested = [
+        'title' => trim((string) ($post['edit_song_title'] ?? '')),
+        'title_jp' => trim((string) ($post['edit_song_title_jp'] ?? '')),
+        'artist' => trim((string) ($post['edit_song_artist'] ?? '')),
+        'duration' => trim((string) ($post['edit_song_duration'] ?? '')),
+        'song_type' => trim((string) ($post['edit_song_type'] ?? '')),
+    ];
+    $changes = $song ? student_request_changed_values($current, $requested) : [];
+    $changed_keys = array_keys($changes);
+    $reason = trim((string) ($post['edit_song_reason'] ?? ''));
+
+    // The reason explains the request, but it does not count as a song data change by itself.
+    if ($reason !== '') {
+        $changes['reason'] = $reason;
+    }
+
+    $error = '';
+
+    if (!$song) {
+        $error = 'Choose one of your current songs to edit.';
+    } elseif ($requested['title'] === '') {
+        $error = 'Song title is required for a song correction request.';
+    } elseif (empty($changed_keys)) {
+        $error = 'Change at least one song field before sending a request.';
+    }
+
     return [
-        'error' => !$song ? 'Choose one of your current songs to edit.' : '',
+        'error' => $error,
         'db_type' => 'song_correction',
         'song_id' => $song ? (int) $song['id'] : null,
         'subject' => 'Song Correction Request',
-        'current_data' => $song ? [
-            'title' => $song['title'] ?? '',
-            'title_jp' => $song['title_jp'] ?? '',
-            'artist' => $song['artist'] ?? '',
-            'duration' => format_request_song_duration($song['duration'] ?? ''),
-            'song_type' => $song['song_type'] ?? '',
-        ] : [],
-        'requested_data' => [
-            'title' => trim((string) ($post['edit_song_title'] ?? '')),
-            'title_jp' => trim((string) ($post['edit_song_title_jp'] ?? '')),
-            'artist' => trim((string) ($post['edit_song_artist'] ?? '')),
-            'duration' => trim((string) ($post['edit_song_duration'] ?? '')),
-            'song_type' => trim((string) ($post['edit_song_type'] ?? '')),
-            'reason' => trim((string) ($post['edit_song_reason'] ?? '')),
-        ],
+        'current_data' => student_request_only_keys($current, $changed_keys),
+        'requested_data' => $changes,
     ];
 }
 

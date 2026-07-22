@@ -37,8 +37,38 @@ if (!$request) {
     );
 }
 
+$request_success = $_SESSION['producer_request_success'] ?? '';
+$request_error = $_SESSION['producer_request_error'] ?? '';
+unset($_SESSION['producer_request_success'], $_SESSION['producer_request_error']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf($_POST['csrf_token'] ?? '');
+    $request_action = (string) ($_POST['request_action'] ?? '');
+
+    try {
+        $_SESSION['producer_request_success'] = producer_request_handle_action(
+            $pdo,
+            $request,
+            (int) $producer['id'],
+            'producer',
+            $request_action
+        );
+
+        if ($request_action === 'manual_edit') {
+            header('Location: ' . producer_request_manual_edit_url($request, 'producer'));
+            exit;
+        }
+    } catch (Throwable $exception) {
+        $_SESSION['producer_request_error'] = $exception->getMessage();
+    }
+
+    header('Location: /gakumas-sms/producer/request_view.php?id=' . (int) $request['id']);
+    exit;
+}
+
 $type_label = producer_request_type_label($request['request_type'] ?? '');
 $status = (string) ($request['status'] ?? 'pending');
+$request_is_closed = in_array($status, ['approved', 'rejected', 'cancelled'], true);
 $current_data = producer_request_visible_data(producer_request_decode_json($request['current_data'] ?? null));
 $requested_data = producer_request_visible_data(producer_request_decode_json($request['requested_data'] ?? null));
 $student_avatar_path = producer_request_avatar_path($request['student_avatar'] ?? '', $request['student_name'] ?? '');
@@ -50,6 +80,14 @@ require_once '../includes/sidebar.php';
 ?>
 
 <main class="dashboard-main producer-request-main">
+    <?php if ($request_success !== ''): ?>
+        <div class="alert alert-success" role="status"><?= e($request_success) ?></div>
+    <?php endif; ?>
+
+    <?php if ($request_error !== ''): ?>
+        <div class="alert alert-danger" role="alert"><?= e($request_error) ?></div>
+    <?php endif; ?>
+
     <section class="producer-request-detail-heading">
         <a href="/gakumas-sms/producer/request.php" class="producer-request-back" aria-label="Back to request inbox">
             <i class="bi bi-arrow-left" aria-hidden="true"></i>
@@ -149,34 +187,43 @@ require_once '../includes/sidebar.php';
                 </dl>
             </section>
 
-            <section class="producer-request-actions" aria-label="Request actions">
-                <button type="button" class="btn btn-primary" disabled>
-                    <i class="bi bi-magic" aria-hidden="true"></i>
-                    Auto Edit
-                </button>
+            <?php if ($request_is_closed): ?>
+                <section class="producer-request-panel">
+                    <h3>Actions</h3>
+                    <p class="producer-request-message">This request is closed, so no more actions are available.</p>
+                </section>
+            <?php else: ?>
+                <form method="post" class="producer-request-actions" aria-label="Request actions">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
 
-                <button type="button" class="btn btn-outline-secondary" disabled>
-                    <i class="bi bi-pencil-square" aria-hidden="true"></i>
-                    Manual Edit
-                </button>
+                    <button type="submit" name="request_action" value="auto_edit" class="btn btn-primary">
+                        <i class="bi bi-magic" aria-hidden="true"></i>
+                        Auto Edit
+                    </button>
 
-                <button type="button" class="btn btn-outline-secondary" disabled>
-                    <i class="bi bi-send-up" aria-hidden="true"></i>
-                    Send to Admin
-                </button>
+                    <button type="submit" name="request_action" value="manual_edit" class="btn btn-outline-secondary">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                        Manual Edit
+                    </button>
 
-                <button type="button" class="btn btn-outline-secondary" disabled>
-                    <i class="bi bi-check2-circle" aria-hidden="true"></i>
-                    Mark Completed
-                </button>
+                    <button type="submit" name="request_action" value="send_admin" class="btn btn-outline-secondary">
+                        <i class="bi bi-send-up" aria-hidden="true"></i>
+                        Send to Admin
+                    </button>
 
-                <button type="button" class="btn btn-outline-danger" disabled>
-                    <i class="bi bi-x-circle" aria-hidden="true"></i>
-                    Reject
-                </button>
+                    <button type="submit" name="request_action" value="completed" class="btn btn-outline-secondary">
+                        <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                        Mark Completed
+                    </button>
 
-                <p class="producer-request-actions-note">Interface preview only. These actions do not submit yet.</p>
-            </section>
+                    <button type="submit" name="request_action" value="reject" class="btn btn-outline-danger">
+                        <i class="bi bi-x-circle" aria-hidden="true"></i>
+                        Reject
+                    </button>
+
+                    <p class="producer-request-actions-note">Actions update this request immediately.</p>
+                </form>
+            <?php endif; ?>
         </aside>
     </section>
 </main>

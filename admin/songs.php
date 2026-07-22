@@ -4,6 +4,7 @@ require_role('admin');
 
 require_once '../config/database.php';
 require_once '../includes/admin_song_helpers.php';
+require_once '../includes/admin_request_helpers.php';
 
 // Read filter and page state from the URL so search results can be shared/bookmarked.
 $song_search = trim((string) ($_GET['song'] ?? ''));
@@ -13,6 +14,13 @@ $per_page = 20;
 $valid_types = ['Solo', 'Group', 'Remix', 'Cover'];
 $show_create_form = isset($_GET['create']) && $_GET['create'] === '1';
 $edit_song_id = isset($_GET['edit']) ? max(0, (int) $_GET['edit']) : 0;
+$manual_request_id = max(0, (int) ($_GET['request_id'] ?? $_POST['request_id'] ?? 0));
+$manual_request = $manual_request_id > 0 ? load_admin_request_detail($pdo, $manual_request_id) : null;
+
+if ($manual_request && !empty($manual_request['song_id'])) {
+    $edit_song_id = (int) $manual_request['song_id'];
+}
+
 $song_page_success = $_SESSION['admin_song_success'] ?? '';
 $song_page_error = '';
 $form_values = default_admin_song_form_values();
@@ -26,12 +34,25 @@ if (!in_array($type_filter, $valid_types, true)) {
 
 // Create, edit, and delete actions live in the helper so this page stays mostly layout/query focused.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $post_result = handle_admin_song_post($pdo, $valid_types, $form_values);
-    $song_page_error = $post_result['song_page_error'];
-    $form_values = $post_result['form_values'];
-    $selected_student_ids = $post_result['selected_student_ids'];
-    $show_create_form = $post_result['show_create_form'];
-    $edit_song_id = $post_result['edit_song_id'];
+    if (($_POST['request_action'] ?? '') === 'completed' && $manual_request) {
+        verify_csrf($_POST['csrf_token'] ?? '');
+
+        try {
+            $song_page_success = producer_request_handle_action($pdo, $manual_request, (int) $_SESSION['id'], 'admin', 'completed');
+            $_SESSION['admin_request_success'] = $song_page_success;
+            header('Location: ' . producer_request_detail_url($manual_request, 'admin'));
+            exit;
+        } catch (Throwable $exception) {
+            $song_page_error = $exception->getMessage();
+        }
+    } else {
+        $post_result = handle_admin_song_post($pdo, $valid_types, $form_values);
+        $song_page_error = $post_result['song_page_error'];
+        $form_values = $post_result['form_values'];
+        $selected_student_ids = $post_result['selected_student_ids'];
+        $show_create_form = $post_result['show_create_form'];
+        $edit_song_id = $post_result['edit_song_id'];
+    }
 }
 
 // Admin can optionally assign a newly-created global song to students immediately.
@@ -220,6 +241,11 @@ $page_styles = [
     '/gakumas-sms/assets/css/pages/song.css',
     '/gakumas-sms/assets/css/pages/admin-songs.css?v=20260720b',
 ];
+$manual_request_requested = producer_request_context_requested_data($manual_request);
+$manual_request_closed = $manual_request && in_array((string) ($manual_request['status'] ?? ''), ['approved', 'rejected', 'cancelled'], true);
+$manual_request_back_url = $manual_request ? producer_request_detail_url($manual_request, 'admin') : '';
+// Song correction requests carry changed song fields only, so highlights can follow the payload keys.
+$request_field_class = static fn(string $field): string => array_key_exists($field, $manual_request_requested) ? ' request-field-highlight' : '';
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>
@@ -300,6 +326,40 @@ require_once '../includes/sidebar.php';
     <?php endif; ?>
 
     <?php if ($show_create_form || $edit_song): ?>
+        <?php if ($manual_request): ?>
+            <section class="admin-song-form-card manual-request-panel">
+                <div class="admin-song-form-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">Manual Request</p>
+                        <h3><?= e(producer_request_type_label($manual_request['request_type'] ?? '')) ?></h3>
+                        <p><?= e($manual_request['details'] ?: 'No message was included with this request.') ?></p>
+                    </div>
+                    <a href="<?= e($manual_request_back_url) ?>" class="manual-request-back" aria-label="Back to request">
+                        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                    </a>
+                </div>
+
+                <dl class="manual-request-data">
+                    <?php foreach (producer_request_visible_data($manual_request_requested) as $key => $value): ?>
+                        <div>
+                            <dt><?= e(producer_request_field_label((string) $key)) ?></dt>
+                            <dd><?= e(producer_request_display_value((string) $key, $value)) ?></dd>
+                        </div>
+                    <?php endforeach; ?>
+                </dl>
+
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                    <input type="hidden" name="request_action" value="completed">
+                    <button type="submit" class="btn btn-primary" <?= $manual_request_closed ? 'disabled' : '' ?>>
+                        <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                        Mark Request Completed
+                    </button>
+                </form>
+            </section>
+        <?php endif; ?>
+
         <section class="admin-song-form-card" id="song-form">
             <div class="admin-song-form-heading">
                 <div>
@@ -319,24 +379,27 @@ require_once '../includes/sidebar.php';
                 <?php if ($edit_song): ?>
                     <input type="hidden" name="song_id" value="<?= (int) $edit_song['id'] ?>">
                 <?php endif; ?>
+                <?php if ($manual_request): ?>
+                    <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                <?php endif; ?>
 
                 <div class="admin-song-form-grid">
-                    <label>
+                    <label class="<?= e($request_field_class('title')) ?>">
                         <span>Title</span>
                         <input type="text" name="title" value="<?= e($form_values['title']) ?>" maxlength="150" required>
                     </label>
 
-                    <label>
+                    <label class="<?= e($request_field_class('title_jp')) ?>">
                         <span>Japanese Title</span>
                         <input type="text" name="title_jp" value="<?= e($form_values['title_jp']) ?>" maxlength="150">
                     </label>
 
-                    <label>
+                    <label class="<?= e($request_field_class('artist')) ?>">
                         <span>Artist</span>
                         <input type="text" name="artist" value="<?= e($form_values['artist']) ?>" maxlength="150">
                     </label>
 
-                    <label>
+                    <label class="<?= e($request_field_class('song_type')) ?>">
                         <span>Song Type</span>
                         <select name="song_type" required>
                             <?php foreach ($valid_types as $type): ?>
@@ -347,7 +410,7 @@ require_once '../includes/sidebar.php';
                         </select>
                     </label>
 
-                    <label>
+                    <label class="<?= e($request_field_class('duration')) ?>">
                         <span>Duration</span>
                         <input type="text" name="duration" value="<?= e($form_values['duration']) ?>" placeholder="MM:SS or HH:MM:SS">
                     </label>

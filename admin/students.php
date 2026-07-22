@@ -4,11 +4,28 @@ require_role('admin');
 
 require_once '../config/database.php';
 require_once '../includes/admin_student_helpers.php';
+require_once '../includes/admin_request_helpers.php';
 
 // Prepare the page data
 $show_create_form = isset($_GET['create']) && $_GET['create'] === '1';
 $success = admin_student_flash_success();
-$error = admin_student_handle_post($pdo, $show_create_form);
+$error = '';
+$manual_request_id = max(0, (int) ($_GET['request_id'] ?? $_POST['request_id'] ?? 0));
+$manual_request = $manual_request_id > 0 ? load_admin_request_detail($pdo, $manual_request_id) : null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['request_action'] ?? '') === 'completed' && $manual_request) {
+    verify_csrf($_POST['csrf_token'] ?? '');
+
+    try {
+        $_SESSION['admin_request_success'] = producer_request_handle_action($pdo, $manual_request, (int) $_SESSION['id'], 'admin', 'completed');
+        header('Location: ' . producer_request_detail_url($manual_request, 'admin'));
+        exit;
+    } catch (Throwable $exception) {
+        $error = $exception->getMessage();
+    }
+} else {
+    $error = admin_student_handle_post($pdo, $show_create_form);
+}
 
 $producers = admin_student_load_producers($pdo);
 $students = admin_student_load_students($pdo);
@@ -23,6 +40,10 @@ $class_count = count($grouped_students);
 $edit_student_id = isset($_GET['edit']) ? (int) $_GET['edit'] : 0;
 $edit_student = admin_student_find($students, $edit_student_id);
 
+if ($manual_request && (int) ($manual_request['student_id'] ?? 0) !== $edit_student_id) {
+    $manual_request = null;
+}
+
 $create_birthday_timestamp = time();
 $create_birthday_month_value = (int) date('n', $create_birthday_timestamp);
 $create_birthday_day_value = (int) date('j', $create_birthday_timestamp);
@@ -34,6 +55,13 @@ $today_month_value = (int) date('n');
 $today_day_value = (int) date('j');
 $today_birthday_display = date('F d');
 $today_zodiac = student_edit_zodiac_from_month_day($today_month_value, $today_day_value);
+$manual_request_requested = producer_request_context_requested_data($manual_request);
+$manual_request_changed = producer_request_context_changed_data($manual_request);
+$manual_request_closed = $manual_request && in_array((string) ($manual_request['status'] ?? ''), ['approved', 'rejected', 'cancelled'], true);
+$manual_request_url_suffix = $manual_request ? '&request_id=' . (int) $manual_request['id'] : '';
+$manual_request_back_url = $manual_request ? producer_request_detail_url($manual_request, 'admin') : '';
+// Highlight only fields included in the changed request payload.
+$request_field_class = static fn(string $field): string => array_key_exists($field, $manual_request_changed) ? ' request-field-highlight' : '';
 $page_title = 'Students';
 $page_styles = ['/gakumas-sms/assets/css/pages/admin_student.css'];
 require_once '../includes/header.php';
@@ -118,13 +146,13 @@ require_once '../includes/sidebar.php';
                     <fieldset class="admin-form-section">
                         <legend><i class="bi bi-key" aria-hidden="true"></i><span>Login Account</span></legend>
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-md-6<?= e($request_field_class('name')) ?>">
                                 <label for="username" class="form-label">Login Username</label>
                                 <input type="text" id="username" name="username" class="form-control" maxlength="50"
                                     required>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6<?= e($request_field_class('name_jp')) ?>">
                                 <label for="temporary_password" class="form-label">Temporary Password</label>
                                 <input type="text" id="temporary_password" name="temporary_password"
                                     class="form-control" minlength="6" required>
@@ -147,7 +175,7 @@ require_once '../includes/sidebar.php';
                                     required>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-4<?= e($request_field_class('birthday')) ?>">
                                 <label for="birthday" class="form-label">Birthday</label>
 
                                 <div class="profile-birthday-picker admin-birthday-picker" data-admin-birthday-picker
@@ -199,13 +227,13 @@ require_once '../includes/sidebar.php';
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-4<?= e($request_field_class('zodiac')) ?>">
                                 <label for="zodiac" class="form-label">Zodiac</label>
                                 <input type="text" id="zodiac" name="zodiac" class="form-control"
                                     value="<?= e($today_zodiac) ?>" readonly data-admin-zodiac>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-4<?= e($request_field_class('blood_type')) ?>">
                                 <label for="blood_type" class="form-label">Blood Type</label>
                                 <select id="blood_type" name="blood_type" class="form-select" required>
                                     <option value="">Choose blood type</option>
@@ -216,7 +244,7 @@ require_once '../includes/sidebar.php';
                                 </select>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-4<?= e($request_field_class('school_year')) ?>">
                                 <label for="hometown" class="form-label">Hometown</label>
                                 <input type="text" id="hometown" name="hometown" class="form-control" maxlength="50">
                             </div>
@@ -280,7 +308,7 @@ require_once '../includes/sidebar.php';
                     <fieldset class="admin-form-section">
                         <legend><i class="bi bi-rulers" aria-hidden="true"></i><span>Physical Details</span></legend>
                         <div class="row g-3">
-                            <div class="col-md-3">
+                            <div class="col-md-3<?= e($request_field_class('height')) ?>">
                                 <label for="height" class="form-label">Height</label>
                                 <div class="input-group">
                                     <input type="number" id="height" name="height" class="form-control" min="100"
@@ -289,7 +317,7 @@ require_once '../includes/sidebar.php';
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-3<?= e($request_field_class('weight')) ?>">
                                 <label for="weight" class="form-label">Weight</label>
                                 <div class="input-group">
                                     <input type="number" id="weight" name="weight" class="form-control" min="20"
@@ -298,7 +326,7 @@ require_once '../includes/sidebar.php';
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6<?= e($request_field_class('three_size')) ?>">
                                 <label class="form-label">Three Size</label>
                                 <div class="profile-three-size">
                                     <input type="number" name="three_size_bust"
@@ -403,17 +431,63 @@ require_once '../includes/sidebar.php';
             $edit_birthday_month_value = $edit_birthday_timestamp ? (int) date('n', $edit_birthday_timestamp) : $today_month_value;
             $edit_birthday_day_value = $edit_birthday_timestamp ? (int) date('j', $edit_birthday_timestamp) : $today_day_value;
             ?>
+        <?php if ($manual_request): ?>
+        <section class="profile-card manual-request-panel">
+            <div class="profile-card-heading manual-request-heading">
+                <div>
+                    <i class="bi bi-inbox" aria-hidden="true"></i>
+                    <h2><?= e(producer_request_type_label($manual_request['request_type'] ?? '')) ?></h2>
+                </div>
+
+                <a href="<?= e($manual_request_back_url) ?>" class="manual-request-back" aria-label="Back to request">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                </a>
+            </div>
+
+            <div class="manual-request-body">
+                <section>
+                    <h3>Request Message</h3>
+                    <p><?= e($manual_request['details'] ?: 'No message was included with this request.') ?></p>
+                </section>
+
+                <section>
+                    <h3>Requested Changes</h3>
+                    <dl class="manual-request-data">
+                        <?php foreach ($manual_request_changed as $key => $value): ?>
+                            <div>
+                                <dt><?= e(producer_request_field_label((string) $key)) ?></dt>
+                                <dd><?= e(producer_request_display_value((string) $key, $value)) ?></dd>
+                            </div>
+                        <?php endforeach; ?>
+                    </dl>
+                </section>
+            </div>
+
+            <form method="post" action="/gakumas-sms/admin/students.php?edit=<?= (int) $edit_student['id'] ?>&request_id=<?= (int) $manual_request['id'] ?>#edit-student">
+                <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                <input type="hidden" name="request_action" value="completed">
+                <button type="submit" class="btn btn-primary" <?= $manual_request_closed ? 'disabled' : '' ?>>
+                    <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                    Mark Request Completed
+                </button>
+            </form>
+        </section>
+        <?php endif; ?>
+
         <section class="profile-card" id="edit-student">
             <div class="profile-card-heading">
                 <i class="bi bi-pencil-square" aria-hidden="true"></i>
                 <h2>Edit Student and Profile: <?= e($edit_student['name']) ?></h2>
             </div>
 
-            <form action="/gakumas-sms/admin/students.php?edit=<?= (int) $edit_student['id'] ?>#edit-student"
+            <form action="/gakumas-sms/admin/students.php?edit=<?= (int) $edit_student['id'] ?><?= e($manual_request_url_suffix) ?>#edit-student"
                 method="post" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                 <input type="hidden" name="action" value="update_student">
                 <input type="hidden" name="student_id" value="<?= (int) $edit_student['id'] ?>">
+                <?php if ($manual_request): ?>
+                <input type="hidden" name="request_id" value="<?= (int) $manual_request['id'] ?>">
+                <?php endif; ?>
 
                 <div class="admin-form-sections">
                     <fieldset class="admin-form-section">
