@@ -21,7 +21,7 @@ $producer_nav = [
         'url' => '/gakumas-sms/producer/students.php',
         'icon' => 'bi-people',
         'page' => 'students.php',
-        'pages' => ['students.php', 'student_add.php', 'student_edit.php', 'student_delete.php'],
+        'pages' => ['students.php', 'student_add.php', 'student_edit.php', 'student_delete.php', 'student_messages.php'],
     ],
     ['label' => 'Schedules', 'url' => '/gakumas-sms/producer/schedules.php', 'icon' => 'bi-calendar-event', 'page' => 'schedules.php'],
     ['label' => 'Lessons', 'url' => '/gakumas-sms/producer/lessons.php', 'icon' => 'bi-journal-bookmark', 'page' => 'lessons.php'],

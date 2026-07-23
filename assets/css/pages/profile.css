@@ -176,7 +176,15 @@
     overflow-wrap: anywhere;
 }
 
-.profile-edit-button {
+.profile-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.profile-edit-button,
+.profile-secondary-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -189,12 +197,15 @@
     color: var(--primary);
     font-weight: 800;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 .profile-edit-button:hover,
-.profile-edit-button[aria-pressed="true"] {
+.profile-edit-button[aria-pressed="true"],
+.profile-secondary-button:hover {
     background: var(--primary);
     color: white;
+    text-decoration: none;
 }
 
 .profile-form {

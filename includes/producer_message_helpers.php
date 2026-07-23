@@ -2,11 +2,222 @@
 
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
+function producer_message_type_options(): array
+{
+    return [
+        'morning' => 'Morning',
+        'afternoon' => 'Afternoon',
+        'evening' => 'Evening',
+        'rest_day' => 'Rest day',
+        'audition_day' => 'Audition day',
+        'good_progress' => 'Good progress',
+        'low_vocal' => 'Low vocal',
+        'low_dance' => 'Low dance',
+        'low_visual' => 'Low visual',
+        'birthday' => 'Birthday',
+    ];
+}
+
+function producer_message_type_label(?string $message_type): string
+{
+    $options = producer_message_type_options();
+
+    return $options[$message_type ?? ''] ?? ucwords(str_replace('_', ' ', (string) $message_type));
+}
+
+function get_producer_message_students(PDO $pdo, int $producer_id): array
+{
+    $stmt = $pdo->prepare(
+        'SELECT
+            s.id,
+            s.name,
+            s.name_jp,
+            s.school_year,
+            s.rank,
+            u.avatar,
+            COUNT(pm.id) AS message_count
+         FROM students s
+         INNER JOIN users u ON u.id = s.user_id
+         LEFT JOIN producer_messages pm
+            ON pm.student_id = s.id
+           AND pm.producer_id = ?
+         WHERE s.producer_id = ?
+           AND u.is_active = 1
+         GROUP BY s.id, s.name, s.name_jp, s.school_year, s.rank, u.avatar
+         ORDER BY s.school_year, s.name'
+    );
+    $stmt->execute([$producer_id, $producer_id]);
+
+    return $stmt->fetchAll();
+}
+
+function get_producer_message_student(PDO $pdo, int $producer_id, int $student_id): ?array
+{
+    $stmt = $pdo->prepare(
+        'SELECT s.id, s.name
+         FROM students s
+         INNER JOIN users u
+            ON u.id = s.user_id
+           AND u.is_active = 1
+         WHERE s.id = ?
+           AND s.producer_id = ?
+         LIMIT 1'
+    );
+    $stmt->execute([$student_id, $producer_id]);
+    $student = $stmt->fetch();
+
+    return $student ?: null;
+}
+
+function get_producer_messages(PDO $pdo, int $producer_id, ?int $student_id = null): array
+{
+    $student_sql = $student_id ? 'AND pm.student_id = ?' : '';
+    $params = [$producer_id, $producer_id];
+
+    if ($student_id) {
+        $params[] = $student_id;
+    }
+
+    $stmt = $pdo->prepare(
+        'SELECT
+            pm.id,
+            pm.student_id,
+            pm.message_type,
+            pm.tone,
+            pm.message_text,
+            s.name AS student_name,
+            s.school_year
+         FROM producer_messages pm
+         INNER JOIN students s
+            ON s.id = pm.student_id
+           AND s.producer_id = ?
+         WHERE pm.producer_id = ?
+           ' . $student_sql . '
+         ORDER BY s.school_year, s.name, pm.message_type, pm.id DESC'
+    );
+    $stmt->execute($params);
+
+    return $stmt->fetchAll();
+}
+
+function get_producer_owned_message(PDO $pdo, int $producer_id, int $message_id): ?array
+{
+    $stmt = $pdo->prepare(
+        'SELECT pm.*
+         FROM producer_messages pm
+         INNER JOIN students s
+            ON s.id = pm.student_id
+           AND s.producer_id = ?
+         WHERE pm.id = ?
+           AND pm.producer_id = ?
+         LIMIT 1'
+    );
+    $stmt->execute([$producer_id, $message_id, $producer_id]);
+    $message = $stmt->fetch();
+
+    return $message ?: null;
+}
+
+function validate_producer_message_payload(string $message_type, string $tone, string $message_text): array
+{
+    $message_type = trim($message_type);
+    $tone = trim($tone);
+    $message_text = trim($message_text);
+
+    if (!array_key_exists($message_type, producer_message_type_options())) {
+        throw new InvalidArgumentException('Choose a valid message type.');
+    }
+
+    if ($message_text === '') {
+        throw new InvalidArgumentException('Message text is required.');
+    }
+
+    if (strlen($message_text) > 500) {
+        throw new InvalidArgumentException('Message text must be 500 characters or fewer.');
+    }
+
+    if (strlen($tone) > 20) {
+        throw new InvalidArgumentException('Tone must be 20 characters or fewer.');
+    }
+
+    return [$message_type, $tone === '' ? null : $tone, $message_text];
+}
+
+function create_producer_message(
+    PDO $pdo,
+    int $producer_id,
+    int $student_id,
+    string $message_type,
+    string $tone,
+    string $message_text
+): int {
+    if (!get_producer_message_student($pdo, $producer_id, $student_id)) {
+        throw new RuntimeException('This student is not assigned to your producer account.');
+    }
+
+    [$message_type, $tone, $message_text] = validate_producer_message_payload(
+        $message_type,
+        $tone,
+        $message_text
+    );
+
+    $stmt = $pdo->prepare(
+        'INSERT INTO producer_messages (producer_id, student_id, message_type, tone, message_text)
+         VALUES (?, ?, ?, ?, ?)'
+    );
+    $stmt->execute([$producer_id, $student_id, $message_type, $tone, $message_text]);
+
+    return (int) $pdo->lastInsertId();
+}
+
+function update_producer_message(
+    PDO $pdo,
+    int $producer_id,
+    int $message_id,
+    string $message_type,
+    string $tone,
+    string $message_text
+): void {
+    if (!get_producer_owned_message($pdo, $producer_id, $message_id)) {
+        throw new RuntimeException('This producer message is not available.');
+    }
+
+    [$message_type, $tone, $message_text] = validate_producer_message_payload(
+        $message_type,
+        $tone,
+        $message_text
+    );
+
+    $stmt = $pdo->prepare(
+        'UPDATE producer_messages
+         SET message_type = ?,
+             tone = ?,
+             message_text = ?
+         WHERE id = ?
+           AND producer_id = ?'
+    );
+    $stmt->execute([$message_type, $tone, $message_text, $message_id, $producer_id]);
+}
+
+function delete_producer_message(PDO $pdo, int $producer_id, int $message_id): void
+{
+    if (!get_producer_owned_message($pdo, $producer_id, $message_id)) {
+        throw new RuntimeException('This producer message is not available.');
+    }
+
+    $stmt = $pdo->prepare(
+        'DELETE FROM producer_messages
+         WHERE id = ?
+           AND producer_id = ?'
+    );
+    $stmt->execute([$message_id, $producer_id]);
+}
+
 function get_producer_message(PDO $pdo, array $student, array $today_schedules, ?array $previous_snapshot): string
 {
     // Check if today is the student birthday, birthday messages have the highest priority
     if (is_student_birthday_today($student)) {
-        return get_random_producer_message($pdo, (int) $student['id'], 'birthday')
+        return get_random_producer_message($pdo, (int) $student['id'], 'birthday', (int) ($student['producer_id'] ?? 0))
             ?: 'Happy birthday. Today is yours, so let yourself enjoy it.';
     }
 
@@ -43,23 +254,31 @@ function get_producer_message(PDO $pdo, array $student, array $today_schedules, 
     $message_type = pick_weighted_message_type($message_weights);
 
     // Get one random producer message that matches the selected message type.
-    return get_random_producer_message($pdo, (int) $student['id'], $message_type)
+    return get_random_producer_message($pdo, (int) $student['id'], $message_type, (int) ($student['producer_id'] ?? 0))
         ?: 'Keep your pace steady today. Small progress still counts.';
 }
 
 //Gets one random message from the database
-function get_random_producer_message(PDO $pdo, int $student_id, string $message_type): ?string
+function get_random_producer_message(PDO $pdo, int $student_id, string $message_type, int $producer_id = 0): ?string
 {
+    $producer_sql = $producer_id > 0 ? 'AND producer_id = ?' : 'AND producer_id IS NULL';
+    $params = [$student_id, $message_type];
+
+    if ($producer_id > 0) {
+        $params[] = $producer_id;
+    }
+
     $stmt = $pdo->prepare(
         'SELECT message_text
          FROM producer_messages
          WHERE student_id = ?
            AND message_type = ?
+           ' . $producer_sql . '
          ORDER BY RAND()
          LIMIT 1'
     );
 
-    $stmt->execute([$student_id, $message_type]);
+    $stmt->execute($params);
 
     return $stmt->fetchColumn() ?: null;
 }

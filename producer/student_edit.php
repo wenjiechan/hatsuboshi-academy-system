@@ -229,10 +229,17 @@ $request_field_class = static fn(string $field): string => array_key_exists($fie
                 <?php endif; ?>
             </div>
 
-            <button type="button" class="profile-edit-button" id="profileEditButton" aria-pressed="false">
-                <i class="bi bi-pen" aria-hidden="true"></i>
-                Edit Profile
-            </button>
+            <div class="profile-hero-actions">
+                <a href="/gakumas-sms/producer/student_messages.php?student_id=<?= $student_id ?>" class="profile-secondary-button">
+                    <i class="bi bi-chat-square-heart" aria-hidden="true"></i>
+                    Producer Messages
+                </a>
+
+                <button type="button" class="profile-edit-button" id="profileEditButton" aria-pressed="false">
+                    <i class="bi bi-pen" aria-hidden="true"></i>
+                    Edit Profile
+                </button>
+            </div>
         </section>
 
         <?php if ($success !== ''): ?>

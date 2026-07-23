@@ -16,6 +16,7 @@ $stmt = $pdo->prepare(
         s.id,
         s.name,
         s.birthday,
+        s.producer_id,
         s.rank,
         s.school_year,
         s.vocal,
