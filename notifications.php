@@ -61,6 +61,33 @@ function format_notification_date(string $date): string
     return $timestamp ? date('M j, Y \a\t g:i A', $timestamp) : $date;
 }
 
+function is_birthday_message_action(array $notification): bool
+{
+    return (string) $notification['type'] === NOTIFICATION_TYPE_BIRTHDAY_TODAY
+        && str_contains((string) $notification['action_url'], '/messages/send_birthday.php');
+}
+
+function render_notification_body(array $notification): string
+{
+    $body = (string) ($notification['body'] ?? '');
+
+    if (!is_birthday_message_action($notification)) {
+        return htmlspecialchars($body, ENT_QUOTES, 'UTF-8');
+    }
+
+    $action_label = 'Click here to send a birthday message!';
+    $body_without_action = trim(str_replace($action_label, '', $body));
+    $html = $body_without_action !== ''
+        ? htmlspecialchars($body_without_action, ENT_QUOTES, 'UTF-8') . ' '
+        : '';
+
+    return $html
+        . '<a href="' . htmlspecialchars((string) $notification['action_url'], ENT_QUOTES, 'UTF-8') . '" class="notification-card-link notification-card-link--inline">'
+        . htmlspecialchars($action_label, ENT_QUOTES, 'UTF-8')
+        . '<i class="bi bi-arrow-right"></i>'
+        . '</a>';
+}
+
 $page_title = 'Notifications';
 require_once 'includes/header.php';
 require_once 'includes/sidebar.php';
@@ -101,8 +128,9 @@ require_once 'includes/sidebar.php';
                 <?php
                 $type_class = notification_type_class((string) $notification['type']);
                 $is_unread = empty($notification['is_read']);
+                $is_content_action = is_birthday_message_action($notification);
                 $action_label = match ((string) $notification['type']) {
-                    NOTIFICATION_TYPE_BIRTHDAY_TODAY => str_contains((string) $notification['action_url'], '/messages/send_birthday.php')
+                    NOTIFICATION_TYPE_BIRTHDAY_TODAY => $is_content_action
                         ? 'Click here to send a birthday message!'
                         : 'View',
                     NOTIFICATION_TYPE_STUDENT_REQUEST => 'View Request',
@@ -123,7 +151,7 @@ require_once 'includes/sidebar.php';
                     <div class="notification-card-content">
                         <h3><?= htmlspecialchars($notification['title'], ENT_QUOTES, 'UTF-8') ?></h3>
                         <?php if (!empty($notification['body'])): ?>
-                            <p><?= htmlspecialchars($notification['body'], ENT_QUOTES, 'UTF-8') ?></p>
+                            <p><?= render_notification_body($notification) ?></p>
                         <?php endif; ?>
                     </div>
 
@@ -133,7 +161,7 @@ require_once 'includes/sidebar.php';
                             <?= htmlspecialchars(format_notification_date((string) $notification['created_at']), ENT_QUOTES, 'UTF-8') ?>
                         </time>
 
-                        <?php if (!empty($notification['action_url'])): ?>
+                        <?php if (!empty($notification['action_url']) && !$is_content_action): ?>
                             <a href="<?= htmlspecialchars($notification['action_url'], ENT_QUOTES, 'UTF-8') ?>" class="notification-card-link">
                                 <?= htmlspecialchars($action_label, ENT_QUOTES, 'UTF-8') ?>
                                 <i class="bi bi-arrow-right"></i>

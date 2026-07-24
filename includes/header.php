@@ -16,6 +16,23 @@ $full_body_class = trim($body_class . ' ' . $student_theme);
 //Set theme colors
 $theme_primary = $_SESSION['theme_primary_color'] ?? '#FF6B9D';
 $theme_secondary = $_SESSION['theme_secondary_color'] ?? '#FFB3D1';
+$click_sparkle_mode = 'normal';
+
+if (($_SESSION['role'] ?? '') === 'student' && isset($pdo) && $pdo instanceof PDO && !empty($_SESSION['id'])) {
+    $birthday_stmt = $pdo->prepare(
+        'SELECT birthday
+         FROM students
+         WHERE user_id = ?
+         LIMIT 1'
+    );
+    $birthday_stmt->execute([(int) $_SESSION['id']]);
+    $birthday = $birthday_stmt->fetchColumn();
+    $birthday_time = $birthday ? strtotime((string) $birthday) : false;
+
+    if ($birthday_time !== false && date('m-d', $birthday_time) === date('m-d')) {
+        $click_sparkle_mode = 'birthday';
+    }
+}
 
 $body_style = sprintf(
     '--primary: %s; --secondary: %s;',
@@ -125,7 +142,7 @@ $is_messages_page = $current_directory === 'messages';
     <script src="/gakumas-sms/assets/js/notification-live.js" defer></script>
 </head>
 
-<body class="<?= htmlspecialchars($full_body_class, ENT_QUOTES, 'UTF-8') ?>" style="<?= $body_style ?>">
+<body class="<?= htmlspecialchars($full_body_class, ENT_QUOTES, 'UTF-8') ?>" style="<?= $body_style ?>" data-click-sparkle="<?= htmlspecialchars($click_sparkle_mode, ENT_QUOTES, 'UTF-8') ?>">
 
     <header class="mobile-topbar d-xl-none">
         <button class="btn sidebar-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar"

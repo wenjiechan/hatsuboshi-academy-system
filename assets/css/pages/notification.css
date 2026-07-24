@@ -207,26 +207,6 @@
         linear-gradient(145deg, color-mix(in srgb, var(--notification-accent) 7%, white), white 60%);
 }
 
-.notification-card--birthday {
-    --notification-accent: #e05c9a;
-}
-
-.notification-card--cancelled {
-    --notification-accent: #dc5a5a;
-}
-
-.notification-card--lesson {
-    --notification-accent: #7c65d6;
-}
-
-.notification-card--message {
-    --notification-accent: #278a78;
-}
-
-.notification-card--request {
-    --notification-accent: #336fbd;
-}
-
 .notification-card-top,
 .notification-card-footer {
     display: flex;
@@ -306,6 +286,10 @@
 
 .notification-card-link:hover {
     color: var(--notification-accent);
+}
+
+.notification-card-link--inline {
+    vertical-align: baseline;
 }
 
 .notification-card-link i {
