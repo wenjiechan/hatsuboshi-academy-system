@@ -61,6 +61,10 @@ function message_preview(?string $body, int $limit = 110): string
 // Decide which avatar image should be shown for the conversation.
 function inbox_avatar_path(array $conversation): string
 {
+    if (($conversation['conversation_type'] ?? '') === 'group') {
+        return message_avatar_path($conversation['group_avatar'] ?? null, 'group');
+    }
+
     $avatar = trim((string) ($conversation['other_avatar'] ?? ''));
     $role = (string) ($conversation['other_role'] ?? '');
 

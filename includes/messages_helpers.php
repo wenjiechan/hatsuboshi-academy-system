@@ -6,6 +6,8 @@ const MESSAGE_TYPE_PRODUCER_ADD_REQUEST = 'producer_add_request';
 const MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST = 'producer_remove_request';
 const MESSAGE_TYPE_SYSTEM = 'system';
 
+require_once __DIR__ . '/message_group_helpers.php';
+
 // Send users back to the correct dashboard based on role
 function message_dashboard_url(string $role): string
 {
@@ -30,6 +32,8 @@ function message_direct_key(int $first_user_id, int $second_user_id): string
 // Checks whether a direct conversation already exists between two users
 function find_direct_conversation(PDO $pdo, int $first_user_id, int $second_user_id): ?int
 {
+    ensure_message_group_schema($pdo);
+
     if ($first_user_id === $second_user_id) {
         return null;
     }
@@ -51,6 +55,8 @@ function find_direct_conversation(PDO $pdo, int $first_user_id, int $second_user
 // Use a transaction so the conversation and both participant rows are created together.
 function create_direct_conversation(PDO $pdo, int $first_user_id, int $second_user_id): int
 {
+    ensure_message_group_schema($pdo);
+
     if ($first_user_id === $second_user_id) {
         throw new InvalidArgumentException('A user cannot start a conversation with themselves.');
     }
@@ -123,6 +129,8 @@ function find_or_create_direct_conversation(PDO $pdo, int $first_user_id, int $s
 // Finds a system conversation for a user
 function find_system_conversation(PDO $pdo, int $recipient_user_id): ?int
 {
+    ensure_message_group_schema($pdo);
+
     $stmt = $pdo->prepare(
         'SELECT id
          FROM conversations
@@ -142,6 +150,8 @@ function find_or_create_system_conversation(
     int $admin_user_id,
     int $recipient_user_id
 ): int {
+    ensure_message_group_schema($pdo);
+
     $existing_id = find_system_conversation($pdo, $recipient_user_id);
 
     if ($existing_id !== null) {
@@ -282,24 +292,51 @@ function get_message_user(PDO $pdo, int $user_id): ?array
 // Information about a conversation for the current user
 function get_conversation_details(PDO $pdo, int $conversation_id, int $user_id): ?array
 {
+    ensure_message_group_schema($pdo);
+
     $stmt = $pdo->prepare(
         'SELECT
             c.id,
             c.conversation_type,
+            c.group_name,
+            c.group_avatar,
+            c.created_by,
             c.created_at,
             c.updated_at,
+            (
+                SELECT COUNT(*)
+                FROM conversation_participants member_count
+                WHERE member_count.conversation_id = c.id
+                  AND member_count.deleted_at IS NULL
+            ) AS member_count,
             current_participant.is_muted,
             current_participant.is_archived,
+            CASE
+                WHEN c.conversation_type = "group"
+                 AND c.created_by = current_participant.user_id
+                THEN 1
+                ELSE current_participant.is_group_admin
+            END AS is_group_admin,
             other_user.id AS other_user_id,
             other_user.username AS other_username,
-            other_user.role AS other_role,
-            other_user.avatar AS other_avatar,
             CASE
+                WHEN c.conversation_type = "group" THEN "group"
+                ELSE other_user.role
+            END AS other_role,
+            CASE
+                WHEN c.conversation_type = "group" THEN c.group_avatar
+                ELSE other_user.avatar
+            END AS other_avatar,
+            CASE
+                WHEN c.conversation_type = "group" THEN c.group_name
                 WHEN c.conversation_type = "system" AND other_user.role = "admin"
                 THEN "Admin"
                 ELSE COALESCE(student.name, teacher.name, other_user.username)
             END AS other_display_name,
-            teacher.specialty AS other_specialty
+            CASE
+                WHEN c.conversation_type = "group" THEN NULL
+                ELSE teacher.specialty
+            END AS other_specialty
          FROM conversations c
          INNER JOIN conversation_participants current_participant
             ON current_participant.conversation_id = c.id
@@ -309,6 +346,7 @@ function get_conversation_details(PDO $pdo, int $conversation_id, int $user_id):
             ON other_participant.conversation_id = c.id
            AND other_participant.user_id <> current_participant.user_id
            AND other_participant.deleted_at IS NULL
+           AND c.conversation_type <> "group"
          LEFT JOIN users other_user ON other_user.id = other_participant.user_id
          LEFT JOIN students student ON student.user_id = other_user.id
          LEFT JOIN teachers teacher ON teacher.user_id = other_user.id
@@ -415,20 +453,36 @@ function set_conversation_muted(
 // Newest conversations appear first.
 function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived = false): array
 {
+    ensure_message_group_schema($pdo);
+
     $archive_sql = $include_archived ? '' : 'AND current_participant.is_archived = 0';
 
     $stmt = $pdo->prepare(
         'SELECT
             c.id,
             c.conversation_type,
+            c.group_name,
+            c.group_avatar,
             c.updated_at,
             current_participant.is_archived,
             current_participant.is_muted,
             current_participant.last_read_at,
+            (
+                SELECT COUNT(*)
+                FROM conversation_participants group_member_count
+                WHERE group_member_count.conversation_id = c.id
+                  AND group_member_count.deleted_at IS NULL
+            ) AS member_count,
             other_user.id AS other_user_id,
             other_user.username AS other_username,
-            other_user.role AS other_role,
-            other_user.avatar AS other_avatar,
+            CASE
+                WHEN c.conversation_type = "group" THEN "group"
+                ELSE other_user.role
+            END AS other_role,
+            CASE
+                WHEN c.conversation_type = "group" THEN c.group_avatar
+                ELSE other_user.avatar
+            END AS other_avatar,
             student.name AS other_student_name,
             latest_message.id AS latest_message_id,
             latest_message.sender_id AS latest_sender_id,
@@ -444,6 +498,10 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
                 FROM messages unread_message
                 WHERE unread_message.conversation_id = c.id
                   AND unread_message.deleted_at IS NULL
+                  AND (
+                      c.conversation_type <> "group"
+                      OR unread_message.created_at >= current_participant.joined_at
+                  )
                   AND (unread_message.sender_id IS NULL OR unread_message.sender_id <> ?)
                   AND (
                       current_participant.last_read_at IS NULL
@@ -457,6 +515,7 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
             ON other_participant.conversation_id = c.id
            AND other_participant.user_id <> current_participant.user_id
            AND other_participant.deleted_at IS NULL
+           AND c.conversation_type <> "group"
          LEFT JOIN users other_user
             ON other_user.id = other_participant.user_id
          LEFT JOIN students student
@@ -466,6 +525,10 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
                 SELECT recent_message.id
                 FROM messages recent_message
                 WHERE recent_message.conversation_id = c.id
+                  AND (
+                      c.conversation_type <> "group"
+                      OR recent_message.created_at >= current_participant.joined_at
+                  )
                 ORDER BY recent_message.created_at DESC, recent_message.id DESC
                 LIMIT 1
             )
@@ -490,6 +553,8 @@ function get_conversation_messages(
     int $user_id,
     int $limit = 100
 ): array {
+    ensure_message_pin_schema($pdo);
+
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
     }
@@ -506,6 +571,8 @@ function get_conversation_messages(
             m.created_at,
             m.edited_at,
             m.deleted_at,
+            m.pinned_at,
+            m.pinned_by,
             request.id AS request_id,
             request.request_type AS request_type,
             request.status AS request_status,
@@ -526,21 +593,37 @@ function get_conversation_messages(
                 THEN 1
                 ELSE 0
             END AS can_delete,
+            CASE
+                WHEN m.deleted_at IS NULL THEN 1
+                ELSE 0
+            END AS can_pin,
             u.username AS sender_username,
             u.role AS sender_role,
             u.avatar AS sender_avatar,
-            s.name AS sender_student_name
+            s.name AS sender_student_name,
+            t.name AS sender_teacher_name
          FROM messages m
+         INNER JOIN conversation_participants current_participant
+            ON current_participant.conversation_id = m.conversation_id
+           AND current_participant.user_id = ?
+           AND current_participant.deleted_at IS NULL
+         INNER JOIN conversations c
+            ON c.id = m.conversation_id
          LEFT JOIN users u ON u.id = m.sender_id
          LEFT JOIN students s ON s.user_id = u.id
+         LEFT JOIN teachers t ON t.user_id = u.id
          LEFT JOIN producer_student_requests request
             ON request.id = m.related_id
            AND m.related_type = "producer_student_request"
          WHERE m.conversation_id = ?
+           AND (
+               c.conversation_type <> "group"
+               OR m.created_at >= current_participant.joined_at
+           )
          ORDER BY m.created_at ASC, m.id ASC
          LIMIT ' . $limit
     );
-    $stmt->execute([$user_id, $user_id, $conversation_id]);
+    $stmt->execute([$user_id, $user_id, $user_id, $conversation_id]);
 
     return $stmt->fetchAll();
 }
@@ -566,13 +649,23 @@ function get_deleted_conversation_messages(
             m.created_at,
             m.deleted_at
          FROM messages m
+         INNER JOIN conversation_participants current_participant
+            ON current_participant.conversation_id = m.conversation_id
+           AND current_participant.user_id = ?
+           AND current_participant.deleted_at IS NULL
+         INNER JOIN conversations c
+            ON c.id = m.conversation_id
          WHERE m.conversation_id = ?
            AND m.deleted_at IS NOT NULL
            AND m.deleted_at >= DATE_SUB(?, INTERVAL 1 SECOND)
+           AND (
+               c.conversation_type <> "group"
+               OR m.created_at >= current_participant.joined_at
+           )
          ORDER BY m.deleted_at ASC, m.id ASC
          LIMIT ' . $limit
     );
-    $stmt->execute([$conversation_id, $deleted_after]);
+    $stmt->execute([$user_id, $conversation_id, $deleted_after]);
 
     return $stmt->fetchAll();
 }
@@ -597,14 +690,24 @@ function get_edited_conversation_messages(
             m.body,
             m.edited_at
          FROM messages m
+         INNER JOIN conversation_participants current_participant
+            ON current_participant.conversation_id = m.conversation_id
+           AND current_participant.user_id = ?
+           AND current_participant.deleted_at IS NULL
+         INNER JOIN conversations c
+            ON c.id = m.conversation_id
          WHERE m.conversation_id = ?
            AND m.edited_at IS NOT NULL
            AND m.edited_at >= DATE_SUB(?, INTERVAL 1 SECOND)
            AND m.deleted_at IS NULL
+           AND (
+               c.conversation_type <> "group"
+               OR m.created_at >= current_participant.joined_at
+           )
          ORDER BY m.edited_at ASC, m.id ASC
          LIMIT ' . $limit
     );
-    $stmt->execute([$conversation_id, $edited_after]);
+    $stmt->execute([$user_id, $conversation_id, $edited_after]);
 
     return $stmt->fetchAll();
 }
@@ -798,12 +901,12 @@ function send_conversation_message(
         );
         $update_stmt->execute([$conversation_id]);
 
-        // Restore archived/ deleted participants
+        // Bring active members back to the inbox without reviving users who left a group.
         $restore_stmt = $pdo->prepare(
             'UPDATE conversation_participants
-             SET is_archived = 0,
-                 deleted_at = NULL
-             WHERE conversation_id = ?'
+             SET is_archived = 0
+             WHERE conversation_id = ?
+               AND deleted_at IS NULL'
         );
         $restore_stmt->execute([$conversation_id]);
 
@@ -819,6 +922,10 @@ function send_conversation_message(
     }
 }
 
+require_once __DIR__ . '/message_request_helpers.php';
+require_once __DIR__ . '/message_pin_helpers.php';
+require_once __DIR__ . '/message_presence_helpers.php';
+
 // Gets the active admin sender used for system-generated messages.
 function get_system_admin_user_id(PDO $pdo): ?int
 {
@@ -833,450 +940,6 @@ function get_system_admin_user_id(PDO $pdo): ?int
     $admin_user_id = (int) $stmt->fetchColumn();
 
     return $admin_user_id > 0 ? $admin_user_id : null;
-}
-
-// Starts a producer request to end a student relationship.
-function create_producer_remove_student_request(PDO $pdo, int $producer_id, int $student_id): int
-{
-    $student_stmt = $pdo->prepare(
-        'SELECT
-            s.id,
-            s.user_id,
-            s.name,
-            s.producer_id,
-            s.producer_status,
-            producer.username AS producer_name
-         FROM students s
-         INNER JOIN users student_user
-            ON student_user.id = s.user_id
-           AND student_user.is_active = 1
-         INNER JOIN users producer
-            ON producer.id = s.producer_id
-           AND producer.role = "producer"
-           AND producer.is_active = 1
-         WHERE s.id = ?
-           AND s.producer_id = ?
-         LIMIT 1'
-    );
-    $student_stmt->execute([$student_id, $producer_id]);
-    $student = $student_stmt->fetch();
-
-    if (!$student) {
-        throw new RuntimeException('This student is not assigned to your producer account.');
-    }
-
-    $pending_stmt = $pdo->prepare(
-        'SELECT id
-         FROM producer_student_requests
-         WHERE producer_id = ?
-           AND student_id = ?
-           AND request_type = "remove"
-           AND status = "pending"
-         LIMIT 1'
-    );
-    $pending_stmt->execute([$producer_id, $student_id]);
-    $existing_request_id = $pending_stmt->fetchColumn();
-
-    if ($existing_request_id !== false) {
-        return (int) $existing_request_id;
-    }
-
-    $conversation_id = find_or_create_direct_conversation(
-        $pdo,
-        $producer_id,
-        (int) $student['user_id']
-    );
-
-    $body = sprintf(
-        '%s requested to end your producer relationship. Please choose Accept if you agree to become unassigned, or Reject if you want to keep this producer.',
-        $student['producer_name'] ?: 'Your producer'
-    );
-
-    $pdo->beginTransaction();
-
-    try {
-        $request_stmt = $pdo->prepare(
-            'INSERT INTO producer_student_requests
-                (producer_id, student_id, request_type, status)
-             VALUES
-                (?, ?, "remove", "pending")'
-        );
-        $request_stmt->execute([$producer_id, $student_id]);
-        $request_id = (int) $pdo->lastInsertId();
-
-        $status_stmt = $pdo->prepare(
-            'UPDATE students
-             SET producer_status = "removal_pending"
-             WHERE id = ?
-               AND producer_id = ?'
-        );
-        $status_stmt->execute([$student_id, $producer_id]);
-
-        $pdo->commit();
-    } catch (Throwable $exception) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-
-        throw $exception;
-    }
-
-    $message_id = send_conversation_message(
-        $pdo,
-        $conversation_id,
-        $producer_id,
-        $body,
-        MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST,
-        'producer_student_request',
-        $request_id,
-        'producer_remove_request:' . $request_id
-    );
-
-    $update_stmt = $pdo->prepare(
-        'UPDATE producer_student_requests
-         SET request_message_id = ?
-         WHERE id = ?'
-    );
-    $update_stmt->execute([$message_id, $request_id]);
-
-    if (
-        function_exists('create_notification') &&
-        defined('NOTIFICATION_TYPE_NEW_MESSAGE') &&
-        !is_conversation_muted($pdo, $conversation_id, (int) $student['user_id'])
-    ) {
-        create_notification(
-            $pdo,
-            (int) $student['user_id'],
-            NOTIFICATION_TYPE_NEW_MESSAGE,
-            'Producer release request',
-            ($student['producer_name'] ?: 'Your producer') . ' asked to end your relationship.',
-            'message',
-            $message_id,
-            '/gakumas-sms/messages/view.php?id=' . $conversation_id,
-            'new_message:' . $message_id . ':' . (int) $student['user_id']
-        );
-    }
-
-    return $request_id;
-}
-
-// Starts a producer request to add an unassigned student.
-function create_producer_add_student_request(PDO $pdo, int $producer_id, int $student_id): int
-{
-    $student_stmt = $pdo->prepare(
-        'SELECT
-            s.id,
-            s.user_id,
-            s.name,
-            s.producer_id,
-            s.producer_status,
-            producer.username AS producer_name
-         FROM students s
-         INNER JOIN users student_user
-            ON student_user.id = s.user_id
-           AND student_user.is_active = 1
-         INNER JOIN users producer
-            ON producer.id = ?
-           AND producer.role = "producer"
-           AND producer.is_active = 1
-         WHERE s.id = ?
-           AND s.producer_id IS NULL
-         LIMIT 1'
-    );
-    $student_stmt->execute([$producer_id, $student_id]);
-    $student = $student_stmt->fetch();
-
-    if (!$student) {
-        throw new RuntimeException('This student is no longer unassigned.');
-    }
-
-    $pending_stmt = $pdo->prepare(
-        'SELECT id, request_message_id
-         FROM producer_student_requests
-         WHERE producer_id = ?
-           AND student_id = ?
-           AND request_type = "add"
-           AND status = "pending"
-         LIMIT 1'
-    );
-    $pending_stmt->execute([$producer_id, $student_id]);
-    $existing_request = $pending_stmt->fetch();
-
-    if ($existing_request && !empty($existing_request['request_message_id'])) {
-        return (int) $existing_request['id'];
-    }
-
-    if ($existing_request) {
-        $cancel_stmt = $pdo->prepare(
-            'UPDATE producer_student_requests
-             SET status = "cancelled",
-                 cancelled_at = NOW()
-             WHERE id = ?
-               AND status = "pending"'
-        );
-        $cancel_stmt->execute([(int) $existing_request['id']]);
-    }
-
-    $conversation_id = find_or_create_direct_conversation(
-        $pdo,
-        $producer_id,
-        (int) $student['user_id']
-    );
-
-    $body = sprintf(
-        '%s wants to become your producer. Please choose Accept if you agree, or Reject if you want to stay unassigned.',
-        $student['producer_name'] ?: 'A producer'
-    );
-
-    $request_stmt = $pdo->prepare(
-        'INSERT INTO producer_student_requests
-            (producer_id, student_id, request_type, status)
-         VALUES
-            (?, ?, "add", "pending")'
-    );
-    $request_stmt->execute([$producer_id, $student_id]);
-    $request_id = (int) $pdo->lastInsertId();
-
-    $message_id = send_conversation_message(
-        $pdo,
-        $conversation_id,
-        $producer_id,
-        $body,
-        MESSAGE_TYPE_PRODUCER_ADD_REQUEST,
-        'producer_student_request',
-        $request_id,
-        'producer_add_request:' . $request_id
-    );
-
-    $update_stmt = $pdo->prepare(
-        'UPDATE producer_student_requests
-         SET request_message_id = ?
-         WHERE id = ?'
-    );
-    $update_stmt->execute([$message_id, $request_id]);
-
-    if (
-        function_exists('create_notification') &&
-        defined('NOTIFICATION_TYPE_NEW_MESSAGE') &&
-        !is_conversation_muted($pdo, $conversation_id, (int) $student['user_id'])
-    ) {
-        create_notification(
-            $pdo,
-            (int) $student['user_id'],
-            NOTIFICATION_TYPE_NEW_MESSAGE,
-            'Producer add request',
-            ($student['producer_name'] ?: 'A producer') . ' asked to become your producer.',
-            'message',
-            $message_id,
-            '/gakumas-sms/messages/view.php?id=' . $conversation_id,
-            'new_message:' . $message_id . ':' . (int) $student['user_id']
-        );
-    }
-
-    return $request_id;
-}
-
-// Handles a student's accept/reject choice for a producer relationship request.
-function respond_to_producer_student_request(
-    PDO $pdo,
-    int $request_id,
-    int $student_user_id,
-    string $action
-): int {
-    if (!in_array($action, ['accept', 'reject'], true)) {
-        throw new InvalidArgumentException('Invalid request response.');
-    }
-
-    $request_stmt = $pdo->prepare(
-        'SELECT
-            request.id,
-            request.producer_id,
-            request.student_id,
-            request.request_type,
-            request.status,
-            s.user_id AS student_user_id,
-            s.name AS student_name,
-            s.producer_id AS current_producer_id,
-            producer.username AS producer_name
-         FROM producer_student_requests request
-         INNER JOIN students s ON s.id = request.student_id
-         INNER JOIN users producer ON producer.id = request.producer_id
-         WHERE request.id = ?
-         LIMIT 1'
-    );
-    $request_stmt->execute([$request_id]);
-    $request = $request_stmt->fetch();
-
-    if (!$request || (int) $request['student_user_id'] !== $student_user_id) {
-        throw new RuntimeException('This request is not available for your account.');
-    }
-
-    if (!in_array($request['request_type'], ['add', 'remove'], true)) {
-        throw new RuntimeException('This request type is not supported yet.');
-    }
-
-    if ($request['status'] !== 'pending') {
-        $conversation_id = find_or_create_direct_conversation(
-            $pdo,
-            (int) $request['producer_id'],
-            $student_user_id
-        );
-
-        return $conversation_id;
-    }
-
-    if (
-        $request['request_type'] === 'remove'
-        && (int) $request['current_producer_id'] !== (int) $request['producer_id']
-    ) {
-        $cancel_stmt = $pdo->prepare(
-            'UPDATE producer_student_requests
-             SET status = "cancelled",
-                 cancelled_at = NOW()
-             WHERE id = ?
-               AND status = "pending"'
-        );
-        $cancel_stmt->execute([$request_id]);
-
-        throw new RuntimeException('This relationship has already changed.');
-    }
-
-    if (
-        $request['request_type'] === 'add'
-        && $request['current_producer_id'] !== null
-    ) {
-        $cancel_stmt = $pdo->prepare(
-            'UPDATE producer_student_requests
-             SET status = "cancelled",
-                 cancelled_at = NOW()
-             WHERE id = ?
-               AND status = "pending"'
-        );
-        $cancel_stmt->execute([$request_id]);
-
-        throw new RuntimeException('This student already has a producer.');
-    }
-
-    $conversation_id = find_or_create_direct_conversation(
-        $pdo,
-        (int) $request['producer_id'],
-        $student_user_id
-    );
-    $accepted = $action === 'accept';
-
-    if ($request['request_type'] === 'add') {
-        $response_body = $accepted
-            ? sprintf('%s accepted the producer request. The producer relationship is now active.', $request['student_name'])
-            : sprintf('%s rejected the producer request. The student will stay unassigned.', $request['student_name']);
-    } else {
-        $response_body = $accepted
-            ? sprintf('%s accepted the release request. The student is now unassigned.', $request['student_name'])
-            : sprintf('%s rejected the release request. The producer relationship will continue.', $request['student_name']);
-    }
-
-    $message_id = send_conversation_message(
-        $pdo,
-        $conversation_id,
-        $student_user_id,
-        $response_body,
-        MESSAGE_TYPE_SYSTEM,
-        'producer_student_request',
-        $request_id,
-        'producer_remove_response:' . $request_id . ':' . ($accepted ? 'accepted' : 'rejected')
-    );
-
-    $pdo->beginTransaction();
-
-    try {
-        $update_request_stmt = $pdo->prepare(
-            'UPDATE producer_student_requests
-             SET status = ?,
-                 response_message_id = ?,
-                 responded_at = NOW()
-             WHERE id = ?
-               AND status = "pending"'
-        );
-        $update_request_stmt->execute([
-            $accepted ? 'accepted' : 'rejected',
-            $message_id,
-            $request_id,
-        ]);
-
-        if ($request['request_type'] === 'add' && $accepted) {
-            $student_stmt = $pdo->prepare(
-                'UPDATE students
-                 SET producer_id = ?,
-                     producer_status = "active"
-                 WHERE id = ?
-                   AND producer_id IS NULL'
-            );
-            $student_stmt->execute([
-                (int) $request['producer_id'],
-                (int) $request['student_id'],
-            ]);
-        } elseif ($request['request_type'] === 'add') {
-            $student_stmt = $pdo->prepare(
-                'UPDATE students
-                 SET producer_status = "unassigned"
-                 WHERE id = ?
-                   AND producer_id IS NULL'
-            );
-            $student_stmt->execute([(int) $request['student_id']]);
-        } elseif ($accepted) {
-            $student_stmt = $pdo->prepare(
-                'UPDATE students
-                 SET producer_id = NULL,
-                     producer_status = "unassigned"
-                 WHERE id = ?
-                   AND producer_id = ?'
-            );
-            $student_stmt->execute([
-                (int) $request['student_id'],
-                (int) $request['producer_id'],
-            ]);
-        } else {
-            $student_stmt = $pdo->prepare(
-                'UPDATE students
-                 SET producer_status = "active"
-                 WHERE id = ?
-                   AND producer_id = ?'
-            );
-            $student_stmt->execute([
-                (int) $request['student_id'],
-                (int) $request['producer_id'],
-            ]);
-        }
-
-        $pdo->commit();
-    } catch (Throwable $exception) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-
-        throw $exception;
-    }
-
-    if (
-        function_exists('create_notification') &&
-        defined('NOTIFICATION_TYPE_NEW_MESSAGE') &&
-        !is_conversation_muted($pdo, $conversation_id, (int) $request['producer_id'])
-    ) {
-        create_notification(
-            $pdo,
-            (int) $request['producer_id'],
-            NOTIFICATION_TYPE_NEW_MESSAGE,
-            $request['request_type'] === 'add'
-                ? 'Producer request response'
-                : 'Release request response',
-            $response_body,
-            'message',
-            $message_id,
-            '/gakumas-sms/messages/view.php?id=' . $conversation_id,
-            'new_message:' . $message_id . ':' . (int) $request['producer_id']
-        );
-    }
-
-    return $conversation_id;
 }
 
 // Update the participant's last_read_at
@@ -1317,108 +980,15 @@ function get_unread_message_count(PDO $pdo, int $user_id): int
     return (int) $stmt->fetchColumn();
 }
 
-// Automatically sends birthday messages to students whose birthday is today
-function generate_automatic_birthday_messages(
-    PDO $pdo,
-    ?DateTimeImmutable $now = null
-): int {
-    $now = $now ?: new DateTimeImmutable('now', new DateTimeZone('Asia/Kuala_Lumpur'));
-    $month_day = $now->format('m-d');
-    $year = $now->format('Y');
-
-    $admin_stmt = $pdo->query(
-        'SELECT id
-         FROM users
-         WHERE role = "admin"
-           AND is_active = 1
-         ORDER BY id
-         LIMIT 1'
-    );
-    $admin_user_id = (int) $admin_stmt->fetchColumn();
-
-    if ($admin_user_id <= 0) {
-        return 0;
-    }
-
-    $students_stmt = $pdo->prepare(
-        'SELECT s.id, s.user_id, s.name
-         FROM students s
-         INNER JOIN users student_user
-            ON student_user.id = s.user_id
-           AND student_user.is_active = 1
-         WHERE s.birthday IS NOT NULL
-           AND DATE_FORMAT(s.birthday, "%m-%d") = ?'
-    );
-    $students_stmt->execute([$month_day]);
-
-    // If another request created the conversation first, reuse the existing conversation.
-    $duplicate_stmt = $pdo->prepare(
-        'SELECT id FROM messages WHERE dedupe_key = ? LIMIT 1'
-    );
-    $created = 0;
-
-    foreach ($students_stmt->fetchAll() as $student) {
-        $dedupe_key = 'birthday:student:' . (int) $student['id'] . ':' . $year;
-        $duplicate_stmt->execute([$dedupe_key]);
-
-        if ($duplicate_stmt->fetchColumn()) {
-            continue;
-        }
-
-        $body = sprintf(
-            'Happy birthday, %s! Everyone at Hatsuboshi Gakuen wishes you a wonderful day.',
-            $student['name']
-        );
-
-        try {
-            $conversation_id = find_or_create_system_conversation(
-                $pdo,
-                $admin_user_id,
-                (int) $student['user_id']
-            );
-            $message_id = send_conversation_message(
-                $pdo,
-                $conversation_id,
-                $admin_user_id,
-                $body,
-                MESSAGE_TYPE_BIRTHDAY,
-                'student',
-                (int) $student['id'],
-                $dedupe_key
-            );
-
-            if (
-                function_exists('create_notification') &&
-                defined('NOTIFICATION_TYPE_NEW_MESSAGE') &&
-                !is_conversation_muted($pdo, $conversation_id, (int) $student['user_id'])
-            ) {
-                create_notification(
-                    $pdo,
-                    (int) $student['user_id'],
-                    NOTIFICATION_TYPE_NEW_MESSAGE,
-                    'New birthday message',
-                    'Admin sent you a birthday message.',
-                    'message',
-                    $message_id,
-                    '/gakumas-sms/messages/view.php?id=' . $conversation_id,
-                    'new_message:' . $message_id . ':' . (int) $student['user_id']
-                );
-            }
-
-            $created++;
-        } catch (PDOException $exception) {
-            if ((string) $exception->getCode() !== '23000') {
-                throw $exception;
-            }
-        }
-    }
-
-    return $created;
-}
+require_once __DIR__ . '/message_birthday_helpers.php';
 
 // Decides what name to show in the inbox
 function get_message_user_display_name(array $row, string $prefix = 'other_'): string
 {
+    if (($row['conversation_type'] ?? '') === 'group') {
+        return trim((string) ($row['group_name'] ?? '')) ?: 'Group chat';
+    }
+
     if (
         ($row['conversation_type'] ?? '') === 'system' &&
         ($row[$prefix . 'role'] ?? '') === 'admin'
@@ -1454,20 +1024,50 @@ function message_avatar_path(?string $avatar, ?string $role): string
 {
     $avatar = trim((string) $avatar);
     $role = (string) $role;
-
-    if ($avatar !== '') {
-        if (preg_match('/^https?:\/\//i', $avatar) || str_starts_with($avatar, '/')) {
-            return $avatar;
-        }
-
-        return $role === 'student'
-            ? '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($avatar)
-            : '/gakumas-sms/assets/images/avatars/' . rawurlencode($avatar);
-    }
-
-    return match ($role) {
+    $default_avatar = match ($role) {
+        'group' => '/gakumas-sms/assets/images/avatars/default.webp',
         'producer' => '/gakumas-sms/assets/images/avatars/default_producer.webp',
         'teacher' => '/gakumas-sms/assets/images/avatars/default_teacher.webp',
         default => '/gakumas-sms/assets/images/avatars/default.webp',
     };
+
+    $local_avatar_exists = static function (string $web_path): bool {
+        $path = (string) parse_url($web_path, PHP_URL_PATH);
+
+        if (!str_starts_with($path, '/gakumas-sms/')) {
+            return true;
+        }
+
+        $base_dir = realpath(__DIR__ . '/..');
+
+        if (!$base_dir) {
+            return false;
+        }
+
+        $relative = rawurldecode(substr($path, strlen('/gakumas-sms/')));
+        $candidate = $base_dir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);
+        $real_candidate = realpath($candidate);
+
+        return $real_candidate !== false
+            && str_starts_with($real_candidate, $base_dir . DIRECTORY_SEPARATOR)
+            && is_file($real_candidate);
+    };
+
+    if ($avatar !== '') {
+        if (preg_match('/^https?:\/\//i', $avatar)) {
+            return $avatar;
+        }
+
+        if (str_starts_with($avatar, '/')) {
+            return $local_avatar_exists($avatar) ? $avatar : $default_avatar;
+        }
+
+        $avatar_path = $role === 'student'
+            ? '/gakumas-sms/assets/images/avatars/idols/' . rawurlencode($avatar)
+            : '/gakumas-sms/assets/images/avatars/' . rawurlencode($avatar);
+
+        return $local_avatar_exists($avatar_path) ? $avatar_path : $default_avatar;
+    }
+
+    return $default_avatar;
 }

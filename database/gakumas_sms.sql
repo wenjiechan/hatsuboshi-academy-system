@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 24, 2026 at 11:42 AM
+-- Generation Time: Jul 27, 2026 at 11:43 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -29,8 +29,11 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `conversations` (
   `id` int(11) NOT NULL,
-  `conversation_type` enum('direct','system') NOT NULL DEFAULT 'direct',
+  `conversation_type` enum('direct','system','group') NOT NULL DEFAULT 'direct',
   `direct_key` varchar(50) DEFAULT NULL,
+  `group_name` varchar(100) DEFAULT NULL,
+  `group_avatar` varchar(255) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -47,6 +50,7 @@ CREATE TABLE `conversation_participants` (
   `last_read_at` datetime DEFAULT NULL,
   `is_archived` tinyint(1) NOT NULL DEFAULT 0,
   `is_muted` tinyint(1) NOT NULL DEFAULT 0,
+  `is_group_admin` tinyint(1) NOT NULL DEFAULT 0,
   `joined_at` datetime NOT NULL DEFAULT current_timestamp(),
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -73,27 +77,12 @@ CREATE TABLE `daily_student_stats` (
 --
 
 INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `dance`, `visual`, `created_at`, `updated_at`) VALUES
-(290, 10, '2026-06-24', 75, 65, 55, '2026-06-24 09:14:20', '2026-06-24 09:14:20'),
 (293, 4, '2026-06-24', 55, 55, 65, '2026-06-24 13:26:12', '2026-06-24 13:26:12'),
 (299, 8, '2026-06-24', 50, 60, 60, '2026-06-24 15:46:53', '2026-06-24 15:46:53'),
 (309, 3, '2026-06-25', 65, 55, 75, '2026-06-25 11:44:20', '2026-06-25 11:44:20'),
 (311, 5, '2026-06-25', 65, 55, 65, '2026-06-25 16:26:59', '2026-06-25 16:26:59'),
-(337, 13, '2026-06-26', 80, 90, 70, '2026-06-26 15:42:03', '2026-06-26 15:42:03'),
 (377, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:53:28', '2026-06-30 17:53:28'),
 (379, 6, '2026-07-01', 55, 55, 60, '2026-07-01 13:12:23', '2026-07-01 13:12:23'),
-(380, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:28:00', '2026-07-03 07:28:00'),
-(381, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:28:22', '2026-07-03 07:28:22'),
-(382, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:29:05', '2026-07-03 07:29:05'),
-(383, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:29:24', '2026-07-03 07:29:24'),
-(384, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:13', '2026-07-03 07:41:13'),
-(385, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:28', '2026-07-03 07:41:28'),
-(386, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:31', '2026-07-03 07:41:31'),
-(387, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:40', '2026-07-03 07:41:40'),
-(388, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:41:49', '2026-07-03 07:41:49'),
-(389, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:42:04', '2026-07-03 07:42:04'),
-(391, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:47:18', '2026-07-03 07:47:18'),
-(394, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:49:42', '2026-07-03 07:49:42'),
-(395, 13, '2026-07-03', 80, 90, 70, '2026-07-03 07:52:48', '2026-07-03 07:52:48'),
 (397, 1, '2026-07-03', 75, 75, 80, '2026-07-03 07:59:03', '2026-07-03 07:59:03'),
 (398, 13, '2026-07-03', 80, 90, 70, '2026-07-03 08:00:00', '2026-07-03 08:00:00'),
 (399, 3, '2026-07-03', 65, 55, 75, '2026-07-03 08:01:08', '2026-07-03 08:01:08'),
@@ -111,7 +100,6 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (416, 2, '2026-07-09', 75, 65, 55, '2026-07-09 16:18:55', '2026-07-09 16:18:55'),
 (417, 11, '2026-07-10', 60, 70, 55, '2026-07-10 16:32:03', '2026-07-10 16:32:03'),
 (418, 14, '2026-07-16', 88, 76, 92, '2026-07-16 14:48:11', '2026-07-16 14:48:11'),
-(419, 10, '2026-07-16', 75, 65, 55, '2026-07-16 15:15:07', '2026-07-16 15:15:07'),
 (420, 10, '2026-07-16', 75, 65, 55, '2026-07-16 17:59:16', '2026-07-16 17:59:16'),
 (421, 2, '2026-07-21', 75, 65, 55, '2026-07-21 11:23:43', '2026-07-21 11:23:43'),
 (422, 4, '2026-07-21', 55, 55, 65, '2026-07-21 11:23:58', '2026-07-21 11:23:58'),
@@ -148,7 +136,17 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (453, 5, '2026-07-24', 65, 55, 65, '2026-07-24 10:57:01', '2026-07-24 10:57:01'),
 (454, 6, '2026-07-24', 55, 55, 60, '2026-07-24 11:03:04', '2026-07-24 11:03:04'),
 (455, 6, '2026-07-24', 55, 55, 60, '2026-07-24 11:03:27', '2026-07-24 11:03:27'),
-(456, 4, '2026-07-24', 55, 55, 65, '2026-07-24 17:32:45', '2026-07-24 17:32:45');
+(456, 4, '2026-07-24', 55, 55, 65, '2026-07-24 17:32:45', '2026-07-24 17:32:45'),
+(457, 4, '2026-07-24', 55, 55, 65, '2026-07-24 17:50:48', '2026-07-24 17:50:48'),
+(458, 4, '2026-07-24', 55, 55, 65, '2026-07-24 17:50:53', '2026-07-24 17:50:53'),
+(459, 13, '2026-07-27', 80, 90, 70, '2026-07-27 11:33:24', '2026-07-27 11:33:24'),
+(460, 12, '2026-07-27', 130, 100, 105, '2026-07-27 12:25:51', '2026-07-27 12:25:51'),
+(461, 13, '2026-07-27', 80, 90, 70, '2026-07-27 13:06:39', '2026-07-27 13:06:39'),
+(462, 10, '2026-07-27', 75, 65, 55, '2026-07-27 13:10:26', '2026-07-27 13:10:26'),
+(463, 13, '2026-07-27', 80, 90, 70, '2026-07-27 15:19:40', '2026-07-27 15:19:40'),
+(464, 11, '2026-07-27', 60, 70, 55, '2026-07-27 17:01:32', '2026-07-27 17:01:32'),
+(465, 13, '2026-07-27', 80, 90, 70, '2026-07-27 17:41:41', '2026-07-27 17:41:41'),
+(466, 11, '2026-07-27', 60, 70, 55, '2026-07-27 17:41:50', '2026-07-27 17:41:50');
 
 -- --------------------------------------------------------
 
@@ -211,8 +209,23 @@ CREATE TABLE `messages` (
   `dedupe_key` varchar(190) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `edited_at` datetime DEFAULT NULL,
-  `deleted_at` datetime DEFAULT NULL
+  `deleted_at` datetime DEFAULT NULL,
+  `pinned_at` datetime DEFAULT NULL,
+  `pinned_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `message_typing_status`
+--
+
+CREATE TABLE `message_typing_status` (
+  `conversation_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `is_typing` tinyint(1) NOT NULL DEFAULT 0,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1904,10 +1917,10 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`
 (11, 'China Kuramoto', '$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy', 'student', 'China Kuramoto.png', 1, '2026-05-26 13:13:13', '2026-07-22 11:03:03', '2026-07-22 11:03:03', '#F68B1F', '#FCE0C5'),
 (12, 'Ume Hanami', '$2y$10$J3odyrCmdaCqHIBPZczN6Ogetu1yEPjb4t5eualYarDubGf9liQpq', 'student', 'Ume Hanami.png', 1, '2026-05-26 13:13:13', '2026-07-07 17:20:13', '2026-07-07 17:16:30', '#EA533A', '#FAD4CB'),
 (13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-07-23 13:57:15', '2026-07-23 13:57:15', '#7A99CF', '#D8E0EF'),
-(14, 'Mao Arimura', '$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO', 'student', 'Mao Arimura.png', 1, '2026-05-26 13:13:13', '2026-07-16 17:59:16', '2026-07-16 17:59:16', '#7F1184', '#DCC2DE'),
-(15, 'Rinami Himesaki', '$2y$10$Mc/amUU4R6ORKAqyn6WMt.S3EcLbF5jxjIq8c83h6D0kElQpB/XZW', 'student', 'Rinami Himesaki.png', 1, '2026-05-26 13:13:13', '2026-07-21 16:41:55', '2026-07-21 16:41:55', '#F6ADC6', '#FCE6EE'),
-(16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-07-21 17:45:18', '2026-07-21 17:45:18', '#F6AE54', '#FCE6CC'),
-(17, 'Tsubame Amaya', '$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi', 'student', 'Tsubame Amaya.png', 1, '2026-05-26 13:13:13', '2026-07-03 07:28:00', '2026-07-03 07:28:00', '#7B68EE', '#D8D2FB'),
+(14, 'Mao Arimura', '$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO', 'student', 'Mao Arimura.png', 1, '2026-05-26 13:13:13', '2026-07-27 13:10:26', '2026-07-27 13:10:26', '#7F1184', '#DCC2DE'),
+(15, 'Rinami Himesaki', '$2y$10$Mc/amUU4R6ORKAqyn6WMt.S3EcLbF5jxjIq8c83h6D0kElQpB/XZW', 'student', 'Rinami Himesaki.png', 1, '2026-05-26 13:13:13', '2026-07-27 17:01:32', '2026-07-27 17:01:32', '#F6ADC6', '#FCE6EE'),
+(16, 'Sena Juo', '$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm', 'student', 'Sena Juo.png', 1, '2026-05-26 13:13:13', '2026-07-27 12:25:51', '2026-07-27 12:25:51', '#F6AE54', '#FCE6CC'),
+(17, 'Tsubame Amaya', '$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi', 'student', 'Tsubame Amaya.png', 1, '2026-05-26 13:13:13', '2026-07-27 15:19:40', '2026-07-27 15:19:40', '#7B68EE', '#D8D2FB'),
 (18, 'Kunio Juo', '$2y$10$KOwDLFqCre7g2vJEwSiu7eZbizrRFI6hNnxi8jBHF0F.EktS2qarG', 'admin', NULL, 1, '2026-06-22 16:12:30', '2026-07-22 17:27:08', '2026-07-22 17:27:08', '#322F30', '#5B5959'),
 (19, 'Rinha Kaya', '$2y$10$j2W69.OZ6Qr3v3iLCLH2m.WHemUhDQmMtSeZS55PkGL3Fo6Te87xa', 'student', '/gakumas-sms/uploads/profiles/student_19_1cb47f6eab98f92f.webp', 1, '2026-06-26 14:45:34', '2026-07-22 12:20:57', '2026-07-22 12:20:57', '#5A3FA8', '#7B65B9');
 
@@ -1973,6 +1986,14 @@ ALTER TABLE `messages`
   ADD KEY `idx_chat_messages_sender` (`sender_id`),
   ADD KEY `idx_chat_messages_related` (`related_type`,`related_id`),
   ADD KEY `idx_chat_messages_created` (`created_at`);
+
+--
+-- Indexes for table `message_typing_status`
+--
+ALTER TABLE `message_typing_status`
+  ADD PRIMARY KEY (`conversation_id`,`user_id`),
+  ADD KEY `idx_message_typing_active` (`conversation_id`,`is_typing`,`updated_at`),
+  ADD KEY `fk_message_typing_user` (`user_id`);
 
 --
 -- Indexes for table `notifications`
@@ -2094,13 +2115,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `daily_student_stats`
 --
 ALTER TABLE `daily_student_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=457;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=467;
 
 --
 -- AUTO_INCREMENT for table `events`
@@ -2124,7 +2145,7 @@ ALTER TABLE `lessons`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -2222,6 +2243,13 @@ ALTER TABLE `event_participants`
 ALTER TABLE `messages`
   ADD CONSTRAINT `fk_chat_messages_conversation` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_chat_messages_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `message_typing_status`
+--
+ALTER TABLE `message_typing_status`
+  ADD CONSTRAINT `fk_message_typing_conversation` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_message_typing_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notifications`

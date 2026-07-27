@@ -54,6 +54,9 @@ if (!is_conversation_participant($pdo, (int) $conversation_id, $user_id)) {
     messages_poll_response(['error' => 'Conversation unavailable'], 403);
 }
 
+ensure_message_pin_schema($pdo);
+ensure_message_presence_schema($pdo);
+
 // Get messages newer than the last message ID received by the browser.
 $stmt = $pdo->prepare(
     'SELECT
@@ -66,6 +69,8 @@ $stmt = $pdo->prepare(
         m.created_at,
         m.edited_at,
         m.deleted_at,
+        m.pinned_at,
+        m.pinned_by,
         request.id AS request_id,
         request.request_type AS request_type,
         request.status AS request_status,
@@ -96,17 +101,35 @@ $stmt = $pdo->prepare(
              AND m.deleted_at IS NULL
             THEN 1
             ELSE 0
-        END AS can_delete
+        END AS can_delete,
+        CASE
+            WHEN m.deleted_at IS NULL THEN 1
+            ELSE 0
+        END AS can_pin,
+        COALESCE(sender_student.name, sender_teacher.name, sender.username) AS sender_display_name
      FROM messages m
+     INNER JOIN conversation_participants current_participant
+        ON current_participant.conversation_id = m.conversation_id
+       AND current_participant.user_id = ?
+       AND current_participant.deleted_at IS NULL
+     INNER JOIN conversations c
+        ON c.id = m.conversation_id
+     LEFT JOIN users sender ON sender.id = m.sender_id
+     LEFT JOIN students sender_student ON sender_student.user_id = sender.id
+     LEFT JOIN teachers sender_teacher ON sender_teacher.user_id = sender.id
      LEFT JOIN producer_student_requests request
         ON request.id = m.related_id
        AND m.related_type = "producer_student_request"
      WHERE m.conversation_id = ?
        AND m.id > ?
+       AND (
+           c.conversation_type <> "group"
+           OR m.created_at >= current_participant.joined_at
+       )
      ORDER BY m.id ASC
      LIMIT 100'
 );
-$stmt->execute([$user_id, $user_id, (int) $conversation_id, (int) $after_id]);
+$stmt->execute([$user_id, $user_id, $user_id, (int) $conversation_id, (int) $after_id]);
 $messages = $stmt->fetchAll();
 // Get messages that were edited or deleted after the browser's last polling cursor.
 $edited_messages = get_edited_conversation_messages(
@@ -142,6 +165,9 @@ $poll_cursor = (string) $pdo->query('SELECT NOW()')->fetchColumn();
 // Use the current database time as the next edit/delete polling cursor.
 mark_conversation_read($pdo, (int) $conversation_id, $user_id);
 
+$read_receipts = get_group_message_read_receipts($pdo, (int) $conversation_id, $user_id);
+$typing_users = get_conversation_typing_users($pdo, (int) $conversation_id, $user_id);
+
 // Use the current database time as the next edit/delete polling cursor.
 $next_after_id = (int) $after_id;
 $response_messages = [];
@@ -163,9 +189,18 @@ foreach ($messages as $message) {
         'created_at' => (string) $message['created_at'],
         'edited_at' => $message['edited_at'],
         'deleted_at' => $message['deleted_at'],
+        'pinned_at' => $message['pinned_at'],
+        'pinned_by' => $message['pinned_by'] !== null ? (int) $message['pinned_by'] : null,
         'is_own' => (int) ($message['sender_id'] ?? 0) === $user_id,
+        'sender_display_name' => $message['sender_display_name'],
         'can_edit' => (bool) $message['can_edit'],
         'can_delete' => (bool) $message['can_delete'],
+        'can_pin' => (bool) $message['can_pin'],
+        'read_receipt' => $read_receipts[$message_id] ?? [
+            'message_id' => $message_id,
+            'read_count' => 0,
+            'read_names' => '',
+        ],
         'can_respond_request' => $user_role === 'student'
             && (int) ($message['sender_id'] ?? 0) !== $user_id
             && in_array($message['message_type'], [
@@ -205,6 +240,14 @@ messages_poll_response([
             'request_status' => (string) $request['status'],
         ],
         $request_statuses
+    ),
+    'read_receipts' => array_values($read_receipts),
+    'typing_users' => array_map(
+        static fn(array $typing_user): array => [
+            'user_id' => (int) $typing_user['user_id'],
+            'display_name' => (string) $typing_user['display_name'],
+        ],
+        $typing_users
     ),
     'next_after_id' => $next_after_id,
     'edited_cursor' => $poll_cursor,
