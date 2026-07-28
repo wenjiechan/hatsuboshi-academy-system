@@ -300,5 +300,5 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </div>
 </main>
 
-<script src="/gakumas-sms/assets/js/messages.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-inbox.js" defer></script>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

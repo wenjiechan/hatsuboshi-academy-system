@@ -171,6 +171,52 @@ function get_group_message_read_receipts(PDO $pdo, int $conversation_id, int $us
     return $receipts;
 }
 
+// Direct read ticks use the other participant's conversation-level read cursor.
+function get_direct_message_read_receipts(PDO $pdo, int $conversation_id, int $user_id): array
+{
+    if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
+        return [];
+    }
+
+    $stmt = $pdo->prepare(
+        'SELECT
+            m.id AS message_id,
+            CASE
+                WHEN reader.last_read_at IS NOT NULL
+                 AND reader.last_read_at >= m.created_at
+                THEN 1
+                ELSE 0
+            END AS is_read,
+            DATE_FORMAT(reader.last_read_at, "%b %e, %Y at %l:%i %p") AS read_at
+         FROM messages m
+         INNER JOIN conversations c
+            ON c.id = m.conversation_id
+           AND c.conversation_type = "direct"
+         LEFT JOIN conversation_participants reader
+            ON reader.conversation_id = m.conversation_id
+           AND reader.user_id <> m.sender_id
+           AND reader.deleted_at IS NULL
+         WHERE m.conversation_id = ?
+           AND m.sender_id = ?
+           AND m.deleted_at IS NULL
+         ORDER BY m.created_at ASC, m.id ASC
+         LIMIT 200'
+    );
+    $stmt->execute([$conversation_id, $user_id]);
+
+    $receipts = [];
+
+    foreach ($stmt->fetchAll() as $row) {
+        $receipts[(int) $row['message_id']] = [
+            'message_id' => (int) $row['message_id'],
+            'is_read' => (bool) $row['is_read'],
+            'read_at' => (string) ($row['read_at'] ?? ''),
+        ];
+    }
+
+    return $receipts;
+}
+
 function group_message_read_receipt_for_message(PDO $pdo, int $message_id, int $conversation_id, int $user_id): array
 {
     $receipts = get_group_message_read_receipts($pdo, $conversation_id, $user_id);
@@ -180,5 +226,16 @@ function group_message_read_receipt_for_message(PDO $pdo, int $message_id, int $
         'read_count' => 0,
         'read_names' => '',
         'read_users' => [],
+    ];
+}
+
+function direct_message_read_receipt_for_message(PDO $pdo, int $message_id, int $conversation_id, int $user_id): array
+{
+    $receipts = get_direct_message_read_receipts($pdo, $conversation_id, $user_id);
+
+    return $receipts[$message_id] ?? [
+        'message_id' => $message_id,
+        'is_read' => false,
+        'read_at' => '',
     ];
 }

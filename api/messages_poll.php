@@ -56,6 +56,17 @@ if (!is_conversation_participant($pdo, (int) $conversation_id, $user_id)) {
 
 ensure_message_pin_schema($pdo);
 ensure_message_presence_schema($pdo);
+ensure_message_reply_schema($pdo);
+ensure_message_clear_schema($pdo);
+
+$conversation_type_stmt = $pdo->prepare(
+    'SELECT conversation_type
+     FROM conversations
+     WHERE id = ?
+     LIMIT 1'
+);
+$conversation_type_stmt->execute([(int) $conversation_id]);
+$conversation_type = (string) $conversation_type_stmt->fetchColumn();
 
 // Get messages newer than the last message ID received by the browser.
 $stmt = $pdo->prepare(
@@ -71,6 +82,13 @@ $stmt = $pdo->prepare(
         m.deleted_at,
         m.pinned_at,
         m.pinned_by,
+        m.reply_to_message_id,
+        m.forwarded_from_label,
+        m.forwarded_from_message_id,
+        reply.body AS reply_body,
+        reply.message_type AS reply_message_type,
+        reply.deleted_at AS reply_deleted_at,
+        COALESCE(reply_student.name, reply_teacher.name, reply_user.username) AS reply_sender_display_name,
         request.id AS request_id,
         request.request_type AS request_type,
         request.status AS request_status,
@@ -117,6 +135,12 @@ $stmt = $pdo->prepare(
      LEFT JOIN users sender ON sender.id = m.sender_id
      LEFT JOIN students sender_student ON sender_student.user_id = sender.id
      LEFT JOIN teachers sender_teacher ON sender_teacher.user_id = sender.id
+     LEFT JOIN messages reply
+        ON reply.id = m.reply_to_message_id
+       AND reply.conversation_id = m.conversation_id
+     LEFT JOIN users reply_user ON reply_user.id = reply.sender_id
+     LEFT JOIN students reply_student ON reply_student.user_id = reply_user.id
+     LEFT JOIN teachers reply_teacher ON reply_teacher.user_id = reply_user.id
      LEFT JOIN producer_student_requests request
         ON request.id = m.related_id
        AND m.related_type = "producer_student_request"
@@ -125,6 +149,11 @@ $stmt = $pdo->prepare(
        AND (
            c.conversation_type <> "group"
            OR m.created_at >= current_participant.joined_at
+       )
+       -- Polling should only return messages still visible after this participant clear point.
+       AND (
+           current_participant.cleared_at IS NULL
+           OR m.created_at > current_participant.cleared_at
        )
      ORDER BY m.id ASC
      LIMIT 100'
@@ -165,7 +194,11 @@ $poll_cursor = (string) $pdo->query('SELECT NOW()')->fetchColumn();
 // Use the current database time as the next edit/delete polling cursor.
 mark_conversation_read($pdo, (int) $conversation_id, $user_id);
 
-$read_receipts = get_group_message_read_receipts($pdo, (int) $conversation_id, $user_id);
+$read_receipts = $conversation_type === 'group'
+    ? get_group_message_read_receipts($pdo, (int) $conversation_id, $user_id)
+    : ($conversation_type === 'direct'
+        ? get_direct_message_read_receipts($pdo, (int) $conversation_id, $user_id)
+        : []);
 $typing_users = get_conversation_typing_users($pdo, (int) $conversation_id, $user_id);
 
 // Use the current database time as the next edit/delete polling cursor.
@@ -191,15 +224,35 @@ foreach ($messages as $message) {
         'deleted_at' => $message['deleted_at'],
         'pinned_at' => $message['pinned_at'],
         'pinned_by' => $message['pinned_by'] !== null ? (int) $message['pinned_by'] : null,
+        'reply_to_message_id' => $message['reply_to_message_id'] !== null ? (int) $message['reply_to_message_id'] : null,
+        'forwarded_from_label' => $message['forwarded_from_label'] !== null ? (string) $message['forwarded_from_label'] : '',
+        'forwarded_from_message_id' => $message['forwarded_from_message_id'] !== null ? (int) $message['forwarded_from_message_id'] : null,
+        'reply_preview' => $message['reply_to_message_id'] !== null ? [
+            'message_id' => (int) $message['reply_to_message_id'],
+            'sender_display_name' => (string) ($message['reply_sender_display_name'] ?? 'Someone'),
+            'body' => empty($message['reply_deleted_at'])
+                ? (string) ($message['reply_body'] ?? '')
+                : 'This message was deleted.',
+            'is_deleted' => !empty($message['reply_deleted_at']),
+            'message_type' => (string) ($message['reply_message_type'] ?? MESSAGE_TYPE_TEXT),
+        ] : null,
+        'sender_id' => (int) ($message['sender_id'] ?? 0),
         'is_own' => (int) ($message['sender_id'] ?? 0) === $user_id,
         'sender_display_name' => $message['sender_display_name'],
         'can_edit' => (bool) $message['can_edit'],
         'can_delete' => (bool) $message['can_delete'],
         'can_pin' => (bool) $message['can_pin'],
+        'can_reply' => empty($message['deleted_at'])
+            && (string) $message['message_type'] !== MESSAGE_TYPE_SYSTEM,
+        'can_forward' => empty($message['deleted_at'])
+            && (string) $message['message_type'] !== MESSAGE_TYPE_SYSTEM,
         'read_receipt' => $read_receipts[$message_id] ?? [
             'message_id' => $message_id,
             'read_count' => 0,
             'read_names' => '',
+            'read_users' => [],
+            'is_read' => false,
+            'read_at' => '',
         ],
         'can_respond_request' => $user_role === 'student'
             && (int) ($message['sender_id'] ?? 0) !== $user_id

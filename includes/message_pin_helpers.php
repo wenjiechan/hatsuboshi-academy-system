@@ -35,6 +35,7 @@ function ensure_message_pin_schema(PDO $pdo): void
 function get_pinned_conversation_messages(PDO $pdo, int $conversation_id, int $user_id): array
 {
     ensure_message_pin_schema($pdo);
+    ensure_message_clear_schema($pdo);
 
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
@@ -66,6 +67,11 @@ function get_pinned_conversation_messages(PDO $pdo, int $conversation_id, int $u
                c.conversation_type <> "group"
                OR m.created_at >= current_participant.joined_at
            )
+           -- Hide pinned messages that are older than this participant clear point.
+           AND (
+               current_participant.cleared_at IS NULL
+               OR m.created_at > current_participant.cleared_at
+           )
          ORDER BY m.pinned_at DESC, m.id DESC
          LIMIT 5'
     );
@@ -82,6 +88,7 @@ function set_conversation_message_pinned(
     bool $is_pinned
 ): int {
     ensure_message_pin_schema($pdo);
+    ensure_message_clear_schema($pdo);
 
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         throw new RuntimeException('You cannot update this message.');
@@ -102,6 +109,11 @@ function set_conversation_message_pinned(
            AND (
                c.conversation_type <> "group"
                OR m.created_at >= current_participant.joined_at
+           )
+           -- Prevent pin changes for messages this participant already cleared.
+           AND (
+               current_participant.cleared_at IS NULL
+               OR m.created_at > current_participant.cleared_at
            )
          LIMIT 1'
     );

@@ -44,6 +44,7 @@ if (!hash_equals($_SESSION['csrf_token'] ?? '', $submitted_csrf)) {
 
 $sender_id = (int) $_SESSION['id'];
 $conversation_id = filter_input(INPUT_POST, 'conversation_id', FILTER_VALIDATE_INT);
+$reply_to_message_id = filter_input(INPUT_POST, 'reply_to_message_id', FILTER_VALIDATE_INT);
 $body = trim((string) ($_POST['body'] ?? ''));
 
 // Check whether the user actually belongs to the conversation
@@ -85,7 +86,12 @@ try {
         $pdo,
         (int) $conversation_id,
         $sender_id,
-        $body
+        $body,
+        MESSAGE_TYPE_TEXT,
+        null,
+        null,
+        null,
+        $reply_to_message_id !== false ? $reply_to_message_id : null
     );
 
     $sender_name = message_user_display_name($pdo, $sender_id);
@@ -135,22 +141,38 @@ try {
         ensure_message_presence_schema($pdo);
 
         $message_stmt = $pdo->prepare(
-            'SELECT id, body, message_type, created_at, edited_at, deleted_at, pinned_at, pinned_by
-             FROM messages
-             WHERE id = ?
-               AND conversation_id = ?
+            'SELECT
+                m.id,
+                m.body,
+                m.message_type,
+                m.created_at,
+                m.edited_at,
+                m.deleted_at,
+                m.pinned_at,
+                m.pinned_by,
+                m.reply_to_message_id,
+                m.forwarded_from_label,
+                m.forwarded_from_message_id,
+                reply.body AS reply_body,
+                reply.message_type AS reply_message_type,
+                reply.deleted_at AS reply_deleted_at,
+                COALESCE(reply_student.name, reply_teacher.name, reply_user.username) AS reply_sender_display_name
+             FROM messages m
+             LEFT JOIN messages reply
+                ON reply.id = m.reply_to_message_id
+               AND reply.conversation_id = m.conversation_id
+             LEFT JOIN users reply_user ON reply_user.id = reply.sender_id
+             LEFT JOIN students reply_student ON reply_student.user_id = reply_user.id
+             LEFT JOIN teachers reply_teacher ON reply_teacher.user_id = reply_user.id
+             WHERE m.id = ?
+               AND m.conversation_id = ?
              LIMIT 1'
         );
         $message_stmt->execute([$message_id, (int) $conversation_id]);
         $message = $message_stmt->fetch();
         $read_receipt = $is_group_conversation
             ? group_message_read_receipt_for_message($pdo, (int) $message_id, (int) $conversation_id, $sender_id)
-            : [
-                'message_id' => (int) $message_id,
-                'read_count' => 0,
-                'read_names' => '',
-                'read_users' => [],
-            ];
+            : direct_message_read_receipt_for_message($pdo, (int) $message_id, (int) $conversation_id, $sender_id);
 
         send_message_response([
             'success' => true,
@@ -163,10 +185,26 @@ try {
                 'deleted_at' => $message['deleted_at'],
                 'pinned_at' => $message['pinned_at'],
                 'pinned_by' => $message['pinned_by'] !== null ? (int) $message['pinned_by'] : null,
+                'reply_to_message_id' => $message['reply_to_message_id'] !== null ? (int) $message['reply_to_message_id'] : null,
+                'forwarded_from_label' => $message['forwarded_from_label'] !== null ? (string) $message['forwarded_from_label'] : '',
+                'forwarded_from_message_id' => $message['forwarded_from_message_id'] !== null ? (int) $message['forwarded_from_message_id'] : null,
+                'reply_preview' => $message['reply_to_message_id'] !== null ? [
+                    'message_id' => (int) $message['reply_to_message_id'],
+                    'sender_display_name' => (string) ($message['reply_sender_display_name'] ?? 'Someone'),
+                    'body' => empty($message['reply_deleted_at'])
+                        ? (string) ($message['reply_body'] ?? '')
+                        : 'This message was deleted.',
+                    'is_deleted' => !empty($message['reply_deleted_at']),
+                    'message_type' => (string) ($message['reply_message_type'] ?? MESSAGE_TYPE_TEXT),
+                ] : null,
+                'sender_id' => $sender_id,
+                'sender_display_name' => $sender_name,
                 'is_own' => true,
                 'can_edit' => true,
                 'can_delete' => true,
                 'can_pin' => true,
+                'can_reply' => true,
+                'can_forward' => true,
                 'read_receipt' => $read_receipt,
             ],
         ]);

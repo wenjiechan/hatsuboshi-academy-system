@@ -238,6 +238,32 @@ function is_conversation_participant(PDO $pdo, int $conversation_id, int $user_i
     return (bool) $stmt->fetchColumn();
 }
 
+// Adds the timestamp used to hide old messages for one participant only.
+function ensure_message_clear_schema(PDO $pdo): void
+{
+    static $ensured = false;
+
+    if ($ensured) {
+        return;
+    }
+
+    $column_stmt = $pdo->prepare(
+        'SELECT 1
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = "conversation_participants"
+           AND COLUMN_NAME = "cleared_at"
+         LIMIT 1'
+    );
+    $column_stmt->execute();
+
+    if (!$column_stmt->fetchColumn()) {
+        $pdo->exec('ALTER TABLE conversation_participants ADD COLUMN cleared_at DATETIME NULL AFTER last_read_at');
+    }
+
+    $ensured = true;
+}
+
 // Get all active users that the current user can message
 function get_message_contacts(PDO $pdo, int $current_user_id): array
 {
@@ -454,6 +480,7 @@ function set_conversation_muted(
 function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived = false): array
 {
     ensure_message_group_schema($pdo);
+    ensure_message_clear_schema($pdo);
 
     $archive_sql = $include_archived ? '' : 'AND current_participant.is_archived = 0';
 
@@ -502,6 +529,11 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
                       c.conversation_type <> "group"
                       OR unread_message.created_at >= current_participant.joined_at
                   )
+                  -- Do not count messages cleared from this participant chat view.
+                  AND (
+                      current_participant.cleared_at IS NULL
+                      OR unread_message.created_at > current_participant.cleared_at
+                  )
                   AND (unread_message.sender_id IS NULL OR unread_message.sender_id <> ?)
                   AND (
                       current_participant.last_read_at IS NULL
@@ -529,6 +561,11 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
                       c.conversation_type <> "group"
                       OR recent_message.created_at >= current_participant.joined_at
                   )
+                  -- Use only messages still visible after this participant clear point.
+                  AND (
+                      current_participant.cleared_at IS NULL
+                      OR recent_message.created_at > current_participant.cleared_at
+                  )
                 ORDER BY recent_message.created_at DESC, recent_message.id DESC
                 LIMIT 1
             )
@@ -554,6 +591,8 @@ function get_conversation_messages(
     int $limit = 100
 ): array {
     ensure_message_pin_schema($pdo);
+    ensure_message_reply_schema($pdo);
+    ensure_message_clear_schema($pdo);
 
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
@@ -573,6 +612,13 @@ function get_conversation_messages(
             m.deleted_at,
             m.pinned_at,
             m.pinned_by,
+            m.reply_to_message_id,
+            m.forwarded_from_label,
+            m.forwarded_from_message_id,
+            reply.body AS reply_body,
+            reply.message_type AS reply_message_type,
+            reply.deleted_at AS reply_deleted_at,
+            COALESCE(reply_student.name, reply_teacher.name, reply_user.username) AS reply_sender_display_name,
             request.id AS request_id,
             request.request_type AS request_type,
             request.status AS request_status,
@@ -612,6 +658,12 @@ function get_conversation_messages(
          LEFT JOIN users u ON u.id = m.sender_id
          LEFT JOIN students s ON s.user_id = u.id
          LEFT JOIN teachers t ON t.user_id = u.id
+         LEFT JOIN messages reply
+            ON reply.id = m.reply_to_message_id
+           AND reply.conversation_id = m.conversation_id
+         LEFT JOIN users reply_user ON reply_user.id = reply.sender_id
+         LEFT JOIN students reply_student ON reply_student.user_id = reply_user.id
+         LEFT JOIN teachers reply_teacher ON reply_teacher.user_id = reply_user.id
          LEFT JOIN producer_student_requests request
             ON request.id = m.related_id
            AND m.related_type = "producer_student_request"
@@ -619,6 +671,11 @@ function get_conversation_messages(
            AND (
                c.conversation_type <> "group"
                OR m.created_at >= current_participant.joined_at
+           )
+           -- Clearing a chat hides older messages only for the current participant.
+           AND (
+               current_participant.cleared_at IS NULL
+               OR m.created_at > current_participant.cleared_at
            )
          ORDER BY m.created_at ASC, m.id ASC
          LIMIT ' . $limit
@@ -636,6 +693,8 @@ function get_deleted_conversation_messages(
     string $deleted_after,
     int $limit = 100
 ): array {
+    ensure_message_clear_schema($pdo);
+
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
     }
@@ -662,6 +721,11 @@ function get_deleted_conversation_messages(
                c.conversation_type <> "group"
                OR m.created_at >= current_participant.joined_at
            )
+           -- Ignore deleted-message updates for rows hidden by clear chat.
+           AND (
+               current_participant.cleared_at IS NULL
+               OR m.created_at > current_participant.cleared_at
+           )
          ORDER BY m.deleted_at ASC, m.id ASC
          LIMIT ' . $limit
     );
@@ -679,6 +743,8 @@ function get_edited_conversation_messages(
     string $edited_after,
     int $limit = 100
 ): array {
+    ensure_message_clear_schema($pdo);
+
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
     }
@@ -703,6 +769,11 @@ function get_edited_conversation_messages(
            AND (
                c.conversation_type <> "group"
                OR m.created_at >= current_participant.joined_at
+           )
+           -- Ignore edited-message updates for rows hidden by clear chat.
+           AND (
+               current_participant.cleared_at IS NULL
+               OR m.created_at > current_participant.cleared_at
            )
          ORDER BY m.edited_at ASC, m.id ASC
          LIMIT ' . $limit
@@ -844,8 +915,14 @@ function send_conversation_message(
     string $message_type = MESSAGE_TYPE_TEXT,
     ?string $related_type = null,
     ?int $related_id = null,
-    ?string $dedupe_key = null
+    ?string $dedupe_key = null,
+    ?int $reply_to_message_id = null,
+    ?string $forwarded_from_label = null,
+    ?int $forwarded_from_message_id = null
 ): int {
+    ensure_message_reply_schema($pdo);
+    ensure_message_clear_schema($pdo);
+
     $body = trim($body);
 
     if ($body === '') {
@@ -872,15 +949,62 @@ function send_conversation_message(
         throw new InvalidArgumentException('Unsupported message type.');
     }
 
+    if ($reply_to_message_id !== null && $reply_to_message_id <= 0) {
+        $reply_to_message_id = null;
+    }
+
+    if ($reply_to_message_id !== null) {
+        $reply_stmt = $pdo->prepare(
+            'SELECT reply.id
+             FROM messages reply
+             INNER JOIN conversation_participants current_participant
+                ON current_participant.conversation_id = reply.conversation_id
+               AND current_participant.user_id = ?
+               AND current_participant.deleted_at IS NULL
+             INNER JOIN conversations c
+                ON c.id = reply.conversation_id
+             WHERE reply.id = ?
+               AND reply.conversation_id = ?
+               AND reply.deleted_at IS NULL
+               AND reply.message_type <> "system"
+               AND (
+                   c.conversation_type <> "group"
+                   OR reply.created_at >= current_participant.joined_at
+               )
+               -- A cleared old message cannot be selected as a reply target.
+               AND (
+                   current_participant.cleared_at IS NULL
+                   OR reply.created_at > current_participant.cleared_at
+               )
+             LIMIT 1'
+        );
+        $reply_stmt->execute([$sender_id, $reply_to_message_id, $conversation_id]);
+
+        if (!$reply_stmt->fetchColumn()) {
+            throw new InvalidArgumentException('The message you are replying to is unavailable.');
+        }
+    }
+
     try {
         $pdo->beginTransaction();
 
         // Starts a transaction and inserts into messages
         $stmt = $pdo->prepare(
             'INSERT INTO messages
-                (conversation_id, sender_id, message_type, body, related_type, related_id, dedupe_key)
+                (
+                    conversation_id,
+                    sender_id,
+                    message_type,
+                    body,
+                    related_type,
+                    related_id,
+                    dedupe_key,
+                    reply_to_message_id,
+                    forwarded_from_label,
+                    forwarded_from_message_id
+                )
              VALUES
-                (?, ?, ?, ?, ?, ?, ?)'
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $conversation_id,
@@ -890,6 +1014,9 @@ function send_conversation_message(
             $related_type,
             $related_id,
             $dedupe_key,
+            $reply_to_message_id,
+            $forwarded_from_label !== null ? trim($forwarded_from_label) : null,
+            $forwarded_from_message_id,
         ]);
         $message_id = (int) $pdo->lastInsertId();
 
@@ -920,6 +1047,172 @@ function send_conversation_message(
 
         throw $exception;
     }
+}
+
+function ensure_message_reply_schema(PDO $pdo): void
+{
+    static $ensured = false;
+
+    if ($ensured) {
+        return;
+    }
+
+    $column_stmt = $pdo->prepare(
+        'SELECT 1
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = "messages"
+           AND COLUMN_NAME = "reply_to_message_id"
+         LIMIT 1'
+    );
+    $column_stmt->execute();
+
+    if (!$column_stmt->fetch()) {
+        $pdo->exec('ALTER TABLE messages ADD COLUMN reply_to_message_id INT NULL AFTER dedupe_key');
+    }
+
+    $forward_label_stmt = $pdo->prepare(
+        'SELECT 1
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = "messages"
+           AND COLUMN_NAME = "forwarded_from_label"
+         LIMIT 1'
+    );
+    $forward_label_stmt->execute();
+
+    if (!$forward_label_stmt->fetchColumn()) {
+        $pdo->exec('ALTER TABLE messages ADD COLUMN forwarded_from_label VARCHAR(160) NULL AFTER reply_to_message_id');
+    }
+
+    $forward_message_stmt = $pdo->prepare(
+        'SELECT 1
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = "messages"
+           AND COLUMN_NAME = "forwarded_from_message_id"
+         LIMIT 1'
+    );
+    $forward_message_stmt->execute();
+
+    if (!$forward_message_stmt->fetchColumn()) {
+        $pdo->exec('ALTER TABLE messages ADD COLUMN forwarded_from_message_id INT NULL AFTER forwarded_from_label');
+    }
+
+    $index_stmt = $pdo->prepare(
+        'SELECT 1
+         FROM information_schema.STATISTICS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = "messages"
+           AND INDEX_NAME = "idx_messages_reply_to"
+         LIMIT 1'
+    );
+    $index_stmt->execute();
+
+    if (!$index_stmt->fetchColumn()) {
+        $pdo->exec('CREATE INDEX idx_messages_reply_to ON messages (reply_to_message_id)');
+    }
+
+    $forward_index_stmt = $pdo->prepare(
+        'SELECT 1
+         FROM information_schema.STATISTICS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = "messages"
+           AND INDEX_NAME = "idx_messages_forwarded_from"
+         LIMIT 1'
+    );
+    $forward_index_stmt->execute();
+
+    if (!$forward_index_stmt->fetchColumn()) {
+        $pdo->exec('CREATE INDEX idx_messages_forwarded_from ON messages (forwarded_from_message_id)');
+    }
+
+    $ensured = true;
+}
+
+function get_forwardable_message(PDO $pdo, int $conversation_id, int $message_id, int $user_id): ?array
+{
+    ensure_message_clear_schema($pdo);
+
+    if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
+        return null;
+    }
+
+    $stmt = $pdo->prepare(
+        'SELECT
+            m.id,
+            m.conversation_id,
+            m.sender_id,
+            m.message_type,
+            m.body,
+            m.created_at,
+            CASE
+                WHEN c.conversation_type = "group" THEN c.group_name
+                ELSE COALESCE(source_student.name, source_teacher.name, source_user.username, "Someone")
+            END AS forward_source_label
+         FROM messages m
+         INNER JOIN conversation_participants current_participant
+            ON current_participant.conversation_id = m.conversation_id
+           AND current_participant.user_id = ?
+           AND current_participant.deleted_at IS NULL
+         INNER JOIN conversations c
+            ON c.id = m.conversation_id
+         LEFT JOIN users source_user ON source_user.id = m.sender_id
+         LEFT JOIN students source_student ON source_student.user_id = source_user.id
+         LEFT JOIN teachers source_teacher ON source_teacher.user_id = source_user.id
+         WHERE m.id = ?
+           AND m.conversation_id = ?
+           AND m.deleted_at IS NULL
+           AND m.message_type <> "system"
+           AND (
+               c.conversation_type <> "group"
+               OR m.created_at >= current_participant.joined_at
+           )
+           -- A cleared old message cannot be forwarded from the hidden history.
+           AND (
+               current_participant.cleared_at IS NULL
+               OR m.created_at > current_participant.cleared_at
+           )
+         LIMIT 1'
+    );
+    $stmt->execute([$user_id, $message_id, $conversation_id]);
+    $message = $stmt->fetch();
+
+    return $message ?: null;
+}
+
+function forward_conversation_message(
+    PDO $pdo,
+    int $source_conversation_id,
+    int $source_message_id,
+    int $target_conversation_id,
+    int $sender_id
+): int {
+    $source_message = get_forwardable_message($pdo, $source_conversation_id, $source_message_id, $sender_id);
+
+    if (!$source_message) {
+        throw new RuntimeException('This message cannot be forwarded.');
+    }
+
+    $target_conversation = get_conversation_details($pdo, $target_conversation_id, $sender_id);
+
+    if (!$target_conversation || ($target_conversation['conversation_type'] ?? '') === 'system') {
+        throw new RuntimeException('Choose a valid conversation to forward this message.');
+    }
+
+    return send_conversation_message(
+        $pdo,
+        $target_conversation_id,
+        $sender_id,
+        (string) $source_message['body'],
+        MESSAGE_TYPE_TEXT,
+        null,
+        null,
+        null,
+        null,
+        (string) ($source_message['forward_source_label'] ?? 'Someone'),
+        (int) $source_message['id']
+    );
 }
 
 require_once __DIR__ . '/message_request_helpers.php';
@@ -957,9 +1250,33 @@ function mark_conversation_read(PDO $pdo, int $conversation_id, int $user_id): b
     return $stmt->rowCount() > 0;
 }
 
+// Hide all existing messages in a conversation for this user only.
+function clear_conversation_for_user(PDO $pdo, int $conversation_id, int $user_id): bool
+{
+    ensure_message_clear_schema($pdo);
+
+    if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
+        throw new RuntimeException('You cannot clear this conversation.');
+    }
+
+    $stmt = $pdo->prepare(
+        'UPDATE conversation_participants
+         SET cleared_at = CURRENT_TIMESTAMP,
+             last_read_at = CURRENT_TIMESTAMP
+         WHERE conversation_id = ?
+           AND user_id = ?
+           AND deleted_at IS NULL'
+    );
+    $stmt->execute([$conversation_id, $user_id]);
+
+    return $stmt->rowCount() > 0;
+}
+
 // Count all the unread message
 function get_unread_message_count(PDO $pdo, int $user_id): int
 {
+    ensure_message_clear_schema($pdo);
+
     $stmt = $pdo->prepare(
         'SELECT COUNT(*)
          FROM conversation_participants participant
@@ -969,6 +1286,11 @@ function get_unread_message_count(PDO $pdo, int $user_id): int
            AND participant.deleted_at IS NULL
            AND participant.is_archived = 0
            AND message.deleted_at IS NULL
+           -- Cleared messages should not keep the global unread badge alive.
+           AND (
+               participant.cleared_at IS NULL
+               OR message.created_at > participant.cleared_at
+           )
            AND (message.sender_id IS NULL OR message.sender_id <> participant.user_id)
            AND (
                participant.last_read_at IS NULL

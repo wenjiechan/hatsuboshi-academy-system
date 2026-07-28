@@ -1,173 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Controls the search box in compose.php
-    const recipientSearch = document.querySelector('[data-recipient-search]');
-    const recipientRows = Array.from(document.querySelectorAll('[data-recipient-row]'));
-    const recipientNoResults = document.querySelector('[data-recipient-no-results]');
+    // Main conversation runtime. Smaller page-specific modules are loaded before this file.
     const messageInput = document.querySelector('[data-message-input]');
     const characterCount = document.querySelector('[data-message-character-count]');
     const conversationThread = document.querySelector('[data-conversation-thread]');
     const messageComposer = document.querySelector('[data-message-composer]');
     const messageSendButton = document.querySelector('[data-message-send-button]');
     const messageSendError = document.querySelector('[data-message-send-error]');
+    const replyToMessageInput = document.querySelector('[data-reply-to-message-id]');
+    const replyComposer = document.querySelector('[data-reply-composer]');
+    const replyComposerSender = document.querySelector('[data-reply-composer-sender]');
+    const replyComposerPreview = document.querySelector('[data-reply-composer-preview]');
+    const replyCancel = document.querySelector('[data-reply-cancel]');
+    const forwardModal = document.querySelector('[data-message-forward-modal]');
+    const forwardMessageInput = document.querySelector('[data-forward-message-id]');
     let setMessageEditVisibility = () => {};
-    // Controls a menu for the whole conversation like archive, delete and mute
-    const conversationActionMenu = document.querySelector('[data-conversation-action-menu]');
-    const conversationActionToggle = document.querySelector('[data-conversation-action-toggle]');
-    const conversationActionPanel = document.querySelector('[data-conversation-action-panel]');
-    const modalOpenButtons = Array.from(document.querySelectorAll('[data-modal-open]'));
-    const modals = Array.from(document.querySelectorAll('.message-modal'));
-    const modalSearchInputs = Array.from(document.querySelectorAll('[data-modal-search]'));
-    let activeModalTrigger = null;
-    let openReadReceiptModal = () => {};
-
-    const filterModalSearch = (input) => {
-        const listId = input.dataset.modalSearchTarget || '';
-        const list = listId ? document.getElementById(listId) : null;
-
-        if (!list) {
-            return;
-        }
-
-        const rows = Array.from(list.querySelectorAll('[data-modal-search-row]'));
-        const emptyState = document.querySelector(`[data-modal-search-empty="${listId}"]`);
-        const query = input.value.trim().toLocaleLowerCase();
-        let visibleCount = 0;
-
-        rows.forEach((row) => {
-            const searchText = (row.dataset.modalSearchText || '').toLocaleLowerCase();
-            const isVisible = query === '' || searchText.includes(query);
-
-            row.hidden = !isVisible;
-            visibleCount += isVisible ? 1 : 0;
-        });
-
-        if (emptyState) {
-            emptyState.hidden = visibleCount !== 0;
-        }
-    };
-
-    const resetModalSearch = (modal) => {
-        modal.querySelectorAll('[data-modal-search]').forEach((input) => {
-            input.value = '';
-            filterModalSearch(input);
-        });
-    };
-
-    const closeModal = (modal, restoreFocus = true) => {
-        if (!modal || modal.hidden) {
-            return;
-        }
-
-        resetModalSearch(modal);
-        modal.hidden = true;
-        document.body.classList.remove('message-modal-open');
-
-        if (restoreFocus) {
-            activeModalTrigger?.focus();
-        }
-
-        activeModalTrigger = null;
-    };
-
-    const openModal = (modal, trigger) => {
-        if (!modal) {
-            return;
-        }
-
-        modals.forEach((existingModal) => closeModal(existingModal, false));
-        activeModalTrigger = trigger;
-        modal.hidden = false;
-        document.body.classList.add('message-modal-open');
-
-        if (conversationActionPanel && conversationActionToggle) {
-            conversationActionPanel.hidden = true;
-            conversationActionToggle.setAttribute('aria-expanded', 'false');
-        }
-
-        modal.querySelector('button, input, textarea, select, a[href]')?.focus();
-    };
-
-    modalOpenButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            openModal(document.getElementById(button.dataset.modalOpen || ''), button);
-        });
-    });
-
-    modals.forEach((modal) => {
-        modal.querySelectorAll('[data-modal-close]').forEach((closeButton) => {
-            closeButton.addEventListener('click', () => closeModal(modal));
-        });
-    });
-
-    modalSearchInputs.forEach((input) => {
-        input.addEventListener('input', () => filterModalSearch(input));
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key !== 'Escape') {
-            return;
-        }
-
-        const openModalElement = modals.find((modal) => !modal.hidden);
-
-        if (openModalElement) {
-            closeModal(openModalElement);
-        }
-    });
-
-    if (conversationActionMenu && conversationActionToggle && conversationActionPanel) {
-        const closeConversationActionMenu = (restoreFocus = false) => {
-            conversationActionPanel.hidden = true;
-            conversationActionToggle.setAttribute('aria-expanded', 'false');
-
-            if (restoreFocus) {
-                conversationActionToggle.focus();
-            }
-        };
-
-        // Opens or closes the action panel
-        conversationActionToggle.addEventListener('click', () => {
-            const shouldOpen = conversationActionPanel.hidden;
-            conversationActionPanel.hidden = !shouldOpen;
-            conversationActionToggle.setAttribute('aria-expanded', String(shouldOpen));
-
-            if (shouldOpen) {
-                conversationActionPanel.querySelector('[role="menuitem"]')?.focus();
-            }
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!conversationActionMenu.contains(event.target)) {
-                closeConversationActionMenu();
-            }
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && !conversationActionPanel.hidden) {
-                closeConversationActionMenu(true);
-            }
-        });
-    }
-
-    // Search recipient in compose.php
-    if (recipientSearch && recipientRows.length > 0 && recipientNoResults) {
-        recipientSearch.addEventListener('input', () => {
-            const query = recipientSearch.value.trim().toLocaleLowerCase();
-            let visibleCount = 0;
-
-            recipientRows.forEach((row) => {
-                // Check each recipient row.
-                const searchText = (row.dataset.recipientSearch || '').toLocaleLowerCase();
-                const isVisible = query === '' || searchText.includes(query);
-
-                //If matched, stay the row visible, and vice versa
-                row.hidden = !isVisible;
-                visibleCount += isVisible ? 1 : 0;
-            });
-
-            recipientNoResults.hidden = visibleCount !== 0;
-        });
-    }
+    let setReplyComposer = () => {};
+    let clearReplyComposer = () => {};
+    const messageModals = window.GakumasMessageModals || { open: () => {} };
 
     // Controls the textarea in the chat page
     if (messageInput) {
@@ -191,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Track live updates
         const conversationId = Number.parseInt(conversationThread.dataset.conversationId || '', 10);
         const isGroupConversation = conversationThread.dataset.conversationType === 'group';
+        const supportsTypingIndicator = ['direct', 'group'].includes(conversationThread.dataset.conversationType || '');
         const currentUserId = Number.parseInt(conversationThread.dataset.currentUserId || '0', 10);
         const mentionSuggestions = document.querySelector('[data-mention-suggestions]');
         const mentionMembersScript = document.querySelector('[data-mention-members]');
@@ -219,6 +69,47 @@ document.addEventListener('DOMContentLoaded', () => {
             producer_add_request: 'Producer request',
             producer_remove_request: 'Release request',
             system: 'System message',
+        };
+
+        const conversationSearch = window.GakumasConversationSearch?.init({
+            conversationThread,
+            isGroupConversation,
+            mentionMembers,
+            messageTypeLabels,
+            currentUserId,
+        }) || {
+            // Fallbacks keep the page usable if a split module is not loaded.
+            hasFilters: () => false,
+            isOpen: () => false,
+            messageSearchDate: () => '',
+            messageSenderId: () => '',
+            run: () => {},
+            searchableMessageText: () => '',
+        };
+        window.GakumasMessageMentions?.init({
+            messageInput,
+            isGroupConversation,
+            mentionSuggestions,
+            mentionMembers,
+            currentUserId,
+        });
+        // Feature modules expose small controllers so polling/rendering can stay in this file.
+        const readReceipts = window.GakumasMessageReadReceipts?.init({
+            isGroupConversation,
+            messageModals,
+        }) || {
+            createControl: () => null,
+            openModal: () => {},
+            updateAll: () => {},
+        };
+        const typingStatus = window.GakumasMessageTyping?.init({
+            conversationThread,
+            conversationId,
+            messageInput,
+            supportsTypingIndicator,
+        }) || {
+            stopNow: () => {},
+            updateIndicator: () => {},
         };
 
         // Convert database datetime into a nicer display format
@@ -337,6 +228,55 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
+        const createReplyPreviewElement = (replyPreview) => {
+            if (!replyPreview || !replyPreview.message_id) {
+                return null;
+            }
+
+            const link = document.createElement('a');
+            link.href = `#message-${replyPreview.message_id}`;
+            link.className = `chat-reply-preview${replyPreview.is_deleted ? ' deleted' : ''}`;
+            link.dataset.replyPreview = '';
+
+            const sender = document.createElement('strong');
+            sender.textContent = replyPreview.sender_display_name || 'Someone';
+            const body = document.createElement('span');
+            body.textContent = replyPreview.body || '[No text]';
+
+            link.append(sender, body);
+            return link;
+        };
+
+        clearReplyComposer = () => {
+            if (replyToMessageInput) {
+                replyToMessageInput.value = '';
+            }
+
+            if (replyComposer) {
+                replyComposer.hidden = true;
+            }
+
+            if (replyComposerSender) {
+                replyComposerSender.textContent = '';
+            }
+
+            if (replyComposerPreview) {
+                replyComposerPreview.textContent = '';
+            }
+        };
+
+        setReplyComposer = (messageId, sender, preview) => {
+            if (!replyToMessageInput || !replyComposer || !replyComposerSender || !replyComposerPreview) {
+                return;
+            }
+
+            replyToMessageInput.value = String(messageId || '');
+            replyComposerSender.textContent = sender || 'Someone';
+            replyComposerPreview.textContent = preview || '[No text]';
+            replyComposer.hidden = false;
+            messageInput?.focus();
+        };
+
         // Updates a message that was edited by polling
         const updateEditedMessage = (message) => {
             const article = conversationThread.querySelector(`[data-message-id="${message.id}"]`);
@@ -348,6 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             renderMessageBody(body, message.body);
+            article.dataset.messageSearchText = conversationSearch.searchableMessageText(message);
+            article.dataset.messageSearchDate = conversationSearch.messageSearchDate(message);
+            article.dataset.messageSenderId = conversationSearch.messageSenderId(message);
 
             if (!meta.querySelector('[data-message-edited]')) {
                 const edited = document.createElement('span');
@@ -374,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             article.classList.add('deleted');
+            article.dataset.messageSearchText = '';
             body.replaceChildren();
 
             const icon = document.createElement('i');
@@ -411,6 +355,28 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.dataset.messageActionPanel = '';
             panel.setAttribute('role', 'menu');
             panel.hidden = true;
+
+            if (message.can_reply) {
+                const replyButton = document.createElement('button');
+                replyButton.type = 'button';
+                replyButton.dataset.messageReplyOpen = '';
+                replyButton.dataset.replyMessageId = String(message.id);
+                replyButton.dataset.replySender = message.sender_display_name || (message.is_own ? 'You' : 'Someone');
+                replyButton.dataset.replyPreview = String(message.body || '').replace(/\s+/g, ' ').trim().slice(0, 90) || '[No text]';
+                replyButton.setAttribute('role', 'menuitem');
+                replyButton.innerHTML = '<i class="bi bi-reply"></i><span>Reply</span>';
+                panel.append(replyButton);
+            }
+
+            if (message.can_forward && forwardModal) {
+                const forwardButton = document.createElement('button');
+                forwardButton.type = 'button';
+                forwardButton.dataset.messageForwardOpen = '';
+                forwardButton.dataset.forwardMessageId = String(message.id);
+                forwardButton.setAttribute('role', 'menuitem');
+                forwardButton.innerHTML = '<i class="bi bi-forward-fill"></i><span>Forward</span>';
+                panel.append(forwardButton);
+            }
 
             if (message.can_edit) {
                 const editButton = document.createElement('button');
@@ -581,284 +547,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        const readReceiptText = (count) => `Read by ${count}`;
-
-        const updateReadReceiptButton = (article, receipt) => {
-            const button = article?.querySelector('[data-read-receipt]');
-
-            if (!button || !receipt) {
-                return;
-            }
-
-            const count = Number.parseInt(receipt.read_count, 10) || 0;
-            button.dataset.readCount = String(count);
-            button.dataset.readNames = receipt.read_names || '';
-            button.dataset.readUsers = JSON.stringify(receipt.read_users || []);
-            button.textContent = readReceiptText(count);
-            button.hidden = count === 0;
-        };
-
-        const updateReadReceipts = (receipts) => {
-            if (!Array.isArray(receipts)) {
-                return;
-            }
-
-            receipts.forEach((receipt) => {
-                const messageId = Number.parseInt(receipt.message_id, 10);
-                const article = conversationThread.querySelector(`[data-message-id="${messageId}"]`);
-                updateReadReceiptButton(article, receipt);
-            });
-        };
-
-        const createReadReceiptButton = (message) => {
-            if (!isGroupConversation || !message.is_own || message.message_type === 'system' || message.deleted_at) {
-                return null;
-            }
-
-            const receipt = message.read_receipt || {};
-            const count = Number.parseInt(receipt.read_count, 10) || 0;
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'chat-read-receipt';
-            button.dataset.readReceipt = '';
-            button.dataset.readCount = String(count);
-            button.dataset.readNames = receipt.read_names || '';
-            button.dataset.readUsers = JSON.stringify(receipt.read_users || []);
-            button.textContent = readReceiptText(count);
-            button.hidden = count === 0;
-
-            return button;
-        };
-
-        const updateTypingIndicator = (typingUsers) => {
-            const indicator = document.querySelector('[data-typing-indicator]');
-            let typingHideTimer = updateTypingIndicator.hideTimer || null;
-
-            if (!indicator || !Array.isArray(typingUsers) || typingUsers.length === 0) {
-                if (indicator) {
-                    window.clearTimeout(typingHideTimer);
-                    updateTypingIndicator.hideTimer = window.setTimeout(() => {
-                        indicator.hidden = true;
-                        indicator.textContent = '';
-                    }, 900);
-                }
-
-                return;
-            }
-
-            const names = typingUsers.map((user) => user.display_name).filter(Boolean);
-
-            if (names.length === 0) {
-                window.clearTimeout(typingHideTimer);
-                updateTypingIndicator.hideTimer = window.setTimeout(() => {
-                    indicator.hidden = true;
-                    indicator.textContent = '';
-                }, 900);
-                return;
-            }
-
-            window.clearTimeout(typingHideTimer);
-            indicator.hidden = false;
-            indicator.textContent = names.length === 1
-                ? `${names[0]} is typing...`
-                : `${names.slice(0, 2).join(' and ')} are typing...`;
-        };
-
-        const hideMentionSuggestions = () => {
-            if (mentionSuggestions) {
-                mentionSuggestions.hidden = true;
-                mentionSuggestions.replaceChildren();
-            }
-        };
-
-        const currentMentionQuery = () => {
-            if (!messageInput) {
-                return null;
-            }
-
-            const caret = messageInput.selectionStart || 0;
-            const textBeforeCaret = messageInput.value.slice(0, caret);
-            const atIndex = textBeforeCaret.lastIndexOf('@');
-
-            if (atIndex < 0) {
-                return null;
-            }
-
-            const charBeforeAt = atIndex > 0 ? textBeforeCaret[atIndex - 1] : '';
-            const query = textBeforeCaret.slice(atIndex + 1);
-
-            if (charBeforeAt && !/\s|\(/.test(charBeforeAt)) {
-                return null;
-            }
-
-            if (/\s/.test(query)) {
-                return null;
-            }
-
-            return {
-                atIndex,
-                query: query.toLocaleLowerCase(),
-                caret,
-            };
-        };
-
-        const insertMention = (mentionValue) => {
-            const mention = currentMentionQuery();
-
-            if (!messageInput || !mention) {
-                return;
-            }
-
-            const insertText = `@${mentionValue} `;
-            const before = messageInput.value.slice(0, mention.atIndex);
-            const after = messageInput.value.slice(mention.caret);
-            const nextCaret = before.length + insertText.length;
-
-            messageInput.value = before + insertText + after;
-            messageInput.focus();
-            messageInput.setSelectionRange(nextCaret, nextCaret);
-            messageInput.dispatchEvent(new Event('input'));
-            hideMentionSuggestions();
-        };
-
-        const showMentionSuggestions = () => {
-            if (!isGroupConversation || !mentionSuggestions || !messageInput) {
-                return;
-            }
-
-            const mention = currentMentionQuery();
-
-            if (!mention) {
-                hideMentionSuggestions();
-                return;
-            }
-
-            const everyoneOption = {
-                display_name: 'everyone',
-                role_detail: 'Notify everyone',
-                avatar: '/gakumas-sms/assets/images/avatars/default.webp',
-                mention_value: 'everyone',
-            };
-            const memberOptions = mentionMembers
-                .filter((member) => {
-                    if (Number.parseInt(member.user_id, 10) === currentUserId) {
-                        return false;
-                    }
-
-                    const searchText = `${member.display_name || ''} ${member.role_detail || ''}`.toLocaleLowerCase();
-                    return mention.query === '' || searchText.includes(mention.query);
-                })
-                .slice(0, 7)
-                .map((member) => ({
-                    ...member,
-                    mention_value: member.display_name,
-                }));
-            const options = [
-                ...(everyoneOption.mention_value.includes(mention.query) ? [everyoneOption] : []),
-                ...memberOptions,
-            ];
-
-            mentionSuggestions.replaceChildren();
-
-            if (options.length === 0) {
-                hideMentionSuggestions();
-                return;
-            }
-
-            options.forEach((option) => {
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'mention-suggestion-item';
-                button.dataset.mentionValue = option.mention_value || option.display_name || '';
-
-                const avatar = document.createElement('img');
-                avatar.src = option.avatar || '/gakumas-sms/assets/images/avatars/default.webp';
-                avatar.alt = '';
-
-                const copy = document.createElement('span');
-                const name = document.createElement('strong');
-                name.textContent = `@${option.display_name || 'member'}`;
-                const detail = document.createElement('small');
-                detail.textContent = option.role_detail || 'Member';
-
-                copy.append(name, detail);
-                button.append(avatar, copy);
-                mentionSuggestions.append(button);
-            });
-
-            mentionSuggestions.hidden = false;
-        };
-
-        openReadReceiptModal = (button) => {
-            const modal = document.getElementById('readReceiptModal');
-            const summary = modal?.querySelector('[data-read-receipt-summary]');
-            const list = modal?.querySelector('[data-read-receipt-list]');
-
-            if (!modal || !summary || !list) {
-                return;
-            }
-
-            const count = Number.parseInt(button.dataset.readCount, 10) || 0;
-            let readers = [];
-
-            try {
-                readers = JSON.parse(button.dataset.readUsers || '[]');
-            } catch (error) {
-                readers = [];
-            }
-
-            if (!Array.isArray(readers) || readers.length === 0) {
-                readers = (button.dataset.readNames || '')
-                    .split(',')
-                    .map((name) => name.trim())
-                    .filter(Boolean)
-                    .map((name) => ({
-                        display_name: name,
-                        avatar: '/gakumas-sms/assets/images/avatars/default.webp',
-                    }));
-            }
-
-            summary.textContent = readReceiptText(count);
-            list.replaceChildren();
-
-            if (readers.length === 0) {
-                const empty = document.createElement('div');
-                empty.className = 'read-receipt-empty';
-                empty.textContent = 'No one has read this message yet.';
-                list.append(empty);
-            } else {
-                readers.forEach((reader) => {
-                    const item = document.createElement('div');
-                    item.className = 'read-receipt-item';
-
-                    const avatar = document.createElement('img');
-                    avatar.src = reader.avatar || '/gakumas-sms/assets/images/avatars/default.webp';
-                    avatar.alt = '';
-                    avatar.className = 'read-receipt-avatar';
-
-                    const text = document.createElement('span');
-                    const name = document.createElement('strong');
-                    name.textContent = reader.display_name || 'Someone';
-                    const detail = document.createElement('small');
-                    const roleDetail = reader.role_detail || reader.role || 'Member';
-                    detail.textContent = reader.read_at
-                        ? `${roleDetail} · ${reader.read_at}`
-                        : roleDetail;
-                    text.append(name, detail);
-                    item.append(avatar, text);
-                    list.append(item);
-                });
-            }
-
-            openModal(modal, button);
-        };
-
         // Create a full chat message element using JavaScript
         const createMessageElement = (message) => {
             const typeLabel = messageTypeLabels[message.message_type] || '';
             const article = document.createElement('article');
             article.className = `chat-message${message.is_own ? ' own' : ''}${typeLabel ? ' special' : ''}`;
             article.dataset.messageId = String(message.id);
+            article.dataset.messageSearchText = conversationSearch.searchableMessageText(message);
+            article.dataset.messageSearchDate = conversationSearch.messageSearchDate(message);
+            article.dataset.messageSenderId = conversationSearch.messageSenderId(message);
             article.id = `message-${message.id}`;
 
             const bubble = document.createElement('div');
@@ -881,6 +578,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 sender.className = 'chat-message-sender';
                 sender.textContent = message.sender_display_name;
                 bubble.append(sender);
+            }
+
+            if (message.forwarded_from_label && message.message_type !== 'system') {
+                const forwardedLabel = document.createElement('span');
+                forwardedLabel.className = 'chat-forwarded-label';
+                forwardedLabel.innerHTML = '<i class="bi bi-forward-fill" aria-hidden="true"></i>';
+                forwardedLabel.append(document.createTextNode(`Forwarded from ${message.forwarded_from_label}`));
+                bubble.append(forwardedLabel);
+            }
+
+            const replyPreview = createReplyPreviewElement(message.reply_preview);
+
+            if (replyPreview) {
+                bubble.append(replyPreview);
             }
 
             const body = document.createElement('p');
@@ -909,13 +620,13 @@ document.addEventListener('DOMContentLoaded', () => {
             time.textContent = formatMessageTime(message.created_at);
             meta.append(time);
 
-            const readReceiptButton = createReadReceiptButton(message);
+            const readReceiptButton = readReceipts.createControl(message);
 
             if (readReceiptButton) {
                 meta.append(readReceiptButton);
             }
 
-            if (message.can_edit || message.can_delete || message.can_pin) {
+            if (message.can_reply || message.can_forward || message.can_edit || message.can_delete || message.can_pin) {
                 meta.append(createMessageActionMenu(message));
             }
 
@@ -1076,8 +787,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
-                updateReadReceipts(data.read_receipts);
-                updateTypingIndicator(data.typing_users);
+                if (conversationSearch.isOpen() && conversationSearch.hasFilters()) {
+                    conversationSearch.run(false, true);
+                }
+
+                readReceipts.updateAll(conversationThread, data.read_receipts);
+                typingStatus.updateIndicator(data.typing_users);
 
                 // Update polling cursors
                 lastMessageId = Number.parseInt(data.next_after_id, 10) || lastMessageId;
@@ -1100,99 +815,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Send a message in the background without reloading the page
         if (messageComposer && messageInput && messageSendButton) {
-            let typingStopTimer = null;
-            let lastTypingState = false;
-
-            const sendTypingStatus = async (isTyping) => {
-                if (!isGroupConversation || lastTypingState === isTyping) {
-                    return;
-                }
-
-                lastTypingState = isTyping;
-
-                const formData = new FormData();
-                formData.set('csrf_token', conversationThread.dataset.csrfToken || '');
-                formData.set('conversation_id', String(conversationId));
-                formData.set('is_typing', isTyping ? '1' : '0');
-
-                try {
-                    await fetch('/gakumas-sms/api/message_typing.php', {
-                        method: 'POST',
-                        headers: {
-                            Accept: 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: formData,
-                        keepalive: !isTyping,
-                    });
-                } catch (error) {
-                    // Typing indicators are best-effort only.
-                }
-            };
-
-            const queueTypingStop = () => {
-                window.clearTimeout(typingStopTimer);
-                typingStopTimer = window.setTimeout(() => {
-                    sendTypingStatus(false);
-                }, 1800);
-            };
-
-            if (isGroupConversation) {
-                messageInput.addEventListener('input', () => {
-                    showMentionSuggestions();
-
-                    if (messageInput.value.trim() === '') {
-                        window.clearTimeout(typingStopTimer);
-                        sendTypingStatus(false);
-                        return;
-                    }
-
-                    sendTypingStatus(true);
-                    queueTypingStop();
-                });
-
-                messageInput.addEventListener('blur', () => {
-                    window.clearTimeout(typingStopTimer);
-                    sendTypingStatus(false);
-                });
-
-                messageInput.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape' && mentionSuggestions && !mentionSuggestions.hidden) {
-                        event.preventDefault();
-                        hideMentionSuggestions();
-                    }
-                });
-
-                mentionSuggestions?.addEventListener('mousedown', (event) => {
-                    event.preventDefault();
-                });
-
-                mentionSuggestions?.addEventListener('click', (event) => {
-                    const button = event.target.closest('[data-mention-value]');
-
-                    if (!button) {
-                        return;
-                    }
-
-                    insertMention(button.dataset.mentionValue || '');
-                });
-
-                document.addEventListener('click', (event) => {
-                    if (
-                        mentionSuggestions?.contains(event.target) ||
-                        messageInput.contains(event.target)
-                    ) {
-                        return;
-                    }
-
-                    hideMentionSuggestions();
-                });
-
-                window.addEventListener('beforeunload', () => {
-                    sendTypingStatus(false);
-                });
-            }
-
             messageInput.addEventListener('keydown', (event) => {
                 if (event.key !== 'Enter' || event.shiftKey || event.isComposing) {
                     return;
@@ -1254,6 +876,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         conversationThread.append(createMessageElement(data.message));
                     }
 
+                    if (conversationSearch.isOpen() && conversationSearch.hasFilters()) {
+                        conversationSearch.run(false, true);
+                    }
+
                     // Updates the latest message ID stores in Javascript and HTML
                     lastMessageId = Math.max(lastMessageId, Number.parseInt(data.message.id, 10) || 0);
                     conversationThread.dataset.lastMessageId = String(lastMessageId);
@@ -1263,9 +889,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Clear the textarea after sending successfully
                     messageInput.value = '';
                     messageInput.dispatchEvent(new Event('input'));
-                    hideMentionSuggestions();
-                    window.clearTimeout(typingStopTimer);
-                    sendTypingStatus(false);
+                    clearReplyComposer();
+                    typingStatus.stopNow();
                     messageInput.focus();
                 } catch (error) {
                     if (messageSendError) {
@@ -1420,9 +1045,31 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (event) => {
         const actionToggle = event.target.closest('[data-message-action-toggle]');
         const editButton = event.target.closest('[data-message-edit-open]');
+        const replyButton = event.target.closest('[data-message-reply-open]');
+        const forwardButton = event.target.closest('[data-message-forward-open]');
         const deleteButton = event.target.closest('[data-message-delete-submit]');
+        const clearConversationButton = event.target.closest('[data-conversation-clear-submit]');
         const groupRemoveButton = event.target.closest('[data-group-remove-submit]');
         const readReceiptButton = event.target.closest('[data-read-receipt]');
+        const replyPreviewLink = event.target.closest('a[data-reply-preview]');
+
+        if (replyPreviewLink) {
+            const targetId = (replyPreviewLink.getAttribute('href') || '').replace('#message-', '');
+            const targetMessage = targetId
+                ? document.querySelector(`[data-message-id="${CSS.escape(targetId)}"]`)
+                : null;
+
+            if (targetMessage) {
+                event.preventDefault();
+                targetMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetMessage.classList.add('reply-jump-target');
+                window.setTimeout(() => {
+                    targetMessage.classList.remove('reply-jump-target');
+                }, 1800);
+            }
+
+            return;
+        }
 
         if (actionToggle) {
             const menu = actionToggle.closest('[data-message-action-menu]');
@@ -1445,8 +1092,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (readReceiptButton) {
-            openReadReceiptModal(readReceiptButton);
+        if (readReceiptButton && readReceiptButton.dataset.readMode !== 'direct') {
+            readReceipts.openModal(readReceiptButton);
             return;
         }
 
@@ -1457,7 +1104,40 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (replyButton) {
+            closeMessageActionMenus();
+            setReplyComposer(
+                replyButton.dataset.replyMessageId || '',
+                replyButton.dataset.replySender || 'Someone',
+                replyButton.dataset.replyPreview || '[No text]'
+            );
+            return;
+        }
+
+        if (forwardButton) {
+            closeMessageActionMenus();
+
+            if (forwardMessageInput && forwardModal) {
+                forwardMessageInput.value = forwardButton.dataset.forwardMessageId || '';
+                forwardModal.querySelectorAll('input[name="target_conversation_id"]').forEach((input) => {
+                    input.checked = false;
+                });
+                messageModals.open(forwardModal, forwardButton);
+            }
+
+            return;
+        }
+
         if (deleteButton && !window.confirm('Delete this message? This cannot be undone.')) {
+            event.preventDefault();
+            return;
+        }
+
+        // Clear chat is private to this user, but still asks because the local history disappears.
+        if (
+            clearConversationButton &&
+            !window.confirm('Clear this chat for you? Other members will still see the messages.')
+        ) {
             event.preventDefault();
             return;
         }
@@ -1504,202 +1184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Control the inbox search bar and filter dropdown
-    const searchInput = document.querySelector('[data-conversation-search]');
-    const searchFilter = document.querySelector('[data-conversation-search-filter]');
-    const filterMenu = document.querySelector('[data-search-filter-menu]');
-    const filterOptions = document.querySelector('.messages-search-filter-options');
-    const filterLabel = document.querySelector('[data-filter-label]');
-    const optionButtons = Array.from(document.querySelectorAll('[data-filter-option]'));
-    const inboxLiveRegion = document.querySelector('[data-inbox-live-region]');
-    const inboxSummary = document.querySelector('[data-inbox-summary]');
-    let activeInboxView = 'all';
-    let inboxPollInProgress = false;
+    replyCancel?.addEventListener('click', clearReplyComposer);
 
-    if (
-        !searchInput ||
-        !searchFilter ||
-        !filterMenu ||
-        !filterOptions ||
-        !filterLabel ||
-        optionButtons.length === 0
-    ) {
-        return;
-    }
-
-    const filterConversations = () => {
-        const query = searchInput.value.trim().toLocaleLowerCase();
-        const filter = searchFilter.dataset.filterValue || 'all';
-        const conversationRows = Array.from(document.querySelectorAll('[data-conversation-row]'));
-        const conversationList = document.querySelector('.conversation-list');
-        const noResults = document.querySelector('[data-conversation-no-results]');
-        const visibleCount = document.querySelector('[data-visible-conversation-count]');
-        const visibleCountLabel = document.querySelector('[data-conversation-count-label]');
-        let matchingCount = 0;
-
-        // The search filter in all, name and messages
-        // When user click unread, it only shows unread rows
-        conversationRows.forEach((row) => {
-            const name = (row.dataset.searchName || '').toLocaleLowerCase();
-            const content = (row.dataset.searchContent || '').toLocaleLowerCase();
-            const searchText = filter === 'name'
-                ? name
-                : filter === 'messages'
-                    ? content
-                    : `${name} ${content}`;
-            const matchesSearch = query === '' || searchText.includes(query);
-            // Archived conversations
-            const isArchived = row.dataset.archived === 'true';
-            const matchesView = activeInboxView === 'archived'
-                ? isArchived
-                : activeInboxView === 'unread'
-                    ? !isArchived && row.dataset.unread === 'true'
-                    : !isArchived;
-            const isVisible = matchesSearch && matchesView;
-
-            row.hidden = !isVisible;
-            matchingCount += isVisible ? 1 : 0;
-        });
-
-        if (conversationList && noResults) {
-            conversationList.hidden = matchingCount === 0;
-            noResults.hidden = matchingCount !== 0;
-        }
-
-        if (visibleCount) {
-            visibleCount.textContent = String(matchingCount);
-        }
-
-        if (visibleCountLabel) {
-            visibleCountLabel.textContent = matchingCount === 1 ? 'conversation' : 'conversations';
-        }
-    };
-
-    // Updates the active tab button
-    const applyInboxViewState = () => {
-        document.querySelectorAll('[data-inbox-view]').forEach((button) => {
-            const isActive = button.dataset.inboxView === activeInboxView;
-            button.classList.toggle('active', isActive);
-            button.setAttribute('aria-pressed', String(isActive));
-        });
-    };
-
-    const closeFilterMenu = () => {
-        filterOptions.hidden = true;
-        filterMenu.classList.remove('open');
-        searchFilter.setAttribute('aria-expanded', 'false');
-    };
-
-    // Click button dropdown
-    searchFilter.addEventListener('click', () => {
-        const shouldOpen = filterOptions.hidden;
-
-        filterOptions.hidden = !shouldOpen;
-        filterMenu.classList.toggle('open', shouldOpen);
-        searchFilter.setAttribute('aria-expanded', String(shouldOpen));
-    });
-
-    // Select option dropdown
-    optionButtons.forEach((option) => {
-        option.addEventListener('click', () => {
-            const value = option.dataset.filterOption || 'all';
-
-            searchFilter.dataset.filterValue = value;
-            filterLabel.textContent = option.querySelector('span')?.textContent || 'All';
-
-            optionButtons.forEach((button) => {
-                button.setAttribute('aria-selected', String(button === option));
-            });
-
-            closeFilterMenu();
-            filterConversations();
-            searchInput.focus();
-        });
-    });
-
-    document.addEventListener('click', (event) => {
-        const button = event.target.closest('[data-inbox-view]');
-
-        if (button) {
-            activeInboxView = button.dataset.inboxView || 'all';
-            applyInboxViewState();
-            filterConversations();
-        }
-    });
-
-    document.addEventListener('click', (event) => {
-        if (!filterMenu.contains(event.target)) {
-            closeFilterMenu();
-        }
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            closeFilterMenu();
-            searchFilter.focus();
-        }
-    });
-
-    searchInput.addEventListener('input', filterConversations);
-
-    // Periodically reloads the inbox content without refreshing the page
-    const pollInbox = async () => {
-        if (!inboxLiveRegion || inboxPollInProgress || document.hidden) {
-            return;
-        }
-
-        inboxPollInProgress = true;
-
-        try {
-            // Fetch the inbox.php
-            const response = await fetch('/gakumas-sms/messages/inbox.php', {
-                headers: { Accept: 'text/html' },
-                cache: 'no-store',
-            });
-
-            if (response.redirected && !response.url.includes('/messages/inbox.php')) {
-                window.location.assign(response.url);
-                return;
-            }
-
-            if (!response.ok) {
-                return;
-            }
-
-            const html = await response.text();
-            // Parses the returned HTML
-            const freshDocument = new DOMParser().parseFromString(html, 'text/html');
-            // Extract
-            const freshLiveRegion = freshDocument.querySelector('[data-inbox-live-region]');
-            const freshSummary = freshDocument.querySelector('[data-inbox-summary]');
-
-            if (!freshLiveRegion || !freshSummary) {
-                return;
-            }
-
-            // Replaces the current page content
-            inboxLiveRegion.replaceChildren(...Array.from(freshLiveRegion.childNodes));
-
-            if (inboxSummary) {
-                inboxSummary.replaceChildren(...Array.from(freshSummary.childNodes));
-            }
-
-            applyInboxViewState();
-            filterConversations();
-        } catch (error) {
-            // A temporary network error is retried on the next polling interval.
-        } finally {
-            inboxPollInProgress = false;
-        }
-    };
-
-    if (inboxLiveRegion) {
-        // Inbox updates immediately when user returns to the tab
-        window.setInterval(pollInbox, 3000);
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                pollInbox();
-            }
-        });
-    }
 });

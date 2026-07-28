@@ -244,5 +244,5 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </section>
 </main>
 
-<script src="/gakumas-sms/assets/js/messages.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-compose.js" defer></script>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

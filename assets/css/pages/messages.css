@@ -807,6 +807,7 @@
 }
 
 .conversation-box {
+    position: relative;
     display: grid;
     grid-template-rows: auto minmax(360px, 1fr) auto;
     min-height: calc(100vh - 150px);
@@ -875,9 +876,9 @@
 
 .conversation-action-menu {
     position: relative;
-    margin-left: auto;
 }
 
+.conversation-search-toggle,
 .conversation-action-menu-toggle {
     display: inline-flex;
     width: 40px;
@@ -892,9 +893,160 @@
     font-size: 1.2rem;
 }
 
+.conversation-search-toggle {
+    margin-left: auto;
+}
+
+.conversation-search-toggle:hover,
+.conversation-search-toggle[aria-expanded="true"],
 .conversation-action-menu-toggle:hover,
 .conversation-action-menu-toggle[aria-expanded="true"] {
     background: color-mix(in srgb, var(--primary) 12%, white);
+    color: var(--primary);
+}
+
+.conversation-search-panel {
+    position: fixed;
+    z-index: 1045;
+    top: 88px;
+    right: 32px;
+    left: 272px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, white);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: var(--shadow-medium);
+}
+
+.conversation-search-panel[hidden] {
+    display: none;
+}
+
+.conversation-search-field {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 11px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, white);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--primary) 4%, white);
+    color: var(--text-secondary);
+}
+
+.conversation-search-field:focus-within {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.conversation-search-field input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.search-mention-suggestions {
+    display: grid;
+    position: absolute;
+    z-index: 1;
+    top: calc(100% + 8px);
+    left: 10px;
+    width: min(420px, calc(100% - 20px));
+    max-height: 260px;
+    overflow-y: auto;
+    gap: 4px;
+    padding: 7px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 16px 36px rgba(74, 59, 71, 0.18);
+}
+
+.search-mention-suggestions[hidden] {
+    display: none;
+}
+
+.conversation-search-date {
+    display: inline-flex;
+    min-height: 38px;
+    flex: 0 0 156px;
+    align-items: center;
+    gap: 7px;
+    padding: 0 9px;
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, white);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--primary) 4%, white);
+    color: var(--text-secondary);
+}
+
+.conversation-search-date:focus-within {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.conversation-search-date span {
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+
+.conversation-search-date input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.conversation-search-count {
+    flex: 0 0 auto;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.conversation-search-actions {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+}
+
+.conversation-search-actions button {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: 8px;
+    background: white;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.conversation-search-actions button:hover,
+.conversation-search-actions button:focus-visible {
+    border-color: color-mix(in srgb, var(--primary) 40%, white);
     color: var(--primary);
 }
 
@@ -1129,8 +1281,13 @@
     color: var(--text-secondary);
 }
 
+.group-members-modal {
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
 .group-member-list {
     display: grid;
+    max-height: min(430px, calc(100vh - 220px));
     gap: 8px;
     overflow-y: auto;
     padding: 12px;
@@ -1282,6 +1439,79 @@ button.group-member-open-button:focus-visible > i {
     gap: 8px;
     overflow-y: auto;
     padding: 12px;
+}
+
+.message-forward-form {
+    display: grid;
+    min-height: 0;
+}
+
+.forward-conversation-list {
+    display: grid;
+    max-height: min(430px, calc(100vh - 240px));
+    gap: 8px;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.forward-conversation-item {
+    display: grid;
+    grid-template-columns: auto 40px minmax(0, 1fr) 22px;
+    min-height: 60px;
+    min-width: 0;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border: 1px solid color-mix(in srgb, var(--primary) 13%, white);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--primary) 3%, white);
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.forward-conversation-item:hover,
+.forward-conversation-item:has(input:focus-visible) {
+    border-color: color-mix(in srgb, var(--primary) 36%, white);
+    background: color-mix(in srgb, var(--primary) 7%, white);
+}
+
+.forward-conversation-item input {
+    margin: 0;
+    accent-color: var(--primary);
+}
+
+.forward-conversation-item span {
+    display: grid;
+    min-width: 0;
+}
+
+.forward-conversation-item strong,
+.forward-conversation-item small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.forward-conversation-item small {
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.forward-conversation-item > i {
+    color: color-mix(in srgb, var(--primary) 32%, white);
+    font-size: 1rem;
+}
+
+.forward-conversation-item:has(input:checked) {
+    border-color: color-mix(in srgb, var(--primary) 46%, white);
+    background: color-mix(in srgb, var(--primary) 10%, white);
+}
+
+.forward-conversation-item:has(input:checked) > i {
+    color: var(--primary);
 }
 
 .group-add-member-item {
@@ -1586,6 +1816,22 @@ button.group-member-open-button:focus-visible > i {
     font-size: 0.84rem;
 }
 
+.chat-message.search-match .chat-message-bubble {
+    outline: 2px solid color-mix(in srgb, var(--primary) 26%, white);
+    outline-offset: 2px;
+}
+
+.chat-message.search-active .chat-message-bubble {
+    outline-color: var(--primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.chat-message.reply-jump-target .chat-message-bubble {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
 .chat-message-meta {
     display: flex;
     min-height: 20px;
@@ -1620,6 +1866,25 @@ button.group-member-open-button:focus-visible > i {
 }
 
 .chat-read-receipt[hidden] {
+    display: none;
+}
+
+.chat-read-tick {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--primary);
+    font-size: 0.68rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.chat-read-tick i {
+    font-size: 0.78rem;
+    line-height: 1;
+}
+
+.chat-read-tick[hidden] {
     display: none;
 }
 
@@ -1779,6 +2044,64 @@ button.group-member-open-button:focus-visible > i {
     font-weight: 800;
 }
 
+.chat-reply-preview {
+    display: grid;
+    gap: 2px;
+    margin-bottom: 7px;
+    padding: 7px 9px;
+    border-left: 3px solid var(--primary);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--primary) 7%, white);
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.chat-reply-preview:hover,
+.chat-reply-preview:focus-visible {
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.chat-reply-preview strong,
+.chat-reply-preview span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chat-reply-preview strong {
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+
+.chat-reply-preview span {
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.chat-reply-preview.deleted span {
+    font-style: italic;
+}
+
+.chat-forwarded-label {
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 850;
+}
+
+.chat-forwarded-label i {
+    flex: 0 0 auto;
+    color: var(--primary);
+    font-size: 0.76rem;
+}
+
 .chat-request-status {
     display: inline-flex;
     align-items: center;
@@ -1865,6 +2188,14 @@ button.group-member-open-button:focus-visible > i {
     border-radius: var(--radius-pill);
     background: var(--bg-card);
     box-shadow: var(--shadow-soft);
+}
+
+.message-composer input[type="hidden"] {
+    display: none;
+}
+
+.conversation-input-area > input[type="hidden"] {
+    display: none;
 }
 
 .conversation-input-area {
@@ -1961,6 +2292,71 @@ button.group-member-open-button:focus-visible > i {
 
 .message-send-error[hidden] {
     display: none;
+}
+
+.message-reply-composer {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) 28px;
+    width: min(100%, 760px);
+    align-items: center;
+    gap: 9px;
+    margin: 0 auto 8px;
+    padding: 8px 10px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--primary) 6%, white);
+    color: var(--text-secondary);
+}
+
+.message-reply-composer[hidden] {
+    display: none;
+}
+
+.message-reply-composer > i {
+    color: var(--primary);
+}
+
+.message-reply-composer span {
+    display: grid;
+    min-width: 0;
+}
+
+.message-reply-composer strong,
+.message-reply-composer small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.message-reply-composer strong {
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.message-reply-composer small {
+    color: var(--text-secondary);
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.message-reply-composer button {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.message-reply-composer button:hover,
+.message-reply-composer button:focus-visible {
+    background: color-mix(in srgb, var(--primary) 10%, white);
+    color: var(--primary);
 }
 
 .message-typing-indicator {
@@ -2125,6 +2521,27 @@ button.group-member-open-button:focus-visible > i {
 
     .conversation-action-menu-panel {
         min-width: 200px;
+    }
+
+    .conversation-search-panel {
+        top: 74px;
+        right: 14px;
+        left: 14px;
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .conversation-search-field {
+        flex-basis: 100%;
+    }
+
+    .conversation-search-date {
+        flex: 1 1 calc(50% - 5px);
+    }
+
+    .conversation-search-count {
+        flex: 1 1 auto;
+        align-self: center;
     }
 
     .conversation-box {

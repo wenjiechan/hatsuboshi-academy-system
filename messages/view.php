@@ -27,9 +27,18 @@ $pinned_messages = get_pinned_conversation_messages($pdo, (int) $conversation_id
 mark_conversation_read($pdo, (int) $conversation_id, $user_id);
 
 $message_error = $_SESSION['message_error'] ?? null;
+$message_success = $_SESSION['message_success'] ?? null;
 unset($_SESSION['message_error']);
+unset($_SESSION['message_success']);
 $is_group_conversation = $conversation['conversation_type'] === 'group';
 $current_user_display_name = message_user_display_name($pdo, $user_id);
+$forward_conversations = $conversation['conversation_type'] !== 'system'
+    ? array_values(array_filter(
+        get_user_conversations($pdo, $user_id, true),
+        static fn(array $forward_conversation): bool => (int) $forward_conversation['id'] !== (int) $conversation_id
+            && ($forward_conversation['conversation_type'] ?? '') !== 'system'
+    ))
+    : [];
 $group_members = $is_group_conversation
     ? get_group_members($pdo, (int) $conversation_id, $user_id)
     : [];
@@ -42,6 +51,9 @@ $group_add_contacts = $is_group_conversation && !empty($conversation['is_group_a
     : [];
 $group_read_receipts = $is_group_conversation
     ? get_group_message_read_receipts($pdo, (int) $conversation_id, $user_id)
+    : [];
+$direct_read_receipts = $conversation['conversation_type'] === 'direct'
+    ? get_direct_message_read_receipts($pdo, (int) $conversation_id, $user_id)
     : [];
 $group_mention_members = $is_group_conversation
     ? array_values(array_map(
@@ -91,6 +103,24 @@ function pinned_message_preview(string $body, int $limit = 120): string
     return mb_strlen($body) > $limit
         ? mb_substr($body, 0, $limit - 1) . '...'
         : $body;
+}
+
+function reply_message_preview(array $message): ?array
+{
+    if (empty($message['reply_to_message_id'])) {
+        return null;
+    }
+
+    $body = !empty($message['reply_deleted_at'])
+        ? 'This message was deleted.'
+        : trim((string) ($message['reply_body'] ?? ''));
+
+    return [
+        'message_id' => (int) $message['reply_to_message_id'],
+        'sender_display_name' => (string) ($message['reply_sender_display_name'] ?? 'Someone'),
+        'body' => pinned_message_preview($body !== '' ? $body : '[No text]', 90),
+        'is_deleted' => !empty($message['reply_deleted_at']),
+    ];
 }
 
 function group_member_role_detail(array $member): string
@@ -200,6 +230,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 </p>
             </div>
 
+            <button
+                type="button"
+                class="conversation-search-toggle"
+                aria-label="Search messages"
+                aria-expanded="false"
+                aria-controls="conversationMessageSearch"
+                data-conversation-message-search-toggle
+            >
+                <i class="bi bi-search" aria-hidden="true"></i>
+            </button>
+
             <div class="conversation-action-menu" data-conversation-action-menu>
                 <button
                     type="button"
@@ -233,6 +274,18 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         </button>
                     </form>
 
+                    <?php if (($conversation['conversation_type'] ?? '') !== 'system'): ?>
+                        <?php // Clear chat hides history only for the logged-in participant. ?>
+                        <form method="post" action="/gakumas-sms/messages/clear.php" role="none">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                            <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
+                            <button type="submit" role="menuitem" data-conversation-clear-submit>
+                                <i class="bi bi-eraser"></i>
+                                <span>Clear chat</span>
+                            </button>
+                        </form>
+                    <?php endif; ?>
+
                     <?php if ($is_group_conversation): ?>
                         <?php if (!empty($conversation['is_group_admin'])): ?>
                             <button type="button" role="menuitem" aria-haspopup="dialog" data-modal-open="groupSettingsModal">
@@ -261,10 +314,70 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         </header>
 
+        <div
+            class="conversation-search-panel"
+            id="conversationMessageSearch"
+            data-conversation-message-search
+            hidden
+        >
+            <label class="conversation-search-field" for="conversationMessageSearchInput">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input
+                    type="search"
+                    id="conversationMessageSearchInput"
+                    placeholder="Search messages"
+                    autocomplete="off"
+                    data-conversation-message-search-input
+                >
+            </label>
+            <?php if ($is_group_conversation): ?>
+                <div class="search-mention-suggestions" data-search-mention-suggestions hidden></div>
+            <?php endif; ?>
+
+            <label class="conversation-search-date" for="conversationMessageSearchAfter">
+                <span>After</span>
+                <input
+                    type="date"
+                    id="conversationMessageSearchAfter"
+                    data-conversation-message-search-after
+                >
+            </label>
+
+            <label class="conversation-search-date" for="conversationMessageSearchBefore">
+                <span>Before</span>
+                <input
+                    type="date"
+                    id="conversationMessageSearchBefore"
+                    data-conversation-message-search-before
+                >
+            </label>
+
+            <span class="conversation-search-count" data-conversation-message-search-count>0 results</span>
+
+            <div class="conversation-search-actions">
+                <button type="button" aria-label="Previous result" data-conversation-message-search-prev>
+                    <i class="bi bi-chevron-up" aria-hidden="true"></i>
+                </button>
+                <button type="button" aria-label="Next result" data-conversation-message-search-next>
+                    <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                </button>
+                <button type="button" aria-label="Clear search" data-conversation-message-search-clear>
+                    <i class="bi bi-x-circle" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+
         <?php if ($message_error): ?>
             <div class="message-form-error" role="alert">
                 <i class="bi bi-exclamation-circle"></i>
                 <?= htmlspecialchars($message_error, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($message_success): ?>
+            <div class="message-form-success" role="status">
+                <i class="bi bi-check-circle"></i>
+                <?= htmlspecialchars($message_success, ENT_QUOTES, 'UTF-8') ?>
             </div>
         <?php endif; ?>
 
@@ -521,6 +634,83 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         <?php endif; ?>
 
+        <?php if (!empty($forward_conversations)): ?>
+            <div class="message-modal" id="messageForwardModal" role="dialog" aria-modal="true" aria-labelledby="messageForwardTitle" data-message-forward-modal hidden>
+                <div class="message-modal-backdrop" data-modal-close></div>
+                <section class="message-modal-panel message-forward-modal">
+                    <header class="message-modal-header">
+                        <div>
+                            <h3 id="messageForwardTitle">Forward message</h3>
+                            <p>Choose a conversation</p>
+                        </div>
+                        <button type="button" class="message-modal-close" aria-label="Close" data-modal-close>
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </header>
+
+                    <form method="post" action="/gakumas-sms/messages/forward.php" class="message-forward-form">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="source_conversation_id" value="<?= (int) $conversation_id ?>">
+                        <input type="hidden" name="source_message_id" value="" data-forward-message-id>
+
+                        <label class="modal-search-field" for="forwardConversationSearch">
+                            <span class="visually-hidden">Search conversations</span>
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                            <input
+                                type="search"
+                                id="forwardConversationSearch"
+                                placeholder="Search conversations"
+                                autocomplete="off"
+                                data-modal-search
+                                data-modal-search-target="forwardConversationList"
+                            >
+                        </label>
+
+                        <div class="forward-conversation-list" id="forwardConversationList">
+                            <?php foreach ($forward_conversations as $forward_conversation): ?>
+                                <?php
+                                $forward_name = get_message_user_display_name($forward_conversation);
+                                $forward_role = ($forward_conversation['conversation_type'] ?? '') === 'group'
+                                    ? (int) ($forward_conversation['member_count'] ?? 0) . ' members'
+                                    : ucfirst((string) ($forward_conversation['other_role'] ?? 'user'));
+                                ?>
+                                <label
+                                    class="forward-conversation-item"
+                                    data-modal-search-row
+                                    data-modal-search-text="<?= htmlspecialchars(strtolower($forward_name . ' ' . $forward_role), ENT_QUOTES, 'UTF-8') ?>"
+                                >
+                                    <input type="radio" name="target_conversation_id" value="<?= (int) $forward_conversation['id'] ?>" required>
+                                    <img
+                                        src="<?= htmlspecialchars(message_avatar_path($forward_conversation['other_avatar'], $forward_conversation['other_role']), ENT_QUOTES, 'UTF-8') ?>"
+                                        alt=""
+                                        class="group-member-avatar"
+                                    >
+                                    <span>
+                                        <strong><?= htmlspecialchars($forward_name, ENT_QUOTES, 'UTF-8') ?></strong>
+                                        <small><?= htmlspecialchars($forward_role, ENT_QUOTES, 'UTF-8') ?></small>
+                                    </span>
+                                    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div class="modal-no-results" data-modal-search-empty="forwardConversationList" hidden>
+                            <i class="bi bi-search"></i>
+                            <strong>No conversations found</strong>
+                        </div>
+
+                        <footer class="message-modal-actions">
+                            <button type="button" class="message-modal-secondary" data-modal-close>Cancel</button>
+                            <button type="submit" class="message-modal-primary">
+                                <i class="bi bi-forward-fill"></i>
+                                Forward
+                            </button>
+                        </footer>
+                    </form>
+                </section>
+            </div>
+        <?php endif; ?>
+
         <?php if (!empty($pinned_messages)): ?>
             <section class="pinned-messages-panel" aria-label="Pinned messages">
                 <div class="pinned-messages-heading">
@@ -570,6 +760,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         'read_names' => '',
                         'read_users' => [],
                     ];
+                    $direct_read_receipt = $direct_read_receipts[(int) $message['id']] ?? [
+                        'is_read' => false,
+                        'read_at' => '',
+                    ];
+                    $reply_preview = reply_message_preview($message);
                     // Show Accept or Reject buttons when the student receives a pending producer request.
                     $is_pending_producer_request = !$is_deleted_message
                         && in_array($message['message_type'], [
@@ -586,6 +781,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         id="message-<?= (int) $message['id'] ?>"
                         class="chat-message<?= $is_own_message ? ' own' : '' ?><?= $type_label ? ' special' : '' ?><?= $is_deleted_message ? ' deleted' : '' ?>"
                         data-message-id="<?= (int) $message['id'] ?>"
+                        data-message-search-text="<?= htmlspecialchars(strtolower(trim((string) ($message['body'] ?? '') . ' ' . chat_sender_display_name($message) . ' ' . $type_label)), ENT_QUOTES, 'UTF-8') ?>"
+                        data-message-search-date="<?= htmlspecialchars(substr((string) $message['created_at'], 0, 10), ENT_QUOTES, 'UTF-8') ?>"
+                        data-message-sender-id="<?= (int) ($message['sender_id'] ?? 0) ?>"
                     >
                         <div class="chat-message-bubble">
                             <?php if ($type_label): ?>
@@ -598,6 +796,24 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 <span class="chat-message-sender">
                                     <?= htmlspecialchars(chat_sender_display_name($message), ENT_QUOTES, 'UTF-8') ?>
                                 </span>
+                            <?php endif; ?>
+
+                            <?php if (!$is_deleted_message && !empty($message['forwarded_from_label'])): ?>
+                                <span class="chat-forwarded-label">
+                                    <i class="bi bi-forward-fill" aria-hidden="true"></i>
+                                    Forwarded from <?= htmlspecialchars((string) $message['forwarded_from_label'], ENT_QUOTES, 'UTF-8') ?>
+                                </span>
+                            <?php endif; ?>
+
+                            <?php if ($reply_preview): ?>
+                                <a
+                                    href="#message-<?= (int) $reply_preview['message_id'] ?>"
+                                    class="chat-reply-preview<?= !empty($reply_preview['is_deleted']) ? ' deleted' : '' ?>"
+                                    data-reply-preview
+                                >
+                                    <strong><?= htmlspecialchars($reply_preview['sender_display_name'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                    <span><?= htmlspecialchars($reply_preview['body'], ENT_QUOTES, 'UTF-8') ?></span>
+                                </a>
                             <?php endif; ?>
 
                             <p data-message-body>
@@ -638,6 +854,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                         type="button"
                                         class="chat-read-receipt"
                                         data-read-receipt
+                                        data-read-mode="group"
                                         data-read-count="<?= (int) $read_receipt['read_count'] ?>"
                                         data-read-names="<?= htmlspecialchars((string) $read_receipt['read_names'], ENT_QUOTES, 'UTF-8') ?>"
                                         data-read-users="<?= htmlspecialchars(json_encode($read_receipt['read_users'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>"
@@ -645,9 +862,22 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                     >
                                         Read by <?= (int) $read_receipt['read_count'] ?>
                                     </button>
+                                <?php elseif ($conversation['conversation_type'] === 'direct' && $is_own_message && !$is_deleted_message && (string) $message['message_type'] !== MESSAGE_TYPE_SYSTEM): ?>
+                                    <span
+                                        class="chat-read-tick"
+                                        data-read-receipt
+                                        data-read-mode="direct"
+                                        data-is-read="<?= !empty($direct_read_receipt['is_read']) ? '1' : '0' ?>"
+                                        data-read-at="<?= htmlspecialchars((string) $direct_read_receipt['read_at'], ENT_QUOTES, 'UTF-8') ?>"
+                                        title="<?= !empty($direct_read_receipt['read_at']) ? 'Read ' . htmlspecialchars((string) $direct_read_receipt['read_at'], ENT_QUOTES, 'UTF-8') : 'Read' ?>"
+                                        <?= empty($direct_read_receipt['is_read']) ? 'hidden' : '' ?>
+                                    >
+                                        <i class="bi bi-check2-all" aria-hidden="true"></i>
+                                        <span>Read</span>
+                                    </span>
                                 <?php endif; ?>
 
-                                <?php if (!empty($message['can_edit']) || !empty($message['can_delete']) || !empty($message['can_pin'])): ?>
+                                <?php if (!empty($message['can_edit']) || !empty($message['can_delete']) || !empty($message['can_pin']) || (!$is_deleted_message && (string) $message['message_type'] !== MESSAGE_TYPE_SYSTEM)): ?>
                                     <div class="chat-message-action-menu" data-message-action-menu>
                                         <button
                                             type="button"
@@ -661,6 +891,32 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                         </button>
 
                                         <div class="chat-message-action-panel" role="menu" data-message-action-panel hidden>
+                                            <?php if (!$is_deleted_message && (string) $message['message_type'] !== MESSAGE_TYPE_SYSTEM): ?>
+                                                <button
+                                                    type="button"
+                                                    role="menuitem"
+                                                    data-message-reply-open
+                                                    data-reply-message-id="<?= (int) $message['id'] ?>"
+                                                    data-reply-sender="<?= htmlspecialchars(chat_sender_display_name($message), ENT_QUOTES, 'UTF-8') ?>"
+                                                    data-reply-preview="<?= htmlspecialchars(pinned_message_preview((string) $message['body'], 90), ENT_QUOTES, 'UTF-8') ?>"
+                                                >
+                                                    <i class="bi bi-reply"></i>
+                                                    <span>Reply</span>
+                                                </button>
+
+                                                <?php if (!empty($forward_conversations)): ?>
+                                                    <button
+                                                        type="button"
+                                                        role="menuitem"
+                                                        data-message-forward-open
+                                                        data-forward-message-id="<?= (int) $message['id'] ?>"
+                                                    >
+                                                        <i class="bi bi-forward-fill"></i>
+                                                        <span>Forward</span>
+                                                    </button>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+
                                             <?php if (!empty($message['can_edit'])): ?>
                                                 <button type="button" role="menuitem" data-message-edit-open>
                                                     <i class="bi bi-pencil"></i>
@@ -768,8 +1024,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                 <div class="message-typing-indicator" data-typing-indicator hidden></div>
                 <div class="message-send-error" role="alert" data-message-send-error hidden></div>
+                <input type="hidden" name="reply_to_message_id" value="" form="messageComposer" data-reply-to-message-id>
 
-                <form method="post" action="/gakumas-sms/messages/send.php" class="message-composer" data-message-composer>
+                <div class="message-reply-composer" data-reply-composer hidden>
+                    <i class="bi bi-reply" aria-hidden="true"></i>
+                    <span>
+                        <strong data-reply-composer-sender></strong>
+                        <small data-reply-composer-preview></small>
+                    </span>
+                    <button type="button" aria-label="Cancel reply" data-reply-cancel>
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <form method="post" action="/gakumas-sms/messages/send.php" class="message-composer" id="messageComposer" data-message-composer>
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
                     <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
 
@@ -795,5 +1063,10 @@ require_once __DIR__ . '/../includes/sidebar.php';
     </section>
 </main>
 
+<script src="/gakumas-sms/assets/js/messages-modals.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-conversation-search.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-mentions.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-read-receipts.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-typing.js" defer></script>
 <script src="/gakumas-sms/assets/js/messages.js" defer></script>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
