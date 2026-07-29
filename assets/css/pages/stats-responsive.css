@@ -1,0 +1,143 @@
+@media (max-width: 991.98px) {
+    .stats-main .rank-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-main .current-rank-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stats-main .stats-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-main .rank-reference-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .stats-main .rank-reference-card {
+        margin-top: 16px;
+        padding: 18px;
+    }
+
+    .stats-main .rank-formula-panel,
+    .stats-main .rank-calculator-panel {
+        padding: 18px;
+    }
+
+    .stats-main .rank-calculator-fields label {
+        grid-template-columns: minmax(0, 1fr) 104px;
+    }
+
+    .stats-main .rank-calculator-result {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .stats-main .rank-calculator-result .rank-badge {
+        grid-column: 1 / -1;
+        justify-self: end;
+    }
+
+    .stats-main .rank-table-disclosure summary,
+    .stats-main .rank-table-content {
+        padding: 14px;
+    }
+
+    .stats-main .rank-table-summary-action > span {
+        display: none;
+    }
+
+    .stats-main .stat-history-card {
+        padding: 18px;
+    }
+
+    .stats-main .stats-detail-grid {
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .stats-main .stat-history-heading > span {
+        display: inline-flex;
+    }
+
+    .stats-main .stats-preview {
+        padding: 18px;
+    }
+
+    .stats-main .stat-chart-period {
+        display: inline-flex;
+    }
+
+    .stats-main .stat-chart-controls {
+        margin-top: 18px;
+    }
+
+    .stats-main .stat-chart-toggle {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .stats-main .stats-chart-wrap {
+        height: 300px;
+        padding-inline: 4px;
+    }
+
+    .stats-main .rank-progress-card {
+        padding: 18px;
+    }
+
+    .stats-main .rank-summary-grid {
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .stats-main .stat-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-main .stat-summary-grid .stat-row {
+        display: flex;
+        min-height: 64px;
+        padding: 14px 16px;
+    }
+
+    .stats-main .rank-progress-heading {
+        display: grid;
+        gap: 16px;
+    }
+
+    .stats-main .rank-progress-rating {
+        grid-template-columns: 1fr auto;
+        align-items: baseline;
+        width: 100%;
+        text-align: left;
+    }
+
+    .stats-main .rank-progress-rating strong {
+        text-align: right;
+    }
+
+    .stats-main .current-rank {
+        padding: 18px;
+    }
+
+    .stats-main .current-rank-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-main .current-rank-heading {
+        margin-bottom: 16px;
+    }
+
+    .stats-main .rank-progress-labels {
+        margin-top: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stats-main .rank-progress-fill {
+        transition: none;
+    }
+}

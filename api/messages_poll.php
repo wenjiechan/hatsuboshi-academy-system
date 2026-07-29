@@ -33,6 +33,11 @@ $conversation_id = filter_input(INPUT_GET, 'conversation_id', FILTER_VALIDATE_IN
 $after_id = filter_input(INPUT_GET, 'after_id', FILTER_VALIDATE_INT);
 $edited_after = (string) ($_GET['edited_after'] ?? '1970-01-01 00:00:00');
 $deleted_after = (string) ($_GET['deleted_after'] ?? '1970-01-01 00:00:00');
+$visible_message_ids = array_values(array_filter(array_map(
+    'intval',
+    explode(',', (string) ($_GET['visible_message_ids'] ?? ''))
+)));
+$visible_message_ids = array_slice(array_values(array_unique($visible_message_ids)), 0, 200);
 
 // Check that the user is logged in before polling messages.
 if (
@@ -58,6 +63,9 @@ ensure_message_pin_schema($pdo);
 ensure_message_presence_schema($pdo);
 ensure_message_reply_schema($pdo);
 ensure_message_clear_schema($pdo);
+ensure_message_reaction_schema($pdo);
+ensure_message_attachment_schema($pdo);
+ensure_message_sticker_schema($pdo);
 
 $conversation_type_stmt = $pdo->prepare(
     'SELECT conversation_type
@@ -77,6 +85,7 @@ $stmt = $pdo->prepare(
         m.body,
         m.related_type,
         m.related_id,
+        m.sticker_key,
         m.created_at,
         m.edited_at,
         m.deleted_at,
@@ -87,7 +96,15 @@ $stmt = $pdo->prepare(
         m.forwarded_from_message_id,
         reply.body AS reply_body,
         reply.message_type AS reply_message_type,
+        reply.sticker_key AS reply_sticker_key,
         reply.deleted_at AS reply_deleted_at,
+        (
+            SELECT reply_attachment.original_name
+            FROM message_attachments reply_attachment
+            WHERE reply_attachment.message_id = reply.id
+            ORDER BY reply_attachment.id ASC
+            LIMIT 1
+        ) AS reply_attachment_name,
         COALESCE(reply_student.name, reply_teacher.name, reply_user.username) AS reply_sender_display_name,
         request.id AS request_id,
         request.request_type AS request_type,
@@ -105,17 +122,18 @@ $stmt = $pdo->prepare(
             WHEN m.sender_id = ?
              AND m.message_type = "text"
              AND m.deleted_at IS NULL
+             AND TRIM(m.body) <> ""
              AND m.created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
             THEN 1
             ELSE 0
         END AS can_edit,
         /*A message can be deleted only 
         message belongs to current user
-        message type is text
+        message type is text or sticker
         message is not deleted*/
         CASE
             WHEN m.sender_id = ?
-             AND m.message_type = "text"
+             AND m.message_type IN ("text", "sticker")
              AND m.deleted_at IS NULL
             THEN 1
             ELSE 0
@@ -159,7 +177,7 @@ $stmt = $pdo->prepare(
      LIMIT 100'
 );
 $stmt->execute([$user_id, $user_id, $user_id, (int) $conversation_id, (int) $after_id]);
-$messages = $stmt->fetchAll();
+$messages = hydrate_message_attachments($pdo, $stmt->fetchAll());
 // Get messages that were edited or deleted after the browser's last polling cursor.
 $edited_messages = get_edited_conversation_messages(
     $pdo,
@@ -200,6 +218,14 @@ $read_receipts = $conversation_type === 'group'
         ? get_direct_message_read_receipts($pdo, (int) $conversation_id, $user_id)
         : []);
 $typing_users = get_conversation_typing_users($pdo, (int) $conversation_id, $user_id);
+$new_message_ids = array_map(static fn(array $message): int => (int) $message['id'], $messages);
+$reaction_message_ids = array_values(array_unique(array_merge($visible_message_ids, $new_message_ids)));
+$reaction_summaries = get_message_reaction_summaries(
+    $pdo,
+    (int) $conversation_id,
+    $user_id,
+    $reaction_message_ids
+);
 
 // Use the current database time as the next edit/delete polling cursor.
 $next_after_id = (int) $after_id;
@@ -209,11 +235,21 @@ $response_messages = [];
 foreach ($messages as $message) {
     $message_id = (int) $message['id'];
     $next_after_id = max($next_after_id, $message_id);
+    $reply_body = trim((string) ($message['reply_body'] ?? ''));
+
+    if (($message['reply_message_type'] ?? '') === MESSAGE_TYPE_STICKER) {
+        $reply_body = message_sticker_preview_label((string) ($message['reply_sticker_key'] ?? ''));
+    } elseif ($reply_body === '' && !empty($message['reply_attachment_name'])) {
+        $reply_body = 'Attachment: ' . (string) $message['reply_attachment_name'];
+    }
 
     $response_messages[] = [
         'id' => $message_id,
         'body' => empty($message['deleted_at']) ? (string) $message['body'] : '',
         'message_type' => (string) $message['message_type'],
+        // Send the resolved asset data so newly polled stickers render immediately.
+        'sticker_key' => $message['sticker_key'] !== null ? (string) $message['sticker_key'] : '',
+        'sticker' => empty($message['deleted_at']) ? message_sticker_public_data($message['sticker_key'] ?? null) : null,
         'related_type' => $message['related_type'],
         'related_id' => $message['related_id'] !== null ? (int) $message['related_id'] : null,
         'request_id' => $message['request_id'] !== null ? (int) $message['request_id'] : null,
@@ -231,10 +267,11 @@ foreach ($messages as $message) {
             'message_id' => (int) $message['reply_to_message_id'],
             'sender_display_name' => (string) ($message['reply_sender_display_name'] ?? 'Someone'),
             'body' => empty($message['reply_deleted_at'])
-                ? (string) ($message['reply_body'] ?? '')
+                ? $reply_body
                 : 'This message was deleted.',
             'is_deleted' => !empty($message['reply_deleted_at']),
             'message_type' => (string) ($message['reply_message_type'] ?? MESSAGE_TYPE_TEXT),
+            'sticker_key' => (string) ($message['reply_sticker_key'] ?? ''),
         ] : null,
         'sender_id' => (int) ($message['sender_id'] ?? 0),
         'is_own' => (int) ($message['sender_id'] ?? 0) === $user_id,
@@ -246,6 +283,8 @@ foreach ($messages as $message) {
             && (string) $message['message_type'] !== MESSAGE_TYPE_SYSTEM,
         'can_forward' => empty($message['deleted_at'])
             && (string) $message['message_type'] !== MESSAGE_TYPE_SYSTEM,
+        'attachments' => $message['attachments'] ?? [],
+        'reactions' => $reaction_summaries[$message_id] ?? [],
         'read_receipt' => $read_receipts[$message_id] ?? [
             'message_id' => $message_id,
             'read_count' => 0,
@@ -274,6 +313,7 @@ messages_poll_response([
             'id' => (int) $message['id'],
             'body' => (string) $message['body'],
             'edited_at' => (string) $message['edited_at'],
+            'attachments' => $message['attachments'] ?? [],
         ],
         $edited_messages
     ),
@@ -295,6 +335,13 @@ messages_poll_response([
         $request_statuses
     ),
     'read_receipts' => array_values($read_receipts),
+    'reaction_summaries' => array_map(
+        static fn(int $message_id): array => [
+            'message_id' => $message_id,
+            'reactions' => $reaction_summaries[$message_id] ?? [],
+        ],
+        $reaction_message_ids
+    ),
     'typing_users' => array_map(
         static fn(array $typing_user): array => [
             'user_id' => (int) $typing_user['user_id'],

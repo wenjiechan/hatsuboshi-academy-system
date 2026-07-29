@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/messages_helpers.php';
+require_once __DIR__ . '/../includes/message_view_helpers.php';
 
 // Get the conversation ID from URL
 $user_id = (int) $_SESSION['id'];
@@ -24,6 +25,7 @@ if (!$conversation) {
 // Mark the conversation as read after loading messages
 $messages = get_conversation_messages($pdo, (int) $conversation_id, $user_id);
 $pinned_messages = get_pinned_conversation_messages($pdo, (int) $conversation_id, $user_id);
+$message_reactions = get_message_reaction_summaries($pdo, (int) $conversation_id, $user_id);
 mark_conversation_read($pdo, (int) $conversation_id, $user_id);
 
 $message_error = $_SESSION['message_error'] ?? null;
@@ -68,124 +70,15 @@ $group_mention_members = $is_group_conversation
     : [];
 $current_group_avatar = trim((string) ($conversation['group_avatar'] ?? $conversation['other_avatar'] ?? ''));
 
-// Displays messages time
-function format_chat_message_time(string $date): string
-{
-    $timestamp = strtotime($date);
-
-    return $timestamp ? date('M j, Y \a\t g:i A', $timestamp) : $date;
-}
-
-// Convert special messages into labels
-function chat_message_type_label(string $type): ?string
-{
-    return match ($type) {
-        MESSAGE_TYPE_BIRTHDAY => 'Birthday message',
-        MESSAGE_TYPE_PRODUCER_ADD_REQUEST => 'Producer request',
-        MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST => 'Release request',
-        MESSAGE_TYPE_SYSTEM => 'System message',
-        default => null,
-    };
-}
-
-function chat_sender_display_name(array $message): string
-{
-    return trim((string) ($message['sender_student_name'] ?? ''))
-        ?: trim((string) ($message['sender_teacher_name'] ?? ''))
-        ?: trim((string) ($message['sender_username'] ?? ''))
-        ?: 'System';
-}
-
-function pinned_message_preview(string $body, int $limit = 120): string
-{
-    $body = trim(preg_replace('/\s+/', ' ', $body));
-
-    return mb_strlen($body) > $limit
-        ? mb_substr($body, 0, $limit - 1) . '...'
-        : $body;
-}
-
-function reply_message_preview(array $message): ?array
-{
-    if (empty($message['reply_to_message_id'])) {
-        return null;
-    }
-
-    $body = !empty($message['reply_deleted_at'])
-        ? 'This message was deleted.'
-        : trim((string) ($message['reply_body'] ?? ''));
-
-    return [
-        'message_id' => (int) $message['reply_to_message_id'],
-        'sender_display_name' => (string) ($message['reply_sender_display_name'] ?? 'Someone'),
-        'body' => pinned_message_preview($body !== '' ? $body : '[No text]', 90),
-        'is_deleted' => !empty($message['reply_deleted_at']),
-    ];
-}
-
-function group_member_role_detail(array $member): string
-{
-    return ($member['role'] ?? '') === 'teacher' && !empty($member['specialty'])
-        ? ucfirst((string) $member['specialty']) . ' teacher'
-        : ucfirst((string) ($member['role'] ?? 'member'));
-}
-
-function chat_message_body_html(
-    string $body,
-    array $mention_members,
-    string $current_user_display_name,
-    bool $is_group_conversation
-): string
-{
-    if (!$is_group_conversation) {
-        return nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8'));
-    }
-
-    $mention_names = array_values(array_unique(array_filter(array_map(
-        static fn(array $member): string => (string) ($member['display_name'] ?? ''),
-        $mention_members
-    ))));
-    $mention_names[] = 'everyone';
-    usort($mention_names, static fn(string $left, string $right): int => mb_strlen($right) <=> mb_strlen($left));
-    $mention_pattern = implode('|', array_map(static fn(string $name): string => preg_quote($name, '/'), $mention_names));
-
-    if ($mention_pattern === '') {
-        return nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8'));
-    }
-
-    $pattern = '/(^|[\s(])@(' . $mention_pattern . ')(?=$|[\s.,!?;:)\]])/iu';
-    $html = '';
-    $last_end = 0;
-
-    if (preg_match_all($pattern, $body, $matches, PREG_OFFSET_CAPTURE) !== false) {
-        foreach ($matches[0] as $index => $match) {
-            [$full_match, $offset] = $match;
-            $prefix = (string) $matches[1][$index][0];
-            $name = (string) $matches[2][$index][0];
-            $mention_start = $offset + strlen($prefix);
-
-            if ($mention_start > $last_end) {
-                $html .= nl2br(htmlspecialchars(substr($body, $last_end, $mention_start - $last_end), ENT_QUOTES, 'UTF-8'));
-            }
-
-            $mention_text = '@' . $name;
-            // All valid mentions are colored; only mentions for the current viewer get the background.
-            $is_targeted = strcasecmp($name, 'everyone') === 0 || strcasecmp($name, $current_user_display_name) === 0;
-            $class = 'chat-mention' . ($is_targeted ? ' chat-mention-targeted' : '');
-            $html .= '<span class="' . $class . '">' . htmlspecialchars($mention_text, ENT_QUOTES, 'UTF-8') . '</span>';
-            $last_end = $offset + strlen($full_match);
-        }
-    }
-
-    if ($last_end < strlen($body)) {
-        $html .= nl2br(htmlspecialchars(substr($body, $last_end), ENT_QUOTES, 'UTF-8'));
-    }
-
-    return $html !== '' ? $html : nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8'));
-}
-
 $page_title = 'Conversation';
-$page_styles = ['/gakumas-sms/assets/css/pages/messages.css'];
+$page_styles = [
+    '/gakumas-sms/assets/css/pages/messages.css',
+    '/gakumas-sms/assets/css/pages/messages-conversation.css',
+    '/gakumas-sms/assets/css/pages/messages-thread.css',
+    '/gakumas-sms/assets/css/pages/messages-responsive.css',
+    '/gakumas-sms/assets/css/pages/messages-emoji.css',
+    '/gakumas-sms/assets/css/pages/messages-attachments.css',
+];
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
@@ -622,7 +515,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     <header class="message-modal-header">
                         <div>
                             <h3 id="readReceiptTitle">Read receipts</h3>
-                            <p data-read-receipt-summary>Read by 0</p>
+                            <p data-read-receipt-summary>No readers yet</p>
                         </div>
                         <button type="button" class="message-modal-close" aria-label="Close" data-modal-close>
                             <i class="bi bi-x-lg"></i>
@@ -726,7 +619,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 <strong><?= htmlspecialchars($pinned_message['sender_display_name'], ENT_QUOTES, 'UTF-8') ?></strong>
                                 <small><?= htmlspecialchars(format_chat_message_time((string) $pinned_message['created_at']), ENT_QUOTES, 'UTF-8') ?></small>
                             </span>
-                            <p><?= htmlspecialchars(pinned_message_preview((string) $pinned_message['body']), ENT_QUOTES, 'UTF-8') ?></p>
+                            <p><?= htmlspecialchars(chat_message_preview_text($pinned_message), ENT_QUOTES, 'UTF-8') ?></p>
                         </a>
                     <?php endforeach; ?>
                 </div>
@@ -781,7 +674,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         id="message-<?= (int) $message['id'] ?>"
                         class="chat-message<?= $is_own_message ? ' own' : '' ?><?= $type_label ? ' special' : '' ?><?= $is_deleted_message ? ' deleted' : '' ?>"
                         data-message-id="<?= (int) $message['id'] ?>"
-                        data-message-search-text="<?= htmlspecialchars(strtolower(trim((string) ($message['body'] ?? '') . ' ' . chat_sender_display_name($message) . ' ' . $type_label)), ENT_QUOTES, 'UTF-8') ?>"
+                        data-message-search-text="<?= htmlspecialchars(strtolower(trim(chat_message_preview_text($message, 500) . ' ' . chat_sender_display_name($message) . ' ' . $type_label)), ENT_QUOTES, 'UTF-8') ?>"
                         data-message-search-date="<?= htmlspecialchars(substr((string) $message['created_at'], 0, 10), ENT_QUOTES, 'UTF-8') ?>"
                         data-message-sender-id="<?= (int) ($message['sender_id'] ?? 0) ?>"
                     >
@@ -816,14 +709,25 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 </a>
                             <?php endif; ?>
 
-                            <p data-message-body>
+                            <p
+                                class="<?= !$is_deleted_message && (string) $message['message_type'] !== MESSAGE_TYPE_STICKER && trim((string) ($message['body'] ?? '')) === '' ? 'chat-message-body-empty' : '' ?>"
+                                data-message-body
+                            >
                                 <?php if ($is_deleted_message): ?>
                                     <i class="bi bi-slash-circle" aria-hidden="true"></i>
                                     <em>This message was deleted.</em>
+                                <?php elseif ((string) $message['message_type'] === MESSAGE_TYPE_STICKER): ?>
+                                    <?php // Stickers render from their catalog key, not from message body text. ?>
+                                    <?= chat_message_sticker_html((string) ($message['sticker_key'] ?? '')) ?>
                                 <?php else: ?>
                                     <?= chat_message_body_html((string) $message['body'], $group_members, $current_user_display_name, $is_group_conversation) ?>
                                 <?php endif; ?>
                             </p>
+
+                            <?php if (!$is_deleted_message): ?>
+                                <?= chat_message_attachments_html($message['attachments'] ?? []) ?>
+                                <?= chat_message_reactions_html($message_reactions[(int) $message['id']] ?? []) ?>
+                            <?php endif; ?>
 
                             <div class="chat-message-meta">
                                 <?php if (
@@ -858,6 +762,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                         data-read-count="<?= (int) $read_receipt['read_count'] ?>"
                                         data-read-names="<?= htmlspecialchars((string) $read_receipt['read_names'], ENT_QUOTES, 'UTF-8') ?>"
                                         data-read-users="<?= htmlspecialchars(json_encode($read_receipt['read_users'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>"
+                                        title="<?= (int) $read_receipt['read_count'] === 1 ? '1 member has read this message' : (int) $read_receipt['read_count'] . ' members have read this message' ?>"
                                         <?= (int) $read_receipt['read_count'] === 0 ? 'hidden' : '' ?>
                                     >
                                         Read by <?= (int) $read_receipt['read_count'] ?>
@@ -895,10 +800,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                                 <button
                                                     type="button"
                                                     role="menuitem"
+                                                    data-message-react-open
+                                                    data-react-message-id="<?= (int) $message['id'] ?>"
+                                                >
+                                                    <i class="bi bi-emoji-smile"></i>
+                                                    <span>React</span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    role="menuitem"
                                                     data-message-reply-open
                                                     data-reply-message-id="<?= (int) $message['id'] ?>"
                                                     data-reply-sender="<?= htmlspecialchars(chat_sender_display_name($message), ENT_QUOTES, 'UTF-8') ?>"
-                                                    data-reply-preview="<?= htmlspecialchars(pinned_message_preview((string) $message['body'], 90), ENT_QUOTES, 'UTF-8') ?>"
+                                                    data-reply-preview="<?= htmlspecialchars(chat_message_preview_text($message, 90), ENT_QUOTES, 'UTF-8') ?>"
                                                 >
                                                     <i class="bi bi-reply"></i>
                                                     <span>Reply</span>
@@ -1008,58 +923,16 @@ require_once __DIR__ . '/../includes/sidebar.php';
             <?php endif; ?>
         </div>
 
-        <footer class="conversation-input-area">
-            <?php if ($conversation['conversation_type'] === 'system'): ?>
-                <div class="system-conversation-notice">
-                    <i class="bi bi-shield-check"></i>
-                    <span>System messages cannot be replied to.</span>
-                </div>
-            <?php else: ?>
-                <?php if ($is_group_conversation): ?>
-                    <script type="application/json" data-mention-members>
-                        <?= json_encode($group_mention_members, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
-                    </script>
-                    <div class="mention-suggestions" data-mention-suggestions hidden></div>
-                <?php endif; ?>
-
-                <div class="message-typing-indicator" data-typing-indicator hidden></div>
-                <div class="message-send-error" role="alert" data-message-send-error hidden></div>
-                <input type="hidden" name="reply_to_message_id" value="" form="messageComposer" data-reply-to-message-id>
-
-                <div class="message-reply-composer" data-reply-composer hidden>
-                    <i class="bi bi-reply" aria-hidden="true"></i>
-                    <span>
-                        <strong data-reply-composer-sender></strong>
-                        <small data-reply-composer-preview></small>
-                    </span>
-                    <button type="button" aria-label="Cancel reply" data-reply-cancel>
-                        <i class="bi bi-x-lg" aria-hidden="true"></i>
-                    </button>
-                </div>
-
-                <form method="post" action="/gakumas-sms/messages/send.php" class="message-composer" id="messageComposer" data-message-composer>
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
-                    <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
-
-                    <label for="messageBody" class="visually-hidden">Message</label>
-                    <textarea
-                        id="messageBody"
-                        name="body"
-                        rows="1"
-                        maxlength="5000"
-                        placeholder="Write a message"
-                        required
-                        data-message-input
-                    ></textarea>
-
-                    <span class="message-character-count" data-message-character-count>0 / 5000</span>
-
-                    <button type="submit" class="message-send-button" aria-label="Send message" data-message-send-button>
-                        <i class="bi bi-send-fill"></i>
-                    </button>
-                </form>
-            <?php endif; ?>
-        </footer>
+        <?php
+        $conversation_composer_context = [
+            'conversation_type' => (string) ($conversation['conversation_type'] ?? ''),
+            'conversation_id' => (int) $conversation_id,
+            'csrf_token' => csrf_token(),
+            'is_group_conversation' => $is_group_conversation,
+            'group_mention_members' => $group_mention_members,
+        ];
+        require __DIR__ . '/partials/conversation_composer.php';
+        ?>
     </section>
 </main>
 
@@ -1068,5 +941,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <script src="/gakumas-sms/assets/js/messages-mentions.js" defer></script>
 <script src="/gakumas-sms/assets/js/messages-read-receipts.js" defer></script>
 <script src="/gakumas-sms/assets/js/messages-typing.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-emoji.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-attachments.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-actions.js" defer></script>
 <script src="/gakumas-sms/assets/js/messages.js" defer></script>
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

@@ -24,6 +24,11 @@
             // These values are written to each message row so searching works after polling adds messages.
             const searchableMessageText = (message) => [
                 message.body || '',
+                ...(Array.isArray(message.attachments)
+                    ? message.attachments.map((attachment) => attachment.original_name || '')
+                    : []),
+                // Sticker labels make visual-only messages discoverable in conversation search.
+                message.sticker?.label || '',
                 message.sender_display_name || '',
                 messageTypeLabels[message.message_type] || '',
             ].join(' ').trim().toLocaleLowerCase();

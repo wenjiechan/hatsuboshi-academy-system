@@ -46,6 +46,8 @@ $sender_id = (int) $_SESSION['id'];
 $conversation_id = filter_input(INPUT_POST, 'conversation_id', FILTER_VALIDATE_INT);
 $reply_to_message_id = filter_input(INPUT_POST, 'reply_to_message_id', FILTER_VALIDATE_INT);
 $body = trim((string) ($_POST['body'] ?? ''));
+// A selected key switches this submission from a text message to a sticker message.
+$sticker_key = trim((string) ($_POST['sticker_key'] ?? ''));
 
 // Check whether the user actually belongs to the conversation
 if (!$conversation_id || !is_conversation_participant($pdo, (int) $conversation_id, $sender_id)) {
@@ -80,19 +82,28 @@ if (!$conversation || $conversation['conversation_type'] === 'system') {
     exit;
 }
 
+$prepared_attachments = [];
+$message_persisted = false;
+
 // Send the message after all permission and validation checks pass.
 try {
+    $prepared_attachments = prepare_message_attachment_uploads($_FILES['attachments'] ?? null);
     $message_id = send_conversation_message(
         $pdo,
         (int) $conversation_id,
         $sender_id,
         $body,
-        MESSAGE_TYPE_TEXT,
+        $sticker_key !== '' ? MESSAGE_TYPE_STICKER : MESSAGE_TYPE_TEXT,
         null,
         null,
         null,
-        $reply_to_message_id !== false ? $reply_to_message_id : null
+        $reply_to_message_id !== false ? $reply_to_message_id : null,
+        null,
+        null,
+        $prepared_attachments,
+        $sticker_key !== '' ? $sticker_key : null
     );
+    $message_persisted = true;
 
     $sender_name = message_user_display_name($pdo, $sender_id);
     $is_group_conversation = ($conversation['conversation_type'] ?? '') === 'group';
@@ -139,12 +150,16 @@ try {
     if ($expects_json) {
         ensure_message_pin_schema($pdo);
         ensure_message_presence_schema($pdo);
+        ensure_message_reaction_schema($pdo);
+        ensure_message_attachment_schema($pdo);
+        ensure_message_sticker_schema($pdo);
 
         $message_stmt = $pdo->prepare(
             'SELECT
                 m.id,
                 m.body,
                 m.message_type,
+                m.sticker_key,
                 m.created_at,
                 m.edited_at,
                 m.deleted_at,
@@ -155,7 +170,15 @@ try {
                 m.forwarded_from_message_id,
                 reply.body AS reply_body,
                 reply.message_type AS reply_message_type,
+                reply.sticker_key AS reply_sticker_key,
                 reply.deleted_at AS reply_deleted_at,
+                (
+                    SELECT reply_attachment.original_name
+                    FROM message_attachments reply_attachment
+                    WHERE reply_attachment.message_id = reply.id
+                    ORDER BY reply_attachment.id ASC
+                    LIMIT 1
+                ) AS reply_attachment_name,
                 COALESCE(reply_student.name, reply_teacher.name, reply_user.username) AS reply_sender_display_name
              FROM messages m
              LEFT JOIN messages reply
@@ -170,9 +193,17 @@ try {
         );
         $message_stmt->execute([$message_id, (int) $conversation_id]);
         $message = $message_stmt->fetch();
+        $message = hydrate_message_attachments($pdo, [$message])[0] ?? $message;
         $read_receipt = $is_group_conversation
             ? group_message_read_receipt_for_message($pdo, (int) $message_id, (int) $conversation_id, $sender_id)
             : direct_message_read_receipt_for_message($pdo, (int) $message_id, (int) $conversation_id, $sender_id);
+        $reply_body = trim((string) ($message['reply_body'] ?? ''));
+
+        if (($message['reply_message_type'] ?? '') === MESSAGE_TYPE_STICKER) {
+            $reply_body = message_sticker_preview_label((string) ($message['reply_sticker_key'] ?? ''));
+        } elseif ($reply_body === '' && !empty($message['reply_attachment_name'])) {
+            $reply_body = 'Attachment: ' . (string) $message['reply_attachment_name'];
+        }
 
         send_message_response([
             'success' => true,
@@ -180,6 +211,8 @@ try {
                 'id' => (int) $message['id'],
                 'body' => (string) $message['body'],
                 'message_type' => (string) $message['message_type'],
+                'sticker_key' => $message['sticker_key'] !== null ? (string) $message['sticker_key'] : '',
+                'sticker' => message_sticker_public_data($message['sticker_key'] ?? null),
                 'created_at' => (string) $message['created_at'],
                 'edited_at' => $message['edited_at'],
                 'deleted_at' => $message['deleted_at'],
@@ -192,30 +225,43 @@ try {
                     'message_id' => (int) $message['reply_to_message_id'],
                     'sender_display_name' => (string) ($message['reply_sender_display_name'] ?? 'Someone'),
                     'body' => empty($message['reply_deleted_at'])
-                        ? (string) ($message['reply_body'] ?? '')
+                        ? $reply_body
                         : 'This message was deleted.',
                     'is_deleted' => !empty($message['reply_deleted_at']),
                     'message_type' => (string) ($message['reply_message_type'] ?? MESSAGE_TYPE_TEXT),
+                    'sticker_key' => (string) ($message['reply_sticker_key'] ?? ''),
                 ] : null,
                 'sender_id' => $sender_id,
                 'sender_display_name' => $sender_name,
                 'is_own' => true,
-                'can_edit' => true,
+                'can_edit' => (string) $message['message_type'] === MESSAGE_TYPE_TEXT && $body !== '',
                 'can_delete' => true,
                 'can_pin' => true,
                 'can_reply' => true,
                 'can_forward' => true,
+                'attachments' => $message['attachments'] ?? [],
+                'reactions' => [],
                 'read_receipt' => $read_receipt,
             ],
         ]);
     }
-} catch (InvalidArgumentException | RuntimeException $exception) {
-    // Only runs for normal non-AJAX form submissions
-    if ($expects_json) {
-        send_message_response(['error' => $exception->getMessage()], 422);
+} catch (Throwable $exception) {
+    if (!$message_persisted) {
+        cleanup_prepared_message_attachments($prepared_attachments);
     }
 
-    $_SESSION['message_error'] = $exception->getMessage();
+    $is_expected_error = $exception instanceof InvalidArgumentException
+        || get_class($exception) === RuntimeException::class;
+    $client_message = $is_expected_error
+        ? $exception->getMessage()
+        : 'The message could not be sent. Please try again.';
+
+    // Only runs for normal non-AJAX form submissions
+    if ($expects_json) {
+        send_message_response(['error' => $client_message], $is_expected_error ? 422 : 500);
+    }
+
+    $_SESSION['message_error'] = $client_message;
 }
 
 header('Location: /gakumas-sms/messages/view.php?id=' . (int) $conversation_id);

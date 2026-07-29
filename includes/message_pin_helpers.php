@@ -36,16 +36,19 @@ function get_pinned_conversation_messages(PDO $pdo, int $conversation_id, int $u
 {
     ensure_message_pin_schema($pdo);
     ensure_message_clear_schema($pdo);
+    ensure_message_sticker_schema($pdo);
 
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
     }
 
+    // Include the key so pinned sticker previews can resolve their label.
     $stmt = $pdo->prepare(
         'SELECT
             m.id,
             m.body,
             m.message_type,
+            m.sticker_key,
             m.sender_id,
             m.created_at,
             m.pinned_at,
@@ -77,7 +80,7 @@ function get_pinned_conversation_messages(PDO $pdo, int $conversation_id, int $u
     );
     $stmt->execute([$user_id, $conversation_id]);
 
-    return $stmt->fetchAll();
+    return hydrate_message_attachments($pdo, $stmt->fetchAll());
 }
 
 function set_conversation_message_pinned(

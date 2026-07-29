@@ -131,6 +131,8 @@ if ($manage_student_id > 0) {
 $page_styles = [
     '/gakumas-sms/assets/css/pages/song.css',
     '/gakumas-sms/assets/css/pages/admin-songs.css?v=20260720b',
+    '/gakumas-sms/assets/css/pages/admin-songs-editor.css?v=20260720b',
+    '/gakumas-sms/assets/css/pages/admin-songs-responsive.css?v=20260720b',
 ];
 $manual_request_requested = producer_request_context_requested_data($manual_request);
 $manual_request_closed = $manual_request && in_array((string) ($manual_request['status'] ?? ''), ['approved', 'rejected', 'cancelled'], true);

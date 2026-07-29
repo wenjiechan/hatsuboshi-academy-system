@@ -1,0 +1,116 @@
+@media (max-width: 1100px) {
+    .admin-songs-hero,
+    .admin-songs-filter-form,
+    .admin-song-form-grid,
+    .admin-song-student-picker,
+    .admin-student-manage-grid,
+    .admin-student-song-add-row {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-songs-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-songs-summary-grid,
+    .admin-song-usage-card {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-song-assignment-heading,
+    .admin-song-assignment-heading-actions,
+    .admin-song-student-tools,
+    .admin-student-songs-heading,
+    .admin-managed-student-summary,
+    .admin-student-song-add {
+        display: grid;
+    }
+
+    .admin-song-pagination {
+        flex-wrap: wrap;
+    }
+}
+
+/* Strong final layout rules for the student-management section. */
+.admin-songs-main .admin-student-songs-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.35rem;
+    border: 1px solid rgba(255, 179, 209, 0.45);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 45px rgba(255, 107, 157, 0.08);
+}
+
+.admin-songs-main .admin-student-songs-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.admin-songs-main .admin-student-manage-search {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 520px;
+    color: var(--text-muted, #7b6f76);
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.admin-songs-main .admin-student-manage-search input {
+    min-height: 44px;
+    border: 1px solid rgba(255, 179, 209, 0.55);
+    border-radius: 16px;
+    padding: 0.7rem 0.85rem;
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.admin-songs-main .admin-student-manage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0.75rem;
+}
+
+.admin-songs-main .admin-student-manage-card {
+    display: grid;
+    gap: 0.45rem;
+    border: 1px solid rgba(255, 179, 209, 0.45);
+    border-radius: 18px;
+    padding: 0.85rem;
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--text-main, #30262c);
+    text-decoration: none;
+}
+
+.admin-songs-main .admin-student-manage-card:hover,
+.admin-songs-main .admin-student-manage-card:focus,
+.admin-songs-main .admin-student-manage-card.is-selected {
+    border-color: var(--primary, #ff6b9d);
+    background: rgba(255, 240, 247, 0.95);
+    color: var(--text-main, #30262c);
+    text-decoration: none;
+}
+
+.admin-songs-main .admin-student-manage-card span,
+.admin-songs-main .admin-student-song-picker-option span {
+    display: grid;
+    min-width: 0;
+}
+
+.admin-songs-main .admin-student-manage-card em {
+    color: var(--text-muted, #7b6f76);
+    font-style: normal;
+    font-weight: 800;
+}
+
+.admin-songs-main .admin-student-manage-card b {
+    width: fit-content;
+    border-radius: 999px;
+    padding: 0.25rem 0.6rem;
+    color: var(--primary, #ff6b9d);
+    background: rgba(255, 179, 209, 0.22);
+    font-size: 0.78rem;
+}

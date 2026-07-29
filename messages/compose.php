@@ -64,7 +64,10 @@ $message_error = $_SESSION['message_error'] ?? null;
 unset($_SESSION['message_error']);
 
 $page_title = 'New Message';
-$page_styles = ['/gakumas-sms/assets/css/pages/messages.css'];
+$page_styles = [
+    '/gakumas-sms/assets/css/pages/messages.css',
+    '/gakumas-sms/assets/css/pages/messages-responsive.css',
+];
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>

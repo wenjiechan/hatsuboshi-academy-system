@@ -75,7 +75,11 @@ $stat_history = $history_stmt->fetchAll();
 
 
 $page_title = 'My Stats';
-$page_styles = ['/gakumas-sms/assets/css/pages/stats.css'];
+$page_styles = [
+    '/gakumas-sms/assets/css/pages/stats.css',
+    '/gakumas-sms/assets/css/pages/stats-details.css',
+    '/gakumas-sms/assets/css/pages/stats-responsive.css',
+];
 require_once '../includes/header.php';
 require_once '../includes/sidebar.php';
 ?>

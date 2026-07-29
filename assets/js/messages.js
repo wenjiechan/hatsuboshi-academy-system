@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageComposer = document.querySelector('[data-message-composer]');
     const messageSendButton = document.querySelector('[data-message-send-button]');
     const messageSendError = document.querySelector('[data-message-send-error]');
+    const messageEmojiToggle = document.querySelector('[data-message-emoji-toggle]');
     const replyToMessageInput = document.querySelector('[data-reply-to-message-id]');
     const replyComposer = document.querySelector('[data-reply-composer]');
     const replyComposerSender = document.querySelector('[data-reply-composer-sender]');
@@ -13,9 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const replyCancel = document.querySelector('[data-reply-cancel]');
     const forwardModal = document.querySelector('[data-message-forward-modal]');
     const forwardMessageInput = document.querySelector('[data-forward-message-id]');
-    let setMessageEditVisibility = () => {};
-    let setReplyComposer = () => {};
-    let clearReplyComposer = () => {};
     const messageModals = window.GakumasMessageModals || { open: () => {} };
 
     // Controls the textarea in the chat page
@@ -70,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
             producer_remove_request: 'Release request',
             system: 'System message',
         };
-
         const conversationSearch = window.GakumasConversationSearch?.init({
             conversationThread,
             isGroupConversation,
@@ -112,6 +109,34 @@ document.addEventListener('DOMContentLoaded', () => {
             updateIndicator: () => {},
         };
 
+        const attachmentUI = window.GakumasMessageAttachments.init({
+            fileInput: document.querySelector('[data-message-attachment-input]'),
+            toggle: document.querySelector('[data-message-attachment-toggle]'),
+            preview: document.querySelector('[data-message-attachment-preview]'),
+            messageSendError,
+        });
+        const reactionUI = window.GakumasMessageEmoji.init({
+            conversationThread,
+            conversationId,
+            messageInput,
+            messageComposer,
+            messageEmojiToggle,
+            messageSendError,
+        });
+        const messageActions = window.GakumasMessageActions.init({
+            messageInput,
+            replyToMessageInput,
+            replyComposer,
+            replyComposerSender,
+            replyComposerPreview,
+            replyCancel,
+            forwardModal,
+            forwardMessageInput,
+            messageModals,
+            readReceipts,
+            reactionUI,
+        });
+
         // Convert database datetime into a nicer display format
         const formatMessageTime = (dateValue) => {
             const parsedDate = new Date(dateValue.replace(' ', 'T'));
@@ -130,30 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const value = (type) => parts.find((part) => part.type === type)?.value || '';
 
             return `${value('month')} ${value('day')}, ${value('year')} at ${value('hour')}:${value('minute')} ${value('dayPeriod')}`;
-        };
-
-        // Controls whether a message is in normal view or edit mode
-        setMessageEditVisibility = (bubble, isEditing) => {
-            const messageBody = bubble?.querySelector('[data-message-body]');
-            const editForm = bubble?.querySelector('[data-message-edit-form]');
-            const actionMenu = bubble?.querySelector('[data-message-action-menu]');
-            const textarea = editForm?.querySelector('textarea');
-
-            if (!messageBody || !editForm) {
-                return;
-            }
-
-            messageBody.hidden = isEditing;
-            editForm.hidden = !isEditing;
-
-            if (actionMenu) {
-                actionMenu.hidden = isEditing;
-            }
-
-            if (isEditing && textarea) {
-                textarea.focus();
-                textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-            }
         };
 
         const escapeRegExp = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -247,36 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return link;
         };
 
-        clearReplyComposer = () => {
-            if (replyToMessageInput) {
-                replyToMessageInput.value = '';
-            }
-
-            if (replyComposer) {
-                replyComposer.hidden = true;
-            }
-
-            if (replyComposerSender) {
-                replyComposerSender.textContent = '';
-            }
-
-            if (replyComposerPreview) {
-                replyComposerPreview.textContent = '';
-            }
-        };
-
-        setReplyComposer = (messageId, sender, preview) => {
-            if (!replyToMessageInput || !replyComposer || !replyComposerSender || !replyComposerPreview) {
-                return;
-            }
-
-            replyToMessageInput.value = String(messageId || '');
-            replyComposerSender.textContent = sender || 'Someone';
-            replyComposerPreview.textContent = preview || '[No text]';
-            replyComposer.hidden = false;
-            messageInput?.focus();
-        };
-
         // Updates a message that was edited by polling
         const updateEditedMessage = (message) => {
             const article = conversationThread.querySelector(`[data-message-id="${message.id}"]`);
@@ -318,6 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             article.classList.add('deleted');
             article.dataset.messageSearchText = '';
+            body.classList.remove('chat-message-body-empty');
+            body.classList.remove('chat-message-body-sticker');
             body.replaceChildren();
 
             const icon = document.createElement('i');
@@ -331,6 +304,8 @@ document.addEventListener('DOMContentLoaded', () => {
             meta.querySelector('[data-message-edited]')?.remove();
             meta.querySelector('[data-read-receipt]')?.remove();
             meta.querySelector('[data-message-action-menu]')?.remove();
+            article.querySelector('[data-message-reactions]')?.remove();
+            article.querySelector('[data-message-attachments]')?.remove();
             article.querySelector('[data-message-edit-form]')?.remove();
         };
 
@@ -357,12 +332,20 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.hidden = true;
 
             if (message.can_reply) {
+                const reactButton = document.createElement('button');
+                reactButton.type = 'button';
+                reactButton.dataset.messageReactOpen = '';
+                reactButton.dataset.reactMessageId = String(message.id);
+                reactButton.setAttribute('role', 'menuitem');
+                reactButton.innerHTML = '<i class="bi bi-emoji-smile"></i><span>React</span>';
+                panel.append(reactButton);
+
                 const replyButton = document.createElement('button');
                 replyButton.type = 'button';
                 replyButton.dataset.messageReplyOpen = '';
                 replyButton.dataset.replyMessageId = String(message.id);
                 replyButton.dataset.replySender = message.sender_display_name || (message.is_own ? 'You' : 'Someone');
-                replyButton.dataset.replyPreview = String(message.body || '').replace(/\s+/g, ' ').trim().slice(0, 90) || '[No text]';
+                replyButton.dataset.replyPreview = attachmentUI.messagePreview(message);
                 replyButton.setAttribute('role', 'menuitem');
                 replyButton.innerHTML = '<i class="bi bi-reply"></i><span>Reply</span>';
                 panel.append(replyButton);
@@ -596,8 +579,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const body = document.createElement('p');
             body.dataset.messageBody = '';
-            renderMessageBody(body, message.body);
+            // Sticker payloads carry an image URL; normal messages still use formatted text.
+            const isSticker = message.message_type === 'sticker';
+            body.classList.toggle('chat-message-body-empty', !isSticker && String(message.body || '').trim() === '');
+
+            if (!isSticker || !reactionUI.renderMessageSticker(body, message.sticker)) {
+                renderMessageBody(body, message.body);
+            }
             bubble.append(body);
+            attachmentUI.renderMessageAttachments(bubble, message.attachments || []);
 
             const meta = document.createElement('div');
             meta.className = 'chat-message-meta';
@@ -675,7 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cancelButton.className = 'message-edit-cancel';
                 cancelButton.dataset.messageEditCancel = '';
                 cancelButton.textContent = 'Cancel';
-                cancelButton.addEventListener('click', () => setMessageEditVisibility(bubble, false));
+                cancelButton.addEventListener('click', () => messageActions.setMessageEditVisibility(bubble, false));
 
                 const saveButton = document.createElement('button');
                 saveButton.type = 'submit';
@@ -694,6 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             article.append(bubble);
+            reactionUI.renderMessageReactions(article, message.reactions || []);
 
             if (message.deleted_at) {
                 renderDeletedMessage(article);
@@ -716,6 +707,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     after_id: String(lastMessageId),
                     edited_after: editedAfter,
                     deleted_after: deletedAfter,
+                    visible_message_ids: Array.from(conversationThread.querySelectorAll('[data-message-id]'))
+                        .map((messageElement) => messageElement.dataset.messageId)
+                        .filter(Boolean)
+                        .slice(-200)
+                        .join(','),
                 });
                 // Send a request to message poll.php
                 const response = await fetch(`/gakumas-sms/api/messages_poll.php?${params}`, {
@@ -792,6 +788,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 readReceipts.updateAll(conversationThread, data.read_receipts);
+                if (Array.isArray(data.reaction_summaries)) {
+                    data.reaction_summaries.forEach((summary) => {
+                        const article = conversationThread.querySelector(`[data-message-id="${summary.message_id}"]`);
+                        reactionUI.renderMessageReactions(article, summary.reactions);
+                    });
+                }
                 typingStatus.updateIndicator(data.typing_users);
 
                 // Update polling cursors
@@ -822,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 event.preventDefault();
 
-                if (messageInput.value.trim() === '') {
+                if (messageInput.value.trim() === '' && !attachmentUI.hasFiles() && !reactionUI.hasSelectedSticker()) {
                     return;
                 }
 
@@ -833,7 +835,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 //Javascript takes control of the submit process
                 event.preventDefault();
 
-                if (messageInput.value.trim() === '') {
+                if (messageInput.value.trim() === '' && !attachmentUI.hasFiles() && !reactionUI.hasSelectedSticker()) {
                     messageInput.focus();
                     return;
                 }
@@ -855,7 +857,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             Accept: 'application/json',
                             'X-Requested-With': 'XMLHttpRequest',
                         },
-                        body: new FormData(messageComposer),
+                        body: attachmentUI.createFormData(messageComposer),
                     });
 
                     if (response.redirected) {
@@ -889,7 +891,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Clear the textarea after sending successfully
                     messageInput.value = '';
                     messageInput.dispatchEvent(new Event('input'));
-                    clearReplyComposer();
+                    attachmentUI.clearSelection();
+                    reactionUI.clearSelectedSticker();
+                    messageActions.clearReplyComposer();
                     typingStatus.stopNow();
                     messageInput.focus();
                 } catch (error) {
@@ -989,201 +993,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Closes all ... menus, except the provided menu
-    const closeMessageActionMenus = (exceptMenu = null) => {
-        document.querySelectorAll('[data-message-action-menu]').forEach((menu) => {
-            if (menu === exceptMenu) {
-                return;
-            }
-
-            const panel = menu.querySelector('[data-message-action-panel]');
-            const toggle = menu.querySelector('[data-message-action-toggle]');
-
-            if (panel) {
-                panel.hidden = true;
-                panel.removeAttribute('style');
-            }
-
-            toggle?.setAttribute('aria-expanded', 'false');
-        });
-    };
-
-    const positionMessageActionPanel = (toggle, panel) => {
-        const toggleRect = toggle.getBoundingClientRect();
-        const gap = 5;
-        const viewportPadding = 8;
-
-        panel.style.position = 'fixed';
-        panel.style.zIndex = '2000';
-        panel.style.visibility = 'hidden';
-        panel.hidden = false;
-
-        const panelWidth = panel.offsetWidth;
-        const panelHeight = panel.offsetHeight;
-        const left = Math.min(
-            Math.max(viewportPadding, toggleRect.right - panelWidth),
-            window.innerWidth - panelWidth - viewportPadding
-        );
-        const preferredTop = toggleRect.bottom + gap;
-        const top = preferredTop + panelHeight + viewportPadding > window.innerHeight
-            ? Math.max(viewportPadding, toggleRect.top - panelHeight - gap)
-            : preferredTop;
-
-        panel.style.left = `${left}px`;
-        panel.style.top = `${top}px`;
-        panel.style.right = 'auto';
-        panel.style.bottom = 'auto';
-        panel.style.visibility = '';
-    };
-
-    // It checked what the user clicked
-    // If user clicks ..., it opens the menu
-    // If user clicks Edit, it opens edit mode
-    // If user clicks Delete, it asks confirmation
-    // If user cancels, it stops the form
-    document.addEventListener('click', (event) => {
-        const actionToggle = event.target.closest('[data-message-action-toggle]');
-        const editButton = event.target.closest('[data-message-edit-open]');
-        const replyButton = event.target.closest('[data-message-reply-open]');
-        const forwardButton = event.target.closest('[data-message-forward-open]');
-        const deleteButton = event.target.closest('[data-message-delete-submit]');
-        const clearConversationButton = event.target.closest('[data-conversation-clear-submit]');
-        const groupRemoveButton = event.target.closest('[data-group-remove-submit]');
-        const readReceiptButton = event.target.closest('[data-read-receipt]');
-        const replyPreviewLink = event.target.closest('a[data-reply-preview]');
-
-        if (replyPreviewLink) {
-            const targetId = (replyPreviewLink.getAttribute('href') || '').replace('#message-', '');
-            const targetMessage = targetId
-                ? document.querySelector(`[data-message-id="${CSS.escape(targetId)}"]`)
-                : null;
-
-            if (targetMessage) {
-                event.preventDefault();
-                targetMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                targetMessage.classList.add('reply-jump-target');
-                window.setTimeout(() => {
-                    targetMessage.classList.remove('reply-jump-target');
-                }, 1800);
-            }
-
-            return;
-        }
-
-        if (actionToggle) {
-            const menu = actionToggle.closest('[data-message-action-menu]');
-            const panel = menu?.querySelector('[data-message-action-panel]');
-            const shouldOpen = Boolean(panel?.hidden);
-
-            closeMessageActionMenus(menu);
-
-            if (panel) {
-                actionToggle.setAttribute('aria-expanded', String(shouldOpen));
-
-                if (shouldOpen) {
-                    positionMessageActionPanel(actionToggle, panel);
-                } else {
-                    panel.hidden = true;
-                    panel.removeAttribute('style');
-                }
-            }
-
-            return;
-        }
-
-        if (readReceiptButton && readReceiptButton.dataset.readMode !== 'direct') {
-            readReceipts.openModal(readReceiptButton);
-            return;
-        }
-
-        if (editButton) {
-            const bubble = editButton.closest('.chat-message-bubble');
-            closeMessageActionMenus();
-            setMessageEditVisibility(bubble, true);
-            return;
-        }
-
-        if (replyButton) {
-            closeMessageActionMenus();
-            setReplyComposer(
-                replyButton.dataset.replyMessageId || '',
-                replyButton.dataset.replySender || 'Someone',
-                replyButton.dataset.replyPreview || '[No text]'
-            );
-            return;
-        }
-
-        if (forwardButton) {
-            closeMessageActionMenus();
-
-            if (forwardMessageInput && forwardModal) {
-                forwardMessageInput.value = forwardButton.dataset.forwardMessageId || '';
-                forwardModal.querySelectorAll('input[name="target_conversation_id"]').forEach((input) => {
-                    input.checked = false;
-                });
-                messageModals.open(forwardModal, forwardButton);
-            }
-
-            return;
-        }
-
-        if (deleteButton && !window.confirm('Delete this message? This cannot be undone.')) {
-            event.preventDefault();
-            return;
-        }
-
-        // Clear chat is private to this user, but still asks because the local history disappears.
-        if (
-            clearConversationButton &&
-            !window.confirm('Clear this chat for you? Other members will still see the messages.')
-        ) {
-            event.preventDefault();
-            return;
-        }
-
-        if (groupRemoveButton) {
-            const memberName = groupRemoveButton.dataset.memberName || 'this member';
-
-            if (!window.confirm(`Remove ${memberName} from this group?`)) {
-                event.preventDefault();
-                return;
-            }
-        }
-
-        if (!event.target.closest('[data-message-action-menu]')) {
-            closeMessageActionMenus();
-        }
-    });
-
-    // Clicks cancel when edit, hides the edit form and shows the original message again
-    document.querySelectorAll('[data-message-edit-cancel]').forEach((cancelButton) => {
-        cancelButton.addEventListener('click', () => {
-            const bubble = cancelButton.closest('.chat-message-bubble');
-            const messageBody = bubble?.querySelector('[data-message-body]');
-            const editForm = bubble?.querySelector('[data-message-edit-form]');
-            const actionMenu = bubble?.querySelector('[data-message-action-menu]');
-
-            if (messageBody) {
-                messageBody.hidden = false;
-            }
-
-            if (editForm) {
-                editForm.hidden = true;
-            }
-
-            if (actionMenu) {
-                actionMenu.hidden = false;
-            }
-        });
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            closeMessageActionMenus();
-        }
-    });
-
-    replyCancel?.addEventListener('click', clearReplyComposer);
-
 });
