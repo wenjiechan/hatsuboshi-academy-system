@@ -313,9 +313,24 @@ window.GakumasMessageEmoji = (() => {
                 return;
             }
 
+            const draftBody = messageInput?.value || '';
+
+            if (draftBody !== '') {
+                messageComposer.dataset.messageStickerDraft = draftBody;
+                messageInput.value = '';
+                messageInput.dispatchEvent(new Event('input', { bubbles: true }));
+            } else {
+                delete messageComposer.dataset.messageStickerDraft;
+            }
+
             stickerKeyInput.value = key;
             closeComposerEmojiPanel();
             messageComposer.requestSubmit();
+
+            if (draftBody !== '') {
+                messageInput.value = draftBody;
+                messageInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
         };
 
         // Rebuild the grid whenever a user switches between available packs.

@@ -1,0 +1,31 @@
+{
+  "name": "Class 1-1",
+  "stickers": [
+    { "id": "saki-wakeup", "label": "Saki Wake Up", "file": "saki-wakeup.webp" },
+    { "id": "saki-training", "label": "Saki Training", "file": "saki-training.webp" },
+    { "id": "saki-winning", "label": "Saki Winning", "file": "saki-winning.webp" },
+    { "id": "saki-proud", "label": "Saki Proud", "file": "saki-proud.webp" },
+    { "id": "saki-name", "label": "Saki Name", "file": "saki-name.webp" },
+    { "id": "temari-food", "label": "Temari Food", "file": "temari-food.webp" },
+    { "id": "temari-phone", "label": "Temari Phone", "file": "temari-phone.webp" },
+    { "id": "temari-speechless", "label": "Temari Speechless", "file": "temari-speechless.webp" },
+    { "id": "temari-ha", "label": "Temari Ha", "file": "temari-ha.webp" },
+    { "id": "temari-name", "label": "Temari Name", "file": "temari-name.webp" },
+    { "id": "kotone-money-fly", "label": "Kotone Money Fly", "file": "kotone-money-fly.webp" },
+    { "id": "kotone-saving-money", "label": "Kotone Saving Money", "file": "kotone-saving-money.webp" },
+    { "id": "kotone-job", "label": "Kotone Job", "file": "kotone-job.webp" },
+    { "id": "kotone-patting", "label": "Kotone Patting", "file": "kotone-patting.webp" },
+    { "id": "kotone-name", "label": "Kotone Name", "file": "kotone-name.webp" },
+    { "id": "sumika-singing", "label": "Sumika Singing", "file": "sumika-singing.webp" },
+    { "id": "sumika-dancing", "label": "Sumika Dancing", "file": "sumika-dancing.webp" },
+    { "id": "sumika-escaping-class", "label": "Sumika Escaping Class", "file": "sumika-escaping-class.webp" },
+    { "id": "sumika-slurping", "label": "Sumika Slurping", "file": "sumika-slurping.webp" },
+    { "id": "sumika-name", "label": "Sumika Name", "file": "sumika-name.webp" },
+    { "id": "lilja-snowglobe", "label": "Lilja Snowglobe", "file": "lilja-snowglobe.webp" },
+    { "id": "lilja-gaming", "label": "Lilja Gaming", "file": "lilja-gaming.webp" },
+    { "id": "lilja-cheering", "label": "Lilja Cheering", "file": "lilja-cheering.webp" },
+    { "id": "lilja-effort", "label": "Lilja Effort", "file": "lilja-effort.webp" },
+    { "id": "lilja-name", "label": "Lilja Name", "file": "lilja-name.webp" },
+    { "id": "class-1-1", "label": "Class 1-1", "file": "class-1-1.webp" }
+  ]
+}

@@ -535,8 +535,9 @@
     overflow: hidden;
 }
 
+.group-member-item:has(.group-member-actions),
 .group-member-item:has(form:not(.group-member-open-form)) {
-    grid-template-columns: minmax(0, 1fr) 44px;
+    grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .group-member-item:hover {
@@ -620,6 +621,20 @@ button.group-member-open-button:focus-visible > i {
     cursor: default;
 }
 
+.group-member-actions {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 10px;
+    border-left: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+}
+
+.group-member-actions form {
+    margin: 0;
+}
+
 .group-member-item form:not(.group-member-open-form) {
     display: grid;
     height: 100%;
@@ -627,6 +642,7 @@ button.group-member-open-button:focus-visible > i {
     border-left: 1px solid color-mix(in srgb, var(--primary) 12%, white);
 }
 
+.group-member-actions > button,
 .group-member-item form:not(.group-member-open-form) button {
     display: inline-flex;
     width: 34px;
@@ -638,6 +654,16 @@ button.group-member-open-button:focus-visible > i {
     border-radius: 50%;
     background: color-mix(in srgb, var(--error) 8%, white);
     color: var(--error);
+}
+
+.group-member-actions > button {
+    background: color-mix(in srgb, var(--primary) 8%, white);
+    color: var(--primary);
+}
+
+.group-member-actions > button:hover,
+.group-member-actions > button:focus-visible {
+    background: color-mix(in srgb, var(--primary) 15%, white);
 }
 
 .group-add-members-form {
@@ -660,6 +686,52 @@ button.group-member-open-button:focus-visible > i {
     gap: 16px;
     overflow-y: auto;
     padding: 14px;
+}
+
+.contact-remark-modal {
+    width: min(100%, 460px);
+}
+
+.contact-remark-form {
+    display: grid;
+}
+
+.contact-remark-field {
+    display: grid;
+    gap: 7px;
+    padding: 14px;
+}
+
+.contact-remark-field span {
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 850;
+}
+
+.contact-remark-field input {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 11px;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, white);
+    border-radius: 8px;
+    outline: 0;
+    background: color-mix(in srgb, var(--primary) 3%, white);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 760;
+}
+
+.contact-remark-field input:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.contact-remark-field small {
+    color: var(--text-secondary);
+    font-size: 0.74rem;
+    font-weight: 750;
 }
 
 .group-add-member-list {
@@ -942,4 +1014,3 @@ button.group-member-open-button:focus-visible > i {
     color: #2f7a46;
     font-weight: 700;
 }
-

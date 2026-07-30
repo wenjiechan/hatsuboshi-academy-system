@@ -101,6 +101,10 @@
     padding: 0;
 }
 
+.message-settings-panel {
+    margin-top: 28px;
+}
+
 .settings-card-heading {
     margin: 0;
     padding: 28px;
@@ -289,6 +293,289 @@
     width: 14%;
 }
 
+.message-settings-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+    align-items: start;
+    gap: 18px;
+}
+
+.message-settings-controls {
+    display: grid;
+    gap: 26px;
+}
+
+.message-setting-group {
+    display: grid;
+    min-width: 0;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.message-setting-group legend {
+    display: block;
+    float: none;
+    width: 100%;
+    margin: 0 0 12px;
+    padding: 0;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    line-height: 1.35;
+    font-weight: 800;
+}
+
+.message-option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    gap: 10px;
+}
+
+.message-choice-card {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    gap: 9px;
+    padding: 12px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--primary) 3%, white);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.message-choice-card:hover,
+.message-choice-card:focus-within {
+    border-color: color-mix(in srgb, var(--primary) 32%, white);
+    transform: translateY(-1px);
+}
+
+.message-choice-card:has(input:checked) {
+    border-color: color-mix(in srgb, var(--primary) 42%, white);
+    background: color-mix(in srgb, var(--primary) 9%, white);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.message-choice-card:has(input:checked)::after {
+    content: "\F26E";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: grid;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-family: "bootstrap-icons";
+    font-size: 0.78rem;
+}
+
+.message-choice-card input,
+.message-segmented-options input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.message-choice-card strong {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.message-bg-preview {
+    display: block;
+    height: 58px;
+    border: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+    border-radius: 8px;
+    background: white;
+}
+
+.message-bg-preview-primary {
+    background: color-mix(in srgb, var(--primary) 10%, white);
+}
+
+.message-bg-preview-secondary {
+    background: color-mix(in srgb, var(--secondary) 16%, white);
+}
+
+.message-bg-preview-gradient {
+    background: linear-gradient(145deg, color-mix(in srgb, var(--primary) 12%, white), color-mix(in srgb, var(--secondary) 18%, white));
+}
+
+.message-bg-preview-plain {
+    background: #f8fafc;
+}
+
+.message-settings-preview {
+    display: grid;
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-md);
+    background: white;
+    box-shadow: 0 10px 22px color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.message-settings-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-bottom: 1px solid color-mix(in srgb, var(--primary) 12%, white);
+    background: white;
+}
+
+.message-settings-preview-header span {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.message-settings-preview-header strong {
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+
+.message-settings-preview-thread {
+    display: grid;
+    gap: 10px;
+    min-height: 190px;
+    align-content: end;
+    padding: 16px;
+    background: white;
+}
+
+.message-settings-preview-primary .message-settings-preview-thread {
+    background: color-mix(in srgb, var(--primary) 8%, white);
+}
+
+.message-settings-preview-secondary .message-settings-preview-thread {
+    background: color-mix(in srgb, var(--secondary) 13%, white);
+}
+
+.message-settings-preview-gradient .message-settings-preview-thread {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 8%, white), color-mix(in srgb, var(--secondary) 14%, white));
+}
+
+.message-settings-preview-plain .message-settings-preview-thread {
+    background: #f8fafc;
+}
+
+.preview-bubble {
+    width: fit-content;
+    max-width: 86%;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid rgba(74, 59, 71, 0.1);
+    border-radius: 8px 8px 8px 2px;
+    background: white;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    line-height: 1.45;
+    box-shadow: 0 2px 8px rgba(74, 59, 71, 0.06);
+}
+
+.preview-bubble.own {
+    justify-self: end;
+    border-color: color-mix(in srgb, var(--primary) 20%, white);
+    border-radius: 8px 8px 2px 8px;
+    background: color-mix(in srgb, var(--primary) 11%, white);
+}
+
+.message-settings-preview-text-small .preview-bubble {
+    font-size: 0.86rem;
+}
+
+.message-settings-preview-text-large .preview-bubble {
+    font-size: 1.08rem;
+}
+
+.message-settings-preview.is-compact .message-settings-preview-thread {
+    gap: 6px;
+    padding: 12px;
+}
+
+.message-settings-preview.is-compact .preview-bubble {
+    padding: 7px 9px;
+}
+
+.message-segmented-options {
+    display: inline-grid;
+    grid-template-columns: repeat(3, minmax(82px, 1fr));
+    gap: 4px;
+    width: min(100%, 360px);
+    padding: 4px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--primary) 4%, white);
+}
+
+.message-segmented-options label {
+    min-width: 0;
+    margin: 0;
+}
+
+.message-segmented-options span {
+    display: grid;
+    min-height: 36px;
+    place-items: center;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.message-segmented-options input:checked + span {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.message-toggle-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 16px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--secondary) 8%, white);
+}
+
+.message-toggle-setting span {
+    display: grid;
+    gap: 2px;
+}
+
+.message-toggle-setting strong {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+.message-toggle-setting small {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.message-toggle-setting input {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    accent-color: var(--primary);
+}
+
 .settings-form .btn {
     display: inline-flex;
     align-items: center;
@@ -305,6 +592,10 @@
     }
 
     .theme-settings-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .message-settings-layout {
         grid-template-columns: 1fr;
     }
 
@@ -336,6 +627,11 @@
     .theme-control-heading {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .message-option-grid,
+    .message-segmented-options {
+        grid-template-columns: 1fr;
     }
 }
 

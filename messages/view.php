@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/messages_helpers.php';
 require_once __DIR__ . '/../includes/message_view_helpers.php';
+require_once __DIR__ . '/../includes/message_settings_helpers.php';
 
 // Get the conversation ID from URL
 $user_id = (int) $_SESSION['id'];
@@ -27,12 +28,15 @@ $messages = get_conversation_messages($pdo, (int) $conversation_id, $user_id);
 $pinned_messages = get_pinned_conversation_messages($pdo, (int) $conversation_id, $user_id);
 $message_reactions = get_message_reaction_summaries($pdo, (int) $conversation_id, $user_id);
 mark_conversation_read($pdo, (int) $conversation_id, $user_id);
+$message_settings = load_user_message_settings($pdo, $user_id);
+$message_settings_classes = message_settings_conversation_classes($message_settings);
 
 $message_error = $_SESSION['message_error'] ?? null;
 $message_success = $_SESSION['message_success'] ?? null;
 unset($_SESSION['message_error']);
 unset($_SESSION['message_success']);
 $is_group_conversation = $conversation['conversation_type'] === 'group';
+$is_direct_conversation = $conversation['conversation_type'] === 'direct';
 $current_user_display_name = message_user_display_name($pdo, $user_id);
 $forward_conversations = $conversation['conversation_type'] !== 'system'
     ? array_values(array_filter(
@@ -84,7 +88,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
 <main class="dashboard-main messages-main conversation-page">
-    <section class="conversation-box<?= $conversation['conversation_type'] === 'system' ? ' system-conversation' : '' ?><?= $is_group_conversation ? ' group-conversation' : '' ?>">
+    <section class="conversation-box <?= htmlspecialchars($message_settings_classes, ENT_QUOTES, 'UTF-8') ?><?= $conversation['conversation_type'] === 'system' ? ' system-conversation' : '' ?><?= $is_group_conversation ? ' group-conversation' : '' ?>">
         <header class="conversation-header">
             <a href="/gakumas-sms/messages/inbox.php" class="message-back-link" aria-label="Back to inbox">
                 <i class="bi bi-arrow-left"></i>
@@ -119,6 +123,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
                             : htmlspecialchars(ucfirst((string) ($conversation['other_role'] ?? 'system')), ENT_QUOTES, 'UTF-8')) ?>
                     <?php if (!$is_group_conversation && $conversation['conversation_type'] !== 'system' && !empty($conversation['other_specialty'])): ?>
                         &middot; <?= htmlspecialchars(ucfirst((string) $conversation['other_specialty']), ENT_QUOTES, 'UTF-8') ?>
+                    <?php endif; ?>
+                    <?php if (
+                        $is_direct_conversation
+                        && trim((string) ($conversation['other_real_display_name'] ?? '')) !== ''
+                        && trim((string) ($conversation['other_real_display_name'] ?? '')) !== trim((string) ($conversation['other_display_name'] ?? ''))
+                    ): ?>
+                        &middot; <?= htmlspecialchars((string) $conversation['other_real_display_name'], ENT_QUOTES, 'UTF-8') ?>
                     <?php endif; ?>
                 </p>
             </div>
@@ -168,6 +179,13 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     </form>
 
                     <?php if (($conversation['conversation_type'] ?? '') !== 'system'): ?>
+                        <?php if ($is_direct_conversation && !empty($conversation['other_user_id'])): ?>
+                            <button type="button" role="menuitem" aria-haspopup="dialog" data-modal-open="directRemarkModal">
+                                <i class="bi bi-person-lines-fill"></i>
+                                <span>Set nickname</span>
+                            </button>
+                        <?php endif; ?>
+
                         <?php // Clear chat hides history only for the logged-in participant. ?>
                         <form method="post" action="/gakumas-sms/messages/clear.php" role="none">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
@@ -274,6 +292,50 @@ require_once __DIR__ . '/../includes/sidebar.php';
             </div>
         <?php endif; ?>
 
+        <?php if ($is_direct_conversation && !empty($conversation['other_user_id'])): ?>
+            <div class="message-modal" id="directRemarkModal" role="dialog" aria-modal="true" aria-labelledby="directRemarkTitle" hidden>
+                <div class="message-modal-backdrop" data-modal-close></div>
+                <section class="message-modal-panel contact-remark-modal">
+                    <header class="message-modal-header">
+                        <div>
+                            <h3 id="directRemarkTitle">Chat nickname</h3>
+                            <p><?= htmlspecialchars((string) ($conversation['other_real_display_name'] ?? $conversation['other_display_name'] ?? 'Contact'), ENT_QUOTES, 'UTF-8') ?></p>
+                        </div>
+                        <button type="button" class="message-modal-close" aria-label="Close" data-modal-close>
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </header>
+
+                    <form method="post" action="/gakumas-sms/messages/remark.php" class="contact-remark-form">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
+                        <input type="hidden" name="target_user_id" value="<?= (int) $conversation['other_user_id'] ?>">
+
+                        <label class="contact-remark-field" for="directRemarkName">
+                            <span>Nickname</span>
+                            <input
+                                type="text"
+                                id="directRemarkName"
+                                name="remark_name"
+                                maxlength="80"
+                                value="<?= htmlspecialchars((string) ($conversation['other_remark_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+                                placeholder="<?= htmlspecialchars((string) ($conversation['other_real_display_name'] ?? $conversation['other_display_name'] ?? 'Contact'), ENT_QUOTES, 'UTF-8') ?>"
+                            >
+                            <small>Leave blank to use the original name.</small>
+                        </label>
+
+                        <footer class="message-modal-actions">
+                            <button type="button" class="message-modal-secondary" data-modal-close>Cancel</button>
+                            <button type="submit" class="message-modal-primary">
+                                <i class="bi bi-check2"></i>
+                                Save nickname
+                            </button>
+                        </footer>
+                    </form>
+                </section>
+            </div>
+        <?php endif; ?>
+
         <?php if ($is_group_conversation): ?>
             <?php if (!empty($conversation['is_group_admin'])): ?>
                 <div class="message-modal" id="groupSettingsModal" role="dialog" aria-modal="true" aria-labelledby="groupSettingsTitle" hidden>
@@ -364,7 +426,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 class="group-member-item"
                                 data-modal-search-row
                                 data-modal-search-text="<?= htmlspecialchars(
-                                    strtolower($member['display_name'] . ' ' . group_member_role_detail($member)),
+                                    strtolower($member['display_name'] . ' ' . ($member['real_display_name'] ?? '') . ' ' . group_member_role_detail($member)),
                                     ENT_QUOTES,
                                     'UTF-8'
                                 ) ?>"
@@ -385,6 +447,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                                 <small>
                                                     <?= htmlspecialchars(group_member_role_detail($member), ENT_QUOTES, 'UTF-8') ?>
                                                     <?= !empty($member['is_group_admin']) ? ' &middot; Admin' : '' ?>
+                                                    <?php if (!empty($member['remark_name']) && !empty($member['real_display_name'])): ?>
+                                                        &middot; <?= htmlspecialchars((string) $member['real_display_name'], ENT_QUOTES, 'UTF-8') ?>
+                                                    <?php endif; ?>
                                                 </small>
                                             </span>
                                             <i class="bi bi-chevron-right" aria-hidden="true"></i>
@@ -402,25 +467,40 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                             <small>
                                                 <?= htmlspecialchars(group_member_role_detail($member), ENT_QUOTES, 'UTF-8') ?>
                                                 <?= !empty($member['is_group_admin']) ? ' &middot; Admin' : '' ?>
+                                                <?php if (!empty($member['remark_name']) && !empty($member['real_display_name'])): ?>
+                                                    &middot; <?= htmlspecialchars((string) $member['real_display_name'], ENT_QUOTES, 'UTF-8') ?>
+                                                <?php endif; ?>
                                             </small>
                                         </span>
                                     </div>
                                 <?php endif; ?>
 
-                                <?php if (!empty($conversation['is_group_admin']) && (int) $member['user_id'] !== $user_id): ?>
-                                    <form method="post" action="/gakumas-sms/messages/group_remove_member.php">
-                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
-                                        <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
-                                        <input type="hidden" name="member_id" value="<?= (int) $member['user_id'] ?>">
+                                <?php if ((int) $member['user_id'] !== $user_id): ?>
+                                    <div class="group-member-actions">
                                         <button
-                                            type="submit"
-                                            aria-label="Remove <?= htmlspecialchars($member['display_name'], ENT_QUOTES, 'UTF-8') ?>"
-                                            data-member-name="<?= htmlspecialchars($member['display_name'], ENT_QUOTES, 'UTF-8') ?>"
-                                            data-group-remove-submit
+                                            type="button"
+                                            aria-label="Set remark for <?= htmlspecialchars($member['display_name'], ENT_QUOTES, 'UTF-8') ?>"
+                                            data-modal-open="memberRemarkModal<?= (int) $member['user_id'] ?>"
                                         >
-                                            <i class="bi bi-person-dash"></i>
+                                            <i class="bi bi-person-lines-fill"></i>
                                         </button>
-                                    </form>
+
+                                        <?php if (!empty($conversation['is_group_admin'])): ?>
+                                            <form method="post" action="/gakumas-sms/messages/group_remove_member.php">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                                                <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
+                                                <input type="hidden" name="member_id" value="<?= (int) $member['user_id'] ?>">
+                                                <button
+                                                    type="submit"
+                                                    aria-label="Remove <?= htmlspecialchars($member['display_name'], ENT_QUOTES, 'UTF-8') ?>"
+                                                    data-member-name="<?= htmlspecialchars($member['display_name'], ENT_QUOTES, 'UTF-8') ?>"
+                                                    data-group-remove-submit
+                                                >
+                                                    <i class="bi bi-person-dash"></i>
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </div>
                                 <?php endif; ?>
                             </article>
                         <?php endforeach; ?>
@@ -432,6 +512,53 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     </div>
                 </section>
             </div>
+
+            <?php foreach ($group_members as $member): ?>
+                <?php if ((int) $member['user_id'] === $user_id) {
+                    continue;
+                } ?>
+                <div class="message-modal" id="memberRemarkModal<?= (int) $member['user_id'] ?>" role="dialog" aria-modal="true" aria-labelledby="memberRemarkTitle<?= (int) $member['user_id'] ?>" hidden>
+                    <div class="message-modal-backdrop" data-modal-close></div>
+                    <section class="message-modal-panel contact-remark-modal">
+                        <header class="message-modal-header">
+                            <div>
+                                <h3 id="memberRemarkTitle<?= (int) $member['user_id'] ?>">Member remark</h3>
+                                <p><?= htmlspecialchars((string) ($member['real_display_name'] ?? $member['display_name'] ?? 'Member'), ENT_QUOTES, 'UTF-8') ?></p>
+                            </div>
+                            <button type="button" class="message-modal-close" aria-label="Close" data-modal-close>
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </header>
+
+                        <form method="post" action="/gakumas-sms/messages/remark.php" class="contact-remark-form">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                            <input type="hidden" name="conversation_id" value="<?= (int) $conversation_id ?>">
+                            <input type="hidden" name="target_user_id" value="<?= (int) $member['user_id'] ?>">
+
+                            <label class="contact-remark-field" for="memberRemarkName<?= (int) $member['user_id'] ?>">
+                                <span>Remark</span>
+                                <input
+                                    type="text"
+                                    id="memberRemarkName<?= (int) $member['user_id'] ?>"
+                                    name="remark_name"
+                                    maxlength="80"
+                                    value="<?= htmlspecialchars((string) ($member['remark_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+                                    placeholder="<?= htmlspecialchars((string) ($member['real_display_name'] ?? $member['display_name'] ?? 'Member'), ENT_QUOTES, 'UTF-8') ?>"
+                                >
+                                <small>Leave blank to use the original name in this group.</small>
+                            </label>
+
+                            <footer class="message-modal-actions">
+                                <button type="button" class="message-modal-secondary" data-modal-close>Cancel</button>
+                                <button type="submit" class="message-modal-primary">
+                                    <i class="bi bi-check2"></i>
+                                    Save remark
+                                </button>
+                            </footer>
+                        </form>
+                    </section>
+                </div>
+            <?php endforeach; ?>
 
             <?php if (!empty($conversation['is_group_admin']) && !empty($group_add_contacts)): ?>
                 <div class="message-modal" id="groupAddMembersModal" role="dialog" aria-modal="true" aria-labelledby="groupAddMembersTitle" hidden>

@@ -70,21 +70,48 @@ LOCK TABLES `lessons` WRITE;
 UNLOCK TABLES;
 
 --
--- Dumping data for table `message_typing_status`
---
-
-LOCK TABLES `message_typing_status` WRITE;
-/*!40000 ALTER TABLE `message_typing_status` DISABLE KEYS */;
-/*!40000 ALTER TABLE `message_typing_status` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Dumping data for table `messages`
 --
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `message_attachments`
+--
+
+LOCK TABLES `message_attachments` WRITE;
+/*!40000 ALTER TABLE `message_attachments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `message_attachments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `message_contact_remarks`
+--
+
+LOCK TABLES `message_contact_remarks` WRITE;
+/*!40000 ALTER TABLE `message_contact_remarks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `message_contact_remarks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `message_reactions`
+--
+
+LOCK TABLES `message_reactions` WRITE;
+/*!40000 ALTER TABLE `message_reactions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `message_reactions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `message_typing_status`
+--
+
+LOCK TABLES `message_typing_status` WRITE;
+/*!40000 ALTER TABLE `message_typing_status` DISABLE KEYS */;
+/*!40000 ALTER TABLE `message_typing_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -200,6 +227,15 @@ LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`, `created_at`, `updated_at`, `last_login`, `theme_primary_color`, `theme_secondary_color`) VALUES (1,'Producer','$2y$10$7BFxM6RgeDvBv6kDTKovuuIdwTzQBM4l1sI2EcNoeHa94mU0y/OM2','producer','',1,'2026-05-26 13:10:43','2026-07-23 17:30:41','2026-07-23 17:30:41','#B297BA','#C1ACC8'),(2,'Vocal Trainer','$2y$10$mfACa/WYxB5KtG.u/sz0NOsEavc0F8j7fR.Zf/PF9hcEl7gdLMNdK','teacher',NULL,1,'2026-05-26 13:11:33','2026-05-27 11:39:47',NULL,'#FF6B9D','#FFB3D1'),(3,'Dance Trainer','$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi','teacher',NULL,1,'2026-05-26 13:11:56','2026-07-08 11:51:51','2026-07-08 11:51:51','#FF6B9D','#FFB3D1'),(4,'Visual Trainer','$2y$10$bGNC.jMo6tcO1e0f6A0q5erVt6QZ2LbnR4kS1AD47.vwZW0J3GQV6','teacher',NULL,1,'2026-05-26 13:12:30','2026-05-27 11:40:41',NULL,'#FF6B9D','#FFB3D1'),(5,'Saki Hanami','$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6','student','Saki Hanami.png',1,'2026-05-26 13:13:13','2026-07-21 11:48:33','2026-07-21 11:48:33','#E30F25','#FAD0D4'),(6,'Temari Tsukimura','$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm','student','Temari Tsukimura.png',1,'2026-05-26 13:13:13','2026-07-21 14:54:04','2026-07-21 14:54:04','#0C7BBB','#3D95C9'),(7,'Kotone Fujita','$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC','student','Kotone Fujita.png',1,'2026-05-26 13:13:13','2026-07-03 08:01:08','2026-07-03 08:01:08','#F8C112','#FEF3CF'),(8,'Lilja Katsuragi','$2y$10$U0wQB4kmtvPYWWQX.9oi0OJ60HDhnd/yf.tuf71exJ8MoG8xS0FVa','student','Lilja Katsuragi.png',1,'2026-05-26 13:13:13','2026-07-24 17:32:45','2026-07-24 17:32:45','#7DC4D4','#EAFDFF'),(9,'Sumika Shiun','$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO','student','Sumika Shiun.png',1,'2026-05-26 13:13:13','2026-07-24 10:57:01','2026-07-24 10:57:01','#7CFC00','#96FD33'),(10,'Hiro Shinosawa','$2y$10$yw50phXBAJaDziCBQu8ul.P/V5GmB5qKyObADsMOiw5nMBEfly4o2','student','Hiro Shinosawa.png',1,'2026-05-26 13:13:13','2026-07-24 11:03:04','2026-07-24 11:03:04','#00AFCC','#BFEAF2'),(11,'China Kuramoto','$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy','student','China Kuramoto.png',1,'2026-05-26 13:13:13','2026-07-22 11:03:03','2026-07-22 11:03:03','#F68B1F','#FCE0C5'),(12,'Ume Hanami','$2y$10$J3odyrCmdaCqHIBPZczN6Ogetu1yEPjb4t5eualYarDubGf9liQpq','student','Ume Hanami.png',1,'2026-05-26 13:13:13','2026-07-07 17:20:13','2026-07-07 17:16:30','#EA533A','#FAD4CB'),(13,'Misuzu Hataya','$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6','student','Misuzu Hataya.png',1,'2026-05-26 13:13:13','2026-07-23 13:57:15','2026-07-23 13:57:15','#7A99CF','#D8E0EF'),(14,'Mao Arimura','$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO','student','Mao Arimura.png',1,'2026-05-26 13:13:13','2026-07-27 13:10:26','2026-07-27 13:10:26','#7F1184','#DCC2DE'),(15,'Rinami Himesaki','$2y$10$Mc/amUU4R6ORKAqyn6WMt.S3EcLbF5jxjIq8c83h6D0kElQpB/XZW','student','Rinami Himesaki.png',1,'2026-05-26 13:13:13','2026-07-27 17:01:32','2026-07-27 17:01:32','#F6ADC6','#FCE6EE'),(16,'Sena Juo','$2y$10$9w5AtEo39Z/d6j516qa7g.dFqvnHdZ9Dvgn9Qdlue.tlcT76MSMsm','student','Sena Juo.png',1,'2026-05-26 13:13:13','2026-07-27 12:25:51','2026-07-27 12:25:51','#F6AE54','#FCE6CC'),(17,'Tsubame Amaya','$2y$10$UIL5Hsv5tvvU27ie5Fvu9.DGDlnO8OMMzoUQaJ7ivZESs0Hhn1yJi','student','Tsubame Amaya.png',1,'2026-05-26 13:13:13','2026-07-27 15:19:40','2026-07-27 15:19:40','#7B68EE','#D8D2FB'),(18,'Kunio Juo','$2y$10$KOwDLFqCre7g2vJEwSiu7eZbizrRFI6hNnxi8jBHF0F.EktS2qarG','admin',NULL,1,'2026-06-22 16:12:30','2026-07-22 17:27:08','2026-07-22 17:27:08','#322F30','#5B5959'),(19,'Rinha Kaya','$2y$10$j2W69.OZ6Qr3v3iLCLH2m.WHemUhDQmMtSeZS55PkGL3Fo6Te87xa','student','/gakumas-sms/uploads/profiles/student_19_1cb47f6eab98f92f.webp',1,'2026-06-26 14:45:34','2026-07-22 12:20:57','2026-07-22 12:20:57','#5A3FA8','#7B65B9');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `user_message_settings`
+--
+
+LOCK TABLES `user_message_settings` WRITE;
+/*!40000 ALTER TABLE `user_message_settings` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_message_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

@@ -141,7 +141,7 @@
     bottom: calc(100% - 4px);
     display: grid;
     width: min(100%, 360px);
-    max-height: 330px;
+    max-height: min(420px, calc(100vh - 150px));
     gap: 8px;
     margin: 0;
     overflow: hidden;
@@ -169,6 +169,31 @@
     max-height: 226px;
     overflow-y: auto;
     padding-right: 3px;
+    scrollbar-color: var(--primary) color-mix(in srgb, var(--primary) 8%, white);
+    scrollbar-width: thin;
+}
+
+.message-emoji-grid::-webkit-scrollbar,
+.message-sticker-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.message-emoji-grid::-webkit-scrollbar-track,
+.message-sticker-grid::-webkit-scrollbar-track {
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--primary) 8%, white);
+}
+
+.message-emoji-grid::-webkit-scrollbar-thumb,
+.message-sticker-grid::-webkit-scrollbar-thumb {
+    border: 2px solid color-mix(in srgb, var(--primary) 8%, white);
+    border-radius: var(--radius-pill);
+    background: var(--primary);
+}
+
+.message-emoji-grid::-webkit-scrollbar-thumb:hover,
+.message-sticker-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
 }
 
 .message-emoji-grid button {
@@ -202,7 +227,8 @@
 
 .message-sticker-picker {
     display: grid;
-    min-height: 226px;
+    height: min(320px, calc(100vh - 230px));
+    min-height: 260px;
     grid-template-rows: auto minmax(0, 1fr);
     gap: 8px;
 }
@@ -261,21 +287,25 @@
 
 .message-sticker-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    grid-auto-rows: 116px;
     align-content: start;
-    gap: 6px;
+    gap: 10px;
     min-height: 0;
     overflow-y: auto;
-    padding-right: 3px;
+    padding: 6px 8px 6px 0;
+    scrollbar-color: var(--primary) color-mix(in srgb, var(--primary) 8%, white);
+    scrollbar-width: thin;
 }
 
 .message-sticker-choice {
     display: grid;
-    aspect-ratio: 1;
+    width: 100%;
+    height: 116px;
     min-width: 0;
     place-items: center;
     overflow: hidden;
-    padding: 3px;
+    padding: 4px;
     border: 0;
     border-radius: 6px;
     background: transparent;
@@ -289,9 +319,10 @@
 
 .message-sticker-choice img {
     display: block;
-    width: 100%;
-    height: 100%;
+    max-width: 112%;
+    max-height: 112%;
     object-fit: contain;
+    transform: scale(1.08);
 }
 
 .chat-message-body.chat-message-body-sticker {

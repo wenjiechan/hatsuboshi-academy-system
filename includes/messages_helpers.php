@@ -7,6 +7,7 @@ const MESSAGE_TYPE_PRODUCER_REMOVE_REQUEST = 'producer_remove_request';
 const MESSAGE_TYPE_SYSTEM = 'system';
 const MESSAGE_TYPE_STICKER = 'sticker';
 
+require_once __DIR__ . '/message_remark_helpers.php';
 require_once __DIR__ . '/message_group_helpers.php';
 
 // Send users back to the correct dashboard based on role
@@ -320,6 +321,7 @@ function get_message_user(PDO $pdo, int $user_id): ?array
 function get_conversation_details(PDO $pdo, int $conversation_id, int $user_id): ?array
 {
     ensure_message_group_schema($pdo);
+    ensure_message_contact_remark_schema($pdo);
 
     $stmt = $pdo->prepare(
         'SELECT
@@ -338,6 +340,7 @@ function get_conversation_details(PDO $pdo, int $conversation_id, int $user_id):
             ) AS member_count,
             current_participant.is_muted,
             current_participant.is_archived,
+            contact_remark.remark_name AS other_remark_name,
             CASE
                 WHEN c.conversation_type = "group"
                  AND c.created_by = current_participant.user_id
@@ -359,6 +362,12 @@ function get_conversation_details(PDO $pdo, int $conversation_id, int $user_id):
                 WHEN c.conversation_type = "system" AND other_user.role = "admin"
                 THEN "Admin"
                 ELSE COALESCE(student.name, teacher.name, other_user.username)
+            END AS other_real_display_name,
+            CASE
+                WHEN c.conversation_type = "group" THEN c.group_name
+                WHEN c.conversation_type = "system" AND other_user.role = "admin"
+                THEN "Admin"
+                ELSE COALESCE(NULLIF(contact_remark.remark_name, ""), student.name, teacher.name, other_user.username)
             END AS other_display_name,
             CASE
                 WHEN c.conversation_type = "group" THEN NULL
@@ -377,6 +386,10 @@ function get_conversation_details(PDO $pdo, int $conversation_id, int $user_id):
          LEFT JOIN users other_user ON other_user.id = other_participant.user_id
          LEFT JOIN students student ON student.user_id = other_user.id
          LEFT JOIN teachers teacher ON teacher.user_id = other_user.id
+         LEFT JOIN message_contact_remarks contact_remark
+            ON contact_remark.conversation_id = c.id
+           AND contact_remark.owner_user_id = current_participant.user_id
+           AND contact_remark.target_user_id = other_user.id
          WHERE c.id = ?
          LIMIT 1'
     );
@@ -484,6 +497,7 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
     ensure_message_clear_schema($pdo);
     ensure_message_attachment_schema($pdo);
     ensure_message_sticker_schema($pdo);
+    ensure_message_contact_remark_schema($pdo);
 
     $archive_sql = $include_archived ? '' : 'AND current_participant.is_archived = 0';
 
@@ -497,6 +511,7 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
             current_participant.is_archived,
             current_participant.is_muted,
             current_participant.last_read_at,
+            direct_remark.remark_name AS other_remark_name,
             (
                 SELECT COUNT(*)
                 FROM conversation_participants group_member_count
@@ -514,6 +529,9 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
                 ELSE other_user.avatar
             END AS other_avatar,
             student.name AS other_student_name,
+            teacher.name AS other_teacher_name,
+            COALESCE(student.name, teacher.name, other_user.username) AS other_real_display_name,
+            COALESCE(NULLIF(direct_remark.remark_name, ""), student.name, teacher.name, other_user.username) AS other_display_name,
             latest_message.id AS latest_message_id,
             latest_message.sender_id AS latest_sender_id,
             latest_message.message_type AS latest_message_type,
@@ -565,6 +583,12 @@ function get_user_conversations(PDO $pdo, int $user_id, bool $include_archived =
             ON other_user.id = other_participant.user_id
          LEFT JOIN students student
             ON student.user_id = other_user.id
+         LEFT JOIN teachers teacher
+            ON teacher.user_id = other_user.id
+         LEFT JOIN message_contact_remarks direct_remark
+            ON direct_remark.conversation_id = c.id
+           AND direct_remark.owner_user_id = current_participant.user_id
+           AND direct_remark.target_user_id = other_user.id
          LEFT JOIN messages latest_message
             ON latest_message.id = (
                 SELECT recent_message.id
@@ -719,6 +743,12 @@ function get_message_user_display_name(array $row, string $prefix = 'other_'): s
         ($row[$prefix . 'role'] ?? '') === 'admin'
     ) {
         return 'Admin';
+    }
+
+    $display_name = trim((string) ($row[$prefix . 'display_name'] ?? ''));
+
+    if ($display_name !== '') {
+        return $display_name;
     }
 
     $student_name = trim((string) ($row[$prefix . 'student_name'] ?? ''));

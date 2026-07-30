@@ -369,6 +369,7 @@ function update_group_conversation_details(
 function get_group_members(PDO $pdo, int $conversation_id, int $user_id): array
 {
     ensure_message_group_schema($pdo);
+    ensure_message_contact_remark_schema($pdo);
 
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
@@ -385,7 +386,9 @@ function get_group_members(PDO $pdo, int $conversation_id, int $user_id): array
             u.username,
             u.role,
             u.avatar,
-            COALESCE(s.name, t.name, u.username) AS display_name,
+            remark.remark_name,
+            COALESCE(s.name, t.name, u.username) AS real_display_name,
+            COALESCE(NULLIF(remark.remark_name, ""), s.name, t.name, u.username) AS display_name,
             t.specialty
          FROM conversation_participants participant
          INNER JOIN conversations c
@@ -396,11 +399,15 @@ function get_group_members(PDO $pdo, int $conversation_id, int $user_id): array
            AND u.is_active = 1
          LEFT JOIN students s ON s.user_id = u.id
          LEFT JOIN teachers t ON t.user_id = u.id
+         LEFT JOIN message_contact_remarks remark
+            ON remark.conversation_id = participant.conversation_id
+           AND remark.owner_user_id = ?
+           AND remark.target_user_id = participant.user_id
          WHERE participant.conversation_id = ?
            AND participant.deleted_at IS NULL
          ORDER BY is_group_admin DESC, display_name'
     );
-    $stmt->execute([$conversation_id]);
+    $stmt->execute([$user_id, $conversation_id]);
 
     return $stmt->fetchAll();
 }

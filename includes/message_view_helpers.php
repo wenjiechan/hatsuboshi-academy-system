@@ -21,6 +21,10 @@ function chat_message_type_label(string $type): ?string
 
 function chat_sender_display_name(array $message): string
 {
+    if (trim((string) ($message['sender_display_name'] ?? '')) !== '') {
+        return trim((string) $message['sender_display_name']);
+    }
+
     return trim((string) ($message['sender_student_name'] ?? ''))
         ?: trim((string) ($message['sender_teacher_name'] ?? ''))
         ?: trim((string) ($message['sender_username'] ?? ''))
@@ -192,7 +196,12 @@ function chat_message_body_html(
         static fn(array $member): string => (string) ($member['display_name'] ?? ''),
         $mention_members
     ))));
+    $mention_names = array_merge($mention_names, array_values(array_unique(array_filter(array_map(
+        static fn(array $member): string => (string) ($member['real_display_name'] ?? ''),
+        $mention_members
+    )))));
     $mention_names[] = 'everyone';
+    $mention_names = array_values(array_unique(array_filter($mention_names)));
     usort($mention_names, static fn(string $left, string $right): int => mb_strlen($right) <=> mb_strlen($left));
     $mention_pattern = implode('|', array_map(static fn(string $name): string => preg_quote($name, '/'), $mention_names));
 

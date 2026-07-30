@@ -12,6 +12,7 @@ function get_conversation_messages(
     ensure_message_clear_schema($pdo);
     ensure_message_attachment_schema($pdo);
     ensure_message_sticker_schema($pdo);
+    ensure_message_contact_remark_schema($pdo);
 
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
@@ -46,7 +47,7 @@ function get_conversation_messages(
                 ORDER BY reply_attachment.id ASC
                 LIMIT 1
             ) AS reply_attachment_name,
-            COALESCE(reply_student.name, reply_teacher.name, reply_user.username) AS reply_sender_display_name,
+            COALESCE(NULLIF(reply_remark.remark_name, ""), reply_student.name, reply_teacher.name, reply_user.username) AS reply_sender_display_name,
             request.id AS request_id,
             request.request_type AS request_type,
             request.status AS request_status,
@@ -75,6 +76,7 @@ function get_conversation_messages(
             u.username AS sender_username,
             u.role AS sender_role,
             u.avatar AS sender_avatar,
+            COALESCE(NULLIF(sender_remark.remark_name, ""), s.name, t.name, u.username) AS sender_display_name,
             s.name AS sender_student_name,
             t.name AS sender_teacher_name
          FROM messages m
@@ -87,12 +89,20 @@ function get_conversation_messages(
          LEFT JOIN users u ON u.id = m.sender_id
          LEFT JOIN students s ON s.user_id = u.id
          LEFT JOIN teachers t ON t.user_id = u.id
+         LEFT JOIN message_contact_remarks sender_remark
+            ON sender_remark.conversation_id = m.conversation_id
+           AND sender_remark.owner_user_id = current_participant.user_id
+           AND sender_remark.target_user_id = u.id
          LEFT JOIN messages reply
             ON reply.id = m.reply_to_message_id
            AND reply.conversation_id = m.conversation_id
          LEFT JOIN users reply_user ON reply_user.id = reply.sender_id
          LEFT JOIN students reply_student ON reply_student.user_id = reply_user.id
          LEFT JOIN teachers reply_teacher ON reply_teacher.user_id = reply_user.id
+         LEFT JOIN message_contact_remarks reply_remark
+            ON reply_remark.conversation_id = m.conversation_id
+           AND reply_remark.owner_user_id = current_participant.user_id
+           AND reply_remark.target_user_id = reply_user.id
          LEFT JOIN producer_student_requests request
             ON request.id = m.related_id
            AND m.related_type = "producer_student_request"

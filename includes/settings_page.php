@@ -2,6 +2,7 @@
 require_once '../includes/auth.php';
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
+require_once '../includes/message_settings_helpers.php';
 require_once '../includes/password_settings_helpers.php';
 
 // Shared settings controller used by admin, producer, teacher, and student wrappers.
@@ -37,6 +38,7 @@ if ($current_role === 'student') {
 $user_theme = load_user_theme($pdo, (int) $_SESSION['id']);
 $current_primary = $user_theme['primary'];
 $current_secondary = $user_theme['secondary'];
+$message_settings = load_user_message_settings($pdo, (int) $_SESSION['id']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf($_POST['csrf_token'] ?? '');
@@ -49,6 +51,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         save_user_theme($pdo, (int) $_SESSION['id'], $current_primary, $current_secondary);
         apply_theme_session($current_primary, $current_secondary);
         $success = 'Theme updated successfully.';
+    } elseif ($settings_action === 'save_message_settings') {
+        $message_settings = [
+            'message_background' => normalize_message_background((string) ($_POST['message_background'] ?? '')),
+            'message_text_size' => normalize_message_text_size((string) ($_POST['message_text_size'] ?? '')),
+            'compact_layout' => !empty($_POST['compact_layout']),
+        ];
+        save_user_message_settings(
+            $pdo,
+            (int) $_SESSION['id'],
+            $message_settings['message_background'],
+            $message_settings['message_text_size'],
+            $message_settings['compact_layout']
+        );
+        $success = 'Message settings updated successfully.';
     } elseif ($settings_action === 'cancel_password_change') {
         unset($_SESSION['password_change_verified_at']);
         $password_change_verified = false;
@@ -95,6 +111,7 @@ require_once '../includes/sidebar.php';
     <?php endif; ?>
 
     <?php require '../includes/theme_settings_page.php'; ?>
+    <?php require '../includes/message_settings_page.php'; ?>
     <?php require '../includes/password_settings_page.php'; ?>
 </main>
 

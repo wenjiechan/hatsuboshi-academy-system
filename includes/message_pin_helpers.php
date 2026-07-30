@@ -35,6 +35,7 @@ function ensure_message_pin_schema(PDO $pdo): void
 function get_pinned_conversation_messages(PDO $pdo, int $conversation_id, int $user_id): array
 {
     ensure_message_pin_schema($pdo);
+    ensure_message_contact_remark_schema($pdo);
     ensure_message_clear_schema($pdo);
     ensure_message_sticker_schema($pdo);
 
@@ -52,7 +53,7 @@ function get_pinned_conversation_messages(PDO $pdo, int $conversation_id, int $u
             m.sender_id,
             m.created_at,
             m.pinned_at,
-            COALESCE(s.name, t.name, u.username, "Someone") AS sender_display_name
+            COALESCE(NULLIF(remark.remark_name, ""), s.name, t.name, u.username, "Someone") AS sender_display_name
          FROM messages m
          INNER JOIN conversation_participants current_participant
             ON current_participant.conversation_id = m.conversation_id
@@ -63,6 +64,10 @@ function get_pinned_conversation_messages(PDO $pdo, int $conversation_id, int $u
          LEFT JOIN users u ON u.id = m.sender_id
          LEFT JOIN students s ON s.user_id = u.id
          LEFT JOIN teachers t ON t.user_id = u.id
+         LEFT JOIN message_contact_remarks remark
+            ON remark.conversation_id = m.conversation_id
+           AND remark.owner_user_id = ?
+           AND remark.target_user_id = u.id
          WHERE m.conversation_id = ?
            AND m.pinned_at IS NOT NULL
            AND m.deleted_at IS NULL
@@ -78,7 +83,7 @@ function get_pinned_conversation_messages(PDO $pdo, int $conversation_id, int $u
          ORDER BY m.pinned_at DESC, m.id DESC
          LIMIT 5'
     );
-    $stmt->execute([$user_id, $conversation_id]);
+    $stmt->execute([$user_id, $user_id, $conversation_id]);
 
     return hydrate_message_attachments($pdo, $stmt->fetchAll());
 }

@@ -834,6 +834,8 @@ document.addEventListener('DOMContentLoaded', () => {
             messageComposer.addEventListener('submit', async (event) => {
                 //Javascript takes control of the submit process
                 event.preventDefault();
+                const stickerDraft = messageComposer.dataset.messageStickerDraft || '';
+                const shouldRestoreStickerDraft = stickerDraft !== '' && reactionUI.hasSelectedSticker();
 
                 if (messageInput.value.trim() === '' && !attachmentUI.hasFiles() && !reactionUI.hasSelectedSticker()) {
                     messageInput.focus();
@@ -888,9 +890,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Scroll to the latest message after sending
                     conversationThread.scrollTop = conversationThread.scrollHeight;
 
-                    // Clear the textarea after sending successfully
-                    messageInput.value = '';
-                    messageInput.dispatchEvent(new Event('input'));
+                    // Sticker clicks send only the sticker and keep the typed draft for a later text send.
+                    if (!shouldRestoreStickerDraft) {
+                        messageInput.value = '';
+                        messageInput.dispatchEvent(new Event('input'));
+                    }
                     attachmentUI.clearSelection();
                     reactionUI.clearSelectedSticker();
                     messageActions.clearReplyComposer();
@@ -904,6 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         messageSendError.hidden = false;
                     }
                 } finally {
+                    delete messageComposer.dataset.messageStickerDraft;
                     messageSendButton.disabled = false;
                 }
             });

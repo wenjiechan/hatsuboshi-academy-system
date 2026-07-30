@@ -7,7 +7,27 @@
     padding: 22px;
     border: 0;
     border-radius: 0;
-    background: color-mix(in srgb, var(--secondary) 5%, white);
+    background: white;
+}
+
+.conversation-box.message-bg-default .conversation-thread {
+    background: white;
+}
+
+.conversation-box.message-bg-primary .conversation-thread {
+    background: color-mix(in srgb, var(--primary) 8%, white);
+}
+
+.conversation-box.message-bg-secondary .conversation-thread {
+    background: color-mix(in srgb, var(--secondary) 13%, white);
+}
+
+.conversation-box.message-bg-gradient .conversation-thread {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 8%, white), color-mix(in srgb, var(--secondary) 14%, white));
+}
+
+.conversation-box.message-bg-plain .conversation-thread {
+    background: #f8fafc;
 }
 
 .conversation-start-state {
@@ -56,6 +76,36 @@
     border-radius: 8px 8px 8px 2px;
     background: white;
     box-shadow: 0 2px 8px rgba(74, 59, 71, 0.06);
+}
+
+.conversation-box.message-text-small .chat-message-bubble p,
+.conversation-box.message-text-small .chat-message-edit-form textarea {
+    font-size: 0.86rem;
+}
+
+.conversation-box.message-text-normal .chat-message-bubble p,
+.conversation-box.message-text-normal .chat-message-edit-form textarea {
+    font-size: 0.95rem;
+}
+
+.conversation-box.message-text-large .chat-message-bubble p,
+.conversation-box.message-text-large .chat-message-edit-form textarea {
+    font-size: 1.08rem;
+}
+
+.conversation-box.message-layout-compact .conversation-thread {
+    gap: 7px;
+    padding: 14px;
+}
+
+.conversation-box.message-layout-compact .chat-message-bubble {
+    padding: 8px 10px 7px;
+}
+
+.conversation-box.message-layout-compact .chat-message-meta {
+    min-height: 17px;
+    gap: 5px;
+    margin-top: 4px;
 }
 
 .chat-message.own .chat-message-bubble {
@@ -724,4 +774,3 @@
     cursor: wait;
     opacity: 0.65;
 }
-

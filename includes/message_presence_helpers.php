@@ -50,6 +50,7 @@ function set_conversation_typing_status(PDO $pdo, int $conversation_id, int $use
 function get_conversation_typing_users(PDO $pdo, int $conversation_id, int $user_id): array
 {
     ensure_message_presence_schema($pdo);
+    ensure_message_contact_remark_schema($pdo);
 
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
@@ -58,7 +59,7 @@ function get_conversation_typing_users(PDO $pdo, int $conversation_id, int $user
     $stmt = $pdo->prepare(
         'SELECT
             status.user_id,
-            COALESCE(s.name, t.name, u.username) AS display_name
+            COALESCE(NULLIF(remark.remark_name, ""), s.name, t.name, u.username) AS display_name
          FROM message_typing_status status
          INNER JOIN conversation_participants participant
             ON participant.conversation_id = status.conversation_id
@@ -69,6 +70,10 @@ function get_conversation_typing_users(PDO $pdo, int $conversation_id, int $user
            AND u.is_active = 1
          LEFT JOIN students s ON s.user_id = u.id
          LEFT JOIN teachers t ON t.user_id = u.id
+         LEFT JOIN message_contact_remarks remark
+            ON remark.conversation_id = status.conversation_id
+           AND remark.owner_user_id = ?
+           AND remark.target_user_id = status.user_id
          WHERE status.conversation_id = ?
            AND status.user_id <> ?
            AND status.is_typing = 1
@@ -76,7 +81,7 @@ function get_conversation_typing_users(PDO $pdo, int $conversation_id, int $user
          ORDER BY display_name
          LIMIT 4'
     );
-    $stmt->execute([$conversation_id, $user_id]);
+    $stmt->execute([$user_id, $conversation_id, $user_id]);
 
     return $stmt->fetchAll();
 }
@@ -84,6 +89,8 @@ function get_conversation_typing_users(PDO $pdo, int $conversation_id, int $user
 // Group read receipts are derived from each member's last_read_at; no per-message read table is needed.
 function get_group_message_read_receipts(PDO $pdo, int $conversation_id, int $user_id): array
 {
+    ensure_message_contact_remark_schema($pdo);
+
     if (!is_conversation_participant($pdo, $conversation_id, $user_id)) {
         return [];
     }
@@ -93,8 +100,8 @@ function get_group_message_read_receipts(PDO $pdo, int $conversation_id, int $us
             m.id AS message_id,
             COUNT(reader.user_id) AS read_count,
             GROUP_CONCAT(
-                COALESCE(s.name, t.name, u.username)
-                ORDER BY COALESCE(s.name, t.name, u.username)
+                COALESCE(NULLIF(remark.remark_name, ""), s.name, t.name, u.username)
+                ORDER BY COALESCE(NULLIF(remark.remark_name, ""), s.name, t.name, u.username)
                 SEPARATOR ", "
             ) AS read_names,
             GROUP_CONCAT(
@@ -103,14 +110,14 @@ function get_group_message_read_receipts(PDO $pdo, int $conversation_id, int $us
                     ELSE CONCAT_WS(
                         "|",
                         reader.user_id,
-                        COALESCE(s.name, t.name, u.username),
+                        COALESCE(NULLIF(remark.remark_name, ""), s.name, t.name, u.username),
                         COALESCE(u.role, ""),
                         COALESCE(u.avatar, ""),
                         COALESCE(t.specialty, ""),
                         DATE_FORMAT(reader.last_read_at, "%b %e, %Y at %l:%i %p")
                     )
                 END
-                ORDER BY COALESCE(s.name, t.name, u.username)
+                ORDER BY COALESCE(NULLIF(remark.remark_name, ""), s.name, t.name, u.username)
                 SEPARATOR "\n"
             ) AS read_user_rows
          FROM messages m
@@ -127,6 +134,10 @@ function get_group_message_read_receipts(PDO $pdo, int $conversation_id, int $us
          LEFT JOIN users u ON u.id = reader.user_id
          LEFT JOIN students s ON s.user_id = u.id
          LEFT JOIN teachers t ON t.user_id = u.id
+         LEFT JOIN message_contact_remarks remark
+            ON remark.conversation_id = m.conversation_id
+           AND remark.owner_user_id = ?
+           AND remark.target_user_id = reader.user_id
          WHERE m.conversation_id = ?
            AND m.sender_id = ?
            AND m.deleted_at IS NULL
@@ -134,7 +145,7 @@ function get_group_message_read_receipts(PDO $pdo, int $conversation_id, int $us
          ORDER BY m.created_at ASC, m.id ASC
          LIMIT 200'
     );
-    $stmt->execute([$conversation_id, $user_id]);
+    $stmt->execute([$user_id, $conversation_id, $user_id]);
 
     $receipts = [];
 
