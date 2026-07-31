@@ -1,0 +1,20 @@
+{
+  "name": "Class 1-3",
+  "stickers": [
+    { "id": "mao-stage", "label": "Mao Stage", "file": "mao-stage.webp" },
+    { "id": "mao-dorm", "label": "Mao Dorm", "file": "mao-dorm.webp" },
+    { "id": "mao-takoyaki", "label": "Mao Takoyaki", "file": "mao-takoyaki.webp" },
+    { "id": "mao-martial-art", "label": "Mao Martial Art", "file": "mao-martial-art.webp" },
+    { "id": "mao-name", "label": "Mao Name", "file": "mao-name.webp" },
+    { "id": "rinami-coffee", "label": "Rinami Coffee", "file": "rinami-coffee.webp" },
+    { "id": "rinami-photo", "label": "Rinami Photo", "file": "rinami-photo.webp" },
+    { "id": "rinami-headpat", "label": "Rinami Headpat", "file": "rinami-headpat.webp" },
+    { "id": "rinami-sushi", "label": "Rinami Sushi", "file": "rinami-sushi.webp" },
+    { "id": "rinami-name", "label": "Rinami Name", "file": "rinami-name.webp" },
+    { "id": "sena-unreachable", "label": "Sena Unreachable", "file": "sena-unreachable.webp" },
+    { "id": "sena-cosmetic", "label": "Sena Cosmetic", "file": "sena-cosmetic.webp" },
+    { "id": "sena-scouting", "label": "Sena Scouting", "file": "sena-scouting.webp" },
+    { "id": "sena-producing", "label": "Sena Producing", "file": "sena-producing.webp" },
+    { "id": "sena-name", "label": "Sena Name", "file": "sena-name.webp" }
+  ]
+}

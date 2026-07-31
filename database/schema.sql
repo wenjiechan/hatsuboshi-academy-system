@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2026 at 10:35 AM
+-- Generation Time: Jul 31, 2026 at 10:57 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -72,6 +72,7 @@ CREATE TABLE `daily_student_stats` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- --------------------------------------------------------
 
@@ -241,6 +242,7 @@ CREATE TABLE `producer_messages` (
   `message_text` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -283,6 +285,7 @@ CREATE TABLE `recurring_schedules` (
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -324,6 +327,7 @@ CREATE TABLE `songs` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- --------------------------------------------------------
 
@@ -373,6 +377,7 @@ CREATE TABLE `students` (
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -386,6 +391,7 @@ CREATE TABLE `student_songs` (
   `added_by` int(11) DEFAULT NULL,
   `added_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- --------------------------------------------------------
 
@@ -428,6 +434,7 @@ CREATE TABLE `teachers` (
   `specialty` enum('vocal','dance','visual') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -448,6 +455,7 @@ CREATE TABLE `users` (
   `theme_secondary_color` varchar(20) DEFAULT '#FFB3D1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -459,6 +467,23 @@ CREATE TABLE `user_message_settings` (
   `message_background` varchar(30) NOT NULL DEFAULT 'default',
   `message_text_size` varchar(20) NOT NULL DEFAULT 'normal',
   `compact_layout` tinyint(1) NOT NULL DEFAULT 0,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_notification_settings`
+--
+
+CREATE TABLE `user_notification_settings` (
+  `user_id` int(11) NOT NULL,
+  `messages_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `schedules_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `lessons_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `birthdays_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `requests_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `system_enabled` tinyint(1) NOT NULL DEFAULT 1,
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -681,6 +706,12 @@ ALTER TABLE `user_message_settings`
   ADD PRIMARY KEY (`user_id`);
 
 --
+-- Indexes for table `user_notification_settings`
+--
+ALTER TABLE `user_notification_settings`
+  ADD PRIMARY KEY (`user_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -694,7 +725,7 @@ ALTER TABLE `conversations`
 -- AUTO_INCREMENT for table `daily_student_stats`
 --
 ALTER TABLE `daily_student_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=494;
 
 --
 -- AUTO_INCREMENT for table `events`
@@ -748,7 +779,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `producer_messages`
 --
 ALTER TABLE `producer_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=391;
 
 --
 -- AUTO_INCREMENT for table `producer_student_requests`
@@ -760,7 +791,7 @@ ALTER TABLE `producer_student_requests`
 -- AUTO_INCREMENT for table `recurring_schedules`
 --
 ALTER TABLE `recurring_schedules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=228;
 
 --
 -- AUTO_INCREMENT for table `schedules`
@@ -772,7 +803,7 @@ ALTER TABLE `schedules`
 -- AUTO_INCREMENT for table `songs`
 --
 ALTER TABLE `songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=326;
 
 --
 -- AUTO_INCREMENT for table `stat_history`
@@ -784,13 +815,13 @@ ALTER TABLE `stat_history`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `student_songs`
 --
 ALTER TABLE `student_songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=446;
 
 --
 -- AUTO_INCREMENT for table `student_update_requests`
@@ -802,13 +833,13 @@ ALTER TABLE `student_update_requests`
 -- AUTO_INCREMENT for table `teachers`
 --
 ALTER TABLE `teachers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- Constraints for dumped tables
@@ -940,6 +971,12 @@ ALTER TABLE `teachers`
 --
 ALTER TABLE `user_message_settings`
   ADD CONSTRAINT `fk_user_message_settings_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_notification_settings`
+--
+ALTER TABLE `user_notification_settings`
+  ADD CONSTRAINT `fk_user_notification_settings_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,12 +1,24 @@
 .conversation-page {
     align-content: start;
+    overflow: visible;
+}
+
+.conversation-page .conversation-box {
+    height: max(430px, calc(100vh - 180px));
+    overflow: hidden;
+}
+
+@supports (height: 100dvh) {
+    .conversation-page .conversation-box {
+        height: max(430px, calc(100dvh - 180px));
+    }
 }
 
 .conversation-box {
     position: relative;
     display: grid;
-    grid-template-rows: auto minmax(360px, 1fr) auto;
-    min-height: calc(100vh - 150px);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 0;
     overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--primary) 15%, white);
     border-radius: 8px;
@@ -16,19 +28,21 @@
 
 .conversation-box:has(.message-form-error),
 .conversation-box:has(.message-form-success) {
-    grid-template-rows: auto auto minmax(360px, 1fr) auto;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
 }
 
 .conversation-box:has(.pinned-messages-panel) {
-    grid-template-rows: auto auto minmax(360px, 1fr) auto;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
 }
 
 .conversation-box:has(.message-form-error):has(.pinned-messages-panel),
 .conversation-box:has(.message-form-success):has(.pinned-messages-panel) {
-    grid-template-rows: auto auto auto minmax(360px, 1fr) auto;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
 }
 
 .conversation-header {
+    position: relative;
+    z-index: 2;
     padding: 14px 18px;
     border: 0;
     border-bottom: 1px solid color-mix(in srgb, var(--primary) 12%, white);
@@ -1013,4 +1027,18 @@ button.group-member-open-button:focus-visible > i {
     background: color-mix(in srgb, var(--success) 8%, white);
     color: #2f7a46;
     font-weight: 700;
+}
+
+@media (max-width: 1199.98px) {
+    .conversation-page .conversation-box {
+        height: max(410px, calc(100vh - 160px));
+    }
+}
+
+@supports (height: 100dvh) {
+    @media (max-width: 1199.98px) {
+        .conversation-page .conversation-box {
+            height: max(410px, calc(100dvh - 160px));
+        }
+    }
 }

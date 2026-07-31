@@ -1,4 +1,8 @@
 @media (max-width: 640px) {
+    .conversation-page .conversation-box {
+        height: clamp(390px, calc(100vh - 258px), 560px);
+    }
+
     .messages-hero {
         grid-template-columns: 1fr;
         padding: 18px;
@@ -105,26 +109,24 @@
     }
 
     .conversation-box {
-        min-height: calc(100vh - 118px);
-        grid-template-rows: auto minmax(320px, 1fr) auto;
+        grid-template-rows: auto minmax(0, 1fr) auto;
     }
 
     .conversation-box:has(.message-form-error),
     .conversation-box:has(.message-form-success) {
-        grid-template-rows: auto auto minmax(320px, 1fr) auto;
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
     }
 
     .conversation-box:has(.pinned-messages-panel) {
-        grid-template-rows: auto auto minmax(320px, 1fr) auto;
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
     }
 
     .conversation-box:has(.message-form-error):has(.pinned-messages-panel),
     .conversation-box:has(.message-form-success):has(.pinned-messages-panel) {
-        grid-template-rows: auto auto auto minmax(320px, 1fr) auto;
+        grid-template-rows: auto auto auto minmax(0, 1fr) auto;
     }
 
     .conversation-thread {
-        min-height: 320px;
         padding: 14px;
     }
 
@@ -170,4 +172,24 @@
         display: none;
     }
 
+}
+
+@media (max-width: 575.98px) {
+    .conversation-page .conversation-box {
+        height: clamp(370px, calc(100vh - 246px), 520px);
+    }
+}
+
+@supports (height: 100dvh) {
+    @media (max-width: 640px) {
+        .conversation-page .conversation-box {
+            height: clamp(390px, calc(100dvh - 258px), 560px);
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .conversation-page .conversation-box {
+            height: clamp(370px, calc(100dvh - 246px), 520px);
+        }
+    }
 }

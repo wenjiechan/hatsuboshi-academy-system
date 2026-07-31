@@ -1,7 +1,15 @@
 /* ---------- Dashboard layout ---------- */
 .dashboard-main {
+    box-sizing: border-box;
     margin-left: 240px;
+    min-height: calc(100vh - 60px);
     padding: 108px 32px 32px;
+}
+
+@supports (min-height: 100dvh) {
+    .dashboard-main {
+        min-height: calc(100dvh - 60px);
+    }
 }
 
 .dashboard-hero,
@@ -600,7 +608,14 @@
 @media (max-width: 1199.98px) {
     .dashboard-main {
         margin-left: 0;
+        min-height: calc(100vh - 96px);
         padding: 88px 16px 24px;
+    }
+
+    @supports (min-height: 100dvh) {
+        .dashboard-main {
+            min-height: calc(100dvh - 96px);
+        }
     }
 
     .dashboard-hero {

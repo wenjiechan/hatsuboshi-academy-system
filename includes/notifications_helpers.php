@@ -11,6 +11,13 @@ const NOTIFICATION_TYPE_LESSON_UPDATED = 'lesson_updated';
 const NOTIFICATION_TYPE_NEW_MESSAGE = 'new_message';
 const NOTIFICATION_TYPE_STUDENT_REQUEST = 'student_request';
 
+const NOTIFICATION_CATEGORY_MESSAGES = 'messages';
+const NOTIFICATION_CATEGORY_SCHEDULES = 'schedules';
+const NOTIFICATION_CATEGORY_LESSONS = 'lessons';
+const NOTIFICATION_CATEGORY_BIRTHDAYS = 'birthdays';
+const NOTIFICATION_CATEGORY_REQUESTS = 'requests';
+const NOTIFICATION_CATEGORY_SYSTEM = 'system';
+
 // Check the notifications table has all required columns
 function ensure_notifications_table_columns(PDO $pdo): void
 {
@@ -60,6 +67,134 @@ function ensure_notifications_table_columns(PDO $pdo): void
     $ensured = true;
 }
 
+function ensure_notification_settings_schema(PDO $pdo): void
+{
+    static $ensured = false;
+
+    if ($ensured) {
+        return;
+    }
+
+    // Settings are opt-out by default so existing users keep receiving notifications.
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS user_notification_settings (
+            user_id INT NOT NULL,
+            messages_enabled TINYINT(1) NOT NULL DEFAULT 1,
+            schedules_enabled TINYINT(1) NOT NULL DEFAULT 1,
+            lessons_enabled TINYINT(1) NOT NULL DEFAULT 1,
+            birthdays_enabled TINYINT(1) NOT NULL DEFAULT 1,
+            requests_enabled TINYINT(1) NOT NULL DEFAULT 1,
+            system_enabled TINYINT(1) NOT NULL DEFAULT 1,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (user_id),
+            CONSTRAINT fk_user_notification_settings_user
+                FOREIGN KEY (user_id) REFERENCES users(id)
+                ON DELETE CASCADE ON UPDATE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+    );
+
+    $ensured = true;
+}
+
+function notification_category_options(): array
+{
+    return [
+        NOTIFICATION_CATEGORY_MESSAGES => 'Messages',
+        NOTIFICATION_CATEGORY_SCHEDULES => 'Schedules',
+        NOTIFICATION_CATEGORY_LESSONS => 'Lessons',
+        NOTIFICATION_CATEGORY_BIRTHDAYS => 'Birthdays',
+        NOTIFICATION_CATEGORY_REQUESTS => 'Requests',
+        NOTIFICATION_CATEGORY_SYSTEM => 'System notices',
+    ];
+}
+
+function notification_category_for_type(string $type): string
+{
+    // Map internal notification types to the user-facing setting categories.
+    return match ($type) {
+        NOTIFICATION_TYPE_NEW_MESSAGE => NOTIFICATION_CATEGORY_MESSAGES,
+        NOTIFICATION_TYPE_SCHEDULE_START,
+        NOTIFICATION_TYPE_SCHEDULE_CREATED,
+        NOTIFICATION_TYPE_SCHEDULE_UPDATED,
+        NOTIFICATION_TYPE_SCHEDULE_CANCELLED => NOTIFICATION_CATEGORY_SCHEDULES,
+        NOTIFICATION_TYPE_LESSON_START,
+        NOTIFICATION_TYPE_LESSON_UPDATED => NOTIFICATION_CATEGORY_LESSONS,
+        NOTIFICATION_TYPE_BIRTHDAY_UPCOMING,
+        NOTIFICATION_TYPE_BIRTHDAY_TODAY => NOTIFICATION_CATEGORY_BIRTHDAYS,
+        NOTIFICATION_TYPE_STUDENT_REQUEST => NOTIFICATION_CATEGORY_REQUESTS,
+        default => NOTIFICATION_CATEGORY_SYSTEM,
+    };
+}
+
+function load_user_notification_settings(PDO $pdo, int $user_id): array
+{
+    ensure_notification_settings_schema($pdo);
+
+    $defaults = array_fill_keys(array_keys(notification_category_options()), true);
+    $stmt = $pdo->prepare(
+        'SELECT messages_enabled, schedules_enabled, lessons_enabled, birthdays_enabled, requests_enabled, system_enabled
+         FROM user_notification_settings
+         WHERE user_id = ?
+         LIMIT 1'
+    );
+    $stmt->execute([$user_id]);
+    $row = $stmt->fetch();
+
+    if (!$row) {
+        return $defaults;
+    }
+
+    return [
+        NOTIFICATION_CATEGORY_MESSAGES => !empty($row['messages_enabled']),
+        NOTIFICATION_CATEGORY_SCHEDULES => !empty($row['schedules_enabled']),
+        NOTIFICATION_CATEGORY_LESSONS => !empty($row['lessons_enabled']),
+        NOTIFICATION_CATEGORY_BIRTHDAYS => !empty($row['birthdays_enabled']),
+        NOTIFICATION_CATEGORY_REQUESTS => !empty($row['requests_enabled']),
+        NOTIFICATION_CATEGORY_SYSTEM => !empty($row['system_enabled']),
+    ];
+}
+
+function save_user_notification_settings(PDO $pdo, int $user_id, array $enabled_categories): void
+{
+    ensure_notification_settings_schema($pdo);
+
+    $settings = [];
+    foreach (notification_category_options() as $category => $_label) {
+        $settings[$category] = !empty($enabled_categories[$category]) ? 1 : 0;
+    }
+
+    $stmt = $pdo->prepare(
+        'INSERT INTO user_notification_settings
+            (user_id, messages_enabled, schedules_enabled, lessons_enabled, birthdays_enabled, requests_enabled, system_enabled)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+            messages_enabled = VALUES(messages_enabled),
+            schedules_enabled = VALUES(schedules_enabled),
+            lessons_enabled = VALUES(lessons_enabled),
+            birthdays_enabled = VALUES(birthdays_enabled),
+            requests_enabled = VALUES(requests_enabled),
+            system_enabled = VALUES(system_enabled),
+            updated_at = CURRENT_TIMESTAMP'
+    );
+    $stmt->execute([
+        $user_id,
+        $settings[NOTIFICATION_CATEGORY_MESSAGES],
+        $settings[NOTIFICATION_CATEGORY_SCHEDULES],
+        $settings[NOTIFICATION_CATEGORY_LESSONS],
+        $settings[NOTIFICATION_CATEGORY_BIRTHDAYS],
+        $settings[NOTIFICATION_CATEGORY_REQUESTS],
+        $settings[NOTIFICATION_CATEGORY_SYSTEM],
+    ]);
+}
+
+function user_allows_notification_type(PDO $pdo, int $user_id, string $type): bool
+{
+    $settings = load_user_notification_settings($pdo, $user_id);
+    $category = notification_category_for_type($type);
+
+    return $settings[$category] ?? true;
+}
+
 // Inserts a new notification in to the database
 function create_notification(
     PDO $pdo,
@@ -73,6 +208,11 @@ function create_notification(
     ?string $dedupe_key = null
 ): bool {
     ensure_notifications_table_columns($pdo);
+
+    // Respect the recipient's notification settings before doing dedupe work.
+    if (!user_allows_notification_type($pdo, $user_id, $type)) {
+        return false;
+    }
 
     // Check the duplication notifications
     if ($dedupe_key !== null) {
@@ -123,6 +263,118 @@ function get_user_notifications(PDO $pdo, int $user_id): array
     $stmt->execute([$user_id]);
 
     return $stmt->fetchAll();
+}
+
+function notification_group_key(array $notification): string
+{
+    $type = (string) ($notification['type'] ?? '');
+    $action_url = (string) ($notification['action_url'] ?? '');
+
+    // Message notifications should group by conversation, not by individual message row.
+    if ($type === NOTIFICATION_TYPE_NEW_MESSAGE && preg_match('/[?&]id=(\d+)/', $action_url, $matches)) {
+        return 'message:conversation:' . $matches[1];
+    }
+
+    $related_type = (string) ($notification['related_type'] ?? '');
+    $related_id = (int) ($notification['related_id'] ?? 0);
+
+    if ($related_type !== '' && $related_id > 0) {
+        return $type . ':' . $related_type . ':' . $related_id;
+    }
+
+    // Fallback keeps similar system-style notifications together without requiring schema changes.
+    return $type . ':' . md5((string) ($notification['title'] ?? '') . '|' . $action_url);
+}
+
+function group_user_notifications(array $notifications): array
+{
+    $groups = [];
+
+    foreach ($notifications as $notification) {
+        $key = notification_group_key($notification);
+
+        if (!isset($groups[$key])) {
+            $groups[$key] = [
+                'group_key' => $key,
+                'latest' => $notification,
+                'items' => [],
+                'ids' => [],
+                'count' => 0,
+                'unread_count' => 0,
+            ];
+        }
+
+        $groups[$key]['items'][] = $notification;
+        $groups[$key]['ids'][] = (int) $notification['id'];
+        $groups[$key]['count']++;
+
+        if (empty($notification['is_read'])) {
+            $groups[$key]['unread_count']++;
+        }
+    }
+
+    return array_values($groups);
+}
+
+function mark_notifications_read(PDO $pdo, int $user_id, array $notification_ids): bool
+{
+    ensure_notifications_table_columns($pdo);
+
+    // Selected grouped cards can submit comma-separated IDs, so normalize before querying.
+    $ids = normalize_notification_id_list($notification_ids);
+
+    if (empty($ids)) {
+        return false;
+    }
+
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare(
+        'UPDATE notifications
+         SET is_read = 1,
+             read_at = COALESCE(read_at, NOW())
+         WHERE user_id = ?
+           AND id IN (' . $placeholders . ')'
+    );
+
+    return $stmt->execute(array_merge([$user_id], $ids));
+}
+
+function delete_notifications(PDO $pdo, int $user_id, array $notification_ids): bool
+{
+    ensure_notifications_table_columns($pdo);
+
+    // Reuse the same normalization as mark-read so grouped bulk actions behave consistently.
+    $ids = normalize_notification_id_list($notification_ids);
+
+    if (empty($ids)) {
+        return false;
+    }
+
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare(
+        'DELETE FROM notifications
+         WHERE user_id = ?
+           AND id IN (' . $placeholders . ')'
+    );
+
+    return $stmt->execute(array_merge([$user_id], $ids));
+}
+
+function normalize_notification_id_list(array $notification_ids): array
+{
+    $ids = [];
+
+    foreach ($notification_ids as $notification_id) {
+        foreach (explode(',', (string) $notification_id) as $id) {
+            $id = (int) trim($id);
+
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+    }
+
+    return array_values(array_unique($ids));
 }
 
 //Marks one notification as read

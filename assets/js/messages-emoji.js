@@ -374,7 +374,11 @@ window.GakumasMessageEmoji = (() => {
                     tab.setAttribute('aria-selected', String(item.id === activePackId));
                     tab.title = item.name;
                     tab.textContent = item.name;
-                    tab.addEventListener('click', () => renderPack(item.id));
+                    tab.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        renderPack(item.id);
+                    });
                     tabs.append(tab);
                 });
 
@@ -481,8 +485,33 @@ window.GakumasMessageEmoji = (() => {
             `;
             panel.append(panelFooter);
 
-            messageComposer.before(panel);
+            document.body.append(panel);
             return panel;
+        };
+
+        const positionComposerEmojiPanel = (panel) => {
+            if (!panel || panel.hidden || !messageEmojiToggle) {
+                return;
+            }
+
+            const toggleRect = messageEmojiToggle.getBoundingClientRect();
+            const viewportPadding = 12;
+            const panelWidth = panel.offsetWidth;
+            const panelHeight = panel.offsetHeight;
+            const left = Math.min(
+                Math.max(
+                    viewportPadding,
+                    toggleRect.left + (toggleRect.width / 2) - (panelWidth / 2)
+                ),
+                Math.max(viewportPadding, window.innerWidth - panelWidth - viewportPadding)
+            );
+            const spaceAbove = toggleRect.top - viewportPadding;
+            const top = spaceAbove >= panelHeight + 10
+                ? toggleRect.top - panelHeight - 10
+                : Math.min(toggleRect.bottom + 10, window.innerHeight - panelHeight - viewportPadding);
+
+            panel.style.left = `${left}px`;
+            panel.style.top = `${Math.max(viewportPadding, top)}px`;
         };
 
         const setComposerPanelMode = (mode) => {
@@ -514,6 +543,10 @@ window.GakumasMessageEmoji = (() => {
                 button.classList.toggle('active', isActive);
                 button.setAttribute('aria-pressed', String(isActive));
             });
+
+            if (!panel.hidden) {
+                window.requestAnimationFrame(() => positionComposerEmojiPanel(panel));
+            }
         };
 
         const toggleComposerEmojiPanel = () => {
@@ -534,31 +567,17 @@ window.GakumasMessageEmoji = (() => {
             messageEmojiToggle.setAttribute('aria-expanded', String(isOpening));
 
             if (isOpening) {
-                const inputArea = messageEmojiToggle.closest('.conversation-input-area');
-                const inputAreaRect = inputArea?.getBoundingClientRect();
-                const toggleRect = messageEmojiToggle.getBoundingClientRect();
-
-                if (inputAreaRect) {
-                    const panelWidth = panel.offsetWidth;
-                    const padding = 8;
-                    const centeredLeft = toggleRect.left
-                        - inputAreaRect.left
-                        + (toggleRect.width / 2)
-                        - (panelWidth / 2);
-                    const maxLeft = inputAreaRect.width - panelWidth - padding;
-                    const left = Math.min(
-                        Math.max(padding, centeredLeft),
-                        Math.max(padding, maxLeft)
-                    );
-
-                    panel.style.left = `${left}px`;
-                }
+                positionComposerEmojiPanel(panel);
             }
         };
 
         messageEmojiToggle?.addEventListener('click', (event) => {
             event.preventDefault();
             toggleComposerEmojiPanel();
+        });
+
+        window.addEventListener('resize', () => {
+            positionComposerEmojiPanel(document.querySelector('[data-message-emoji-panel]'));
         });
 
         return {

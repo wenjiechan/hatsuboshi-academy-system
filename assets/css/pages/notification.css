@@ -174,6 +174,68 @@
     gap: 18px;
 }
 
+.notifications-alert {
+    margin: 0;
+}
+
+.notifications-actions-panel {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--primary) 14%, white);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--shadow-soft);
+}
+
+.notifications-actions-heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.notifications-actions-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 11%, white);
+    color: var(--primary);
+}
+
+.notifications-actions-heading div {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.notifications-actions-heading strong {
+    color: var(--text-primary);
+    line-height: 1.25;
+}
+
+.notifications-bulk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.notifications-bulk-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    white-space: nowrap;
+}
+
 .notification-card {
     --notification-accent: var(--primary);
     position: relative;
@@ -181,7 +243,7 @@
     grid-template-rows: auto 1fr auto;
     min-width: 0;
     min-height: 230px;
-    padding: 22px;
+    padding: 22px 54px 22px 22px;
     overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--notification-accent) 16%, white);
     border-radius: var(--radius-md);
@@ -227,7 +289,27 @@
     font-size: 1.15rem;
 }
 
-.notification-new-badge {
+.notification-card-checkbox {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 2;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--notification-accent);
+    cursor: pointer;
+}
+
+.notification-card-badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.notification-new-badge,
+.notification-count-badge {
     padding: 6px 10px;
     border-radius: var(--radius-pill);
     background: color-mix(in srgb, var(--notification-accent) 13%, white);
@@ -236,6 +318,11 @@
     font-weight: 900;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+}
+
+.notification-count-badge {
+    background: color-mix(in srgb, var(--text-muted) 12%, white);
+    color: var(--text-secondary);
 }
 
 .notification-card-content {
@@ -278,14 +365,22 @@
     align-items: center;
     flex: 0 0 auto;
     gap: 7px;
+    padding: 0;
+    border: 0;
+    background: transparent;
     color: var(--notification-accent);
     font-size: 0.86rem;
     font-weight: 900;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .notification-card-link:hover {
     color: var(--notification-accent);
+}
+
+.notification-open-form {
+    margin: 0;
 }
 
 .notification-card-link--inline {
@@ -321,8 +416,13 @@
 
 @media (max-width: 767.98px) {
     .notifications-hero,
-    .notifications-card-grid {
+    .notifications-card-grid,
+    .notifications-actions-panel {
         grid-template-columns: 1fr;
+    }
+
+    .notifications-bulk-actions {
+        justify-content: flex-start;
     }
 }
 
@@ -330,6 +430,15 @@
     .notifications-hero,
     .notification-card {
         padding: 18px;
+    }
+
+    .notification-card {
+        padding-right: 50px;
+    }
+
+    .notification-card-checkbox {
+        top: 16px;
+        right: 16px;
     }
 
     .notifications-summary-grid {
@@ -343,5 +452,9 @@
     .notification-card-footer {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .notifications-bulk-actions .btn {
+        flex: 1 1 100%;
     }
 }

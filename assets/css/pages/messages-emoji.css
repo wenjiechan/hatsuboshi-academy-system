@@ -136,12 +136,11 @@
 }
 
 .message-emoji-panel {
-    position: absolute;
-    z-index: 80;
-    bottom: calc(100% - 4px);
+    position: fixed;
+    z-index: 2100;
     display: grid;
-    width: min(100%, 360px);
-    max-height: min(420px, calc(100vh - 150px));
+    width: min(360px, calc(100vw - 24px));
+    max-height: min(420px, calc(100dvh - 24px));
     gap: 8px;
     margin: 0;
     overflow: hidden;
@@ -399,8 +398,7 @@
 
 @media (max-width: 640px) {
     .message-emoji-panel {
-        bottom: calc(100% - 2px);
-        width: min(100%, 328px);
+        width: min(328px, calc(100vw - 24px));
     }
 
     .message-emoji-grid {

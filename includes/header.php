@@ -110,6 +110,12 @@ $role_label = match ($role) {
 $is_notifications_page = basename($_SERVER['PHP_SELF']) === 'notifications.php';
 $current_directory = basename(dirname(str_replace('\\', '/', $_SERVER['PHP_SELF'] ?? '')));
 $is_messages_page = $current_directory === 'messages';
+$app_css_version = (string) max(
+    filemtime(__DIR__ . '/../assets/css/theme.css'),
+    filemtime(__DIR__ . '/../assets/css/components.css'),
+    filemtime(__DIR__ . '/../assets/css/pages/dashboard.css'),
+    filemtime(__DIR__ . '/../assets/css/pages/notification.css')
+);
 ?>
 
 <!DOCTYPE html>
@@ -129,10 +135,10 @@ $is_messages_page = $current_directory === 'messages';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <!-- App Styles -->
-    <link rel="stylesheet" href="/gakumas-sms/assets/css/theme.css">
-    <link rel="stylesheet" href="/gakumas-sms/assets/css/components.css">
-    <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/dashboard.css">
-    <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/notification.css">
+    <link rel="stylesheet" href="/gakumas-sms/assets/css/theme.css?v=<?= htmlspecialchars($app_css_version, ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="/gakumas-sms/assets/css/components.css?v=<?= htmlspecialchars($app_css_version, ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/dashboard.css?v=<?= htmlspecialchars($app_css_version, ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="/gakumas-sms/assets/css/pages/notification.css?v=<?= htmlspecialchars($app_css_version, ENT_QUOTES, 'UTF-8') ?>">
     <?php foreach (($page_styles ?? []) as $style_href): ?>
         <link rel="stylesheet" href="<?= htmlspecialchars($style_href, ENT_QUOTES, 'UTF-8') ?>">
     <?php endforeach; ?>

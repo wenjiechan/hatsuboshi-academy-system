@@ -75,13 +75,22 @@ $group_mention_members = $is_group_conversation
 $current_group_avatar = trim((string) ($conversation['group_avatar'] ?? $conversation['other_avatar'] ?? ''));
 
 $page_title = 'Conversation';
+$message_asset_version = (string) max(
+    filemtime(__DIR__ . '/../assets/css/pages/messages.css'),
+    filemtime(__DIR__ . '/../assets/css/pages/messages-conversation.css'),
+    filemtime(__DIR__ . '/../assets/css/pages/messages-thread.css'),
+    filemtime(__DIR__ . '/../assets/css/pages/messages-responsive.css'),
+    filemtime(__DIR__ . '/../assets/css/pages/messages-emoji.css'),
+    filemtime(__DIR__ . '/../assets/css/pages/messages-attachments.css')
+);
+$message_emoji_script_version = (string) filemtime(__DIR__ . '/../assets/js/messages-emoji.js');
 $page_styles = [
-    '/gakumas-sms/assets/css/pages/messages.css',
-    '/gakumas-sms/assets/css/pages/messages-conversation.css',
-    '/gakumas-sms/assets/css/pages/messages-thread.css',
-    '/gakumas-sms/assets/css/pages/messages-responsive.css',
-    '/gakumas-sms/assets/css/pages/messages-emoji.css',
-    '/gakumas-sms/assets/css/pages/messages-attachments.css',
+    '/gakumas-sms/assets/css/pages/messages.css?v=' . $message_asset_version,
+    '/gakumas-sms/assets/css/pages/messages-conversation.css?v=' . $message_asset_version,
+    '/gakumas-sms/assets/css/pages/messages-thread.css?v=' . $message_asset_version,
+    '/gakumas-sms/assets/css/pages/messages-responsive.css?v=' . $message_asset_version,
+    '/gakumas-sms/assets/css/pages/messages-emoji.css?v=' . $message_asset_version,
+    '/gakumas-sms/assets/css/pages/messages-attachments.css?v=' . $message_asset_version,
 ];
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/sidebar.php';
@@ -1068,7 +1077,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <script src="/gakumas-sms/assets/js/messages-mentions.js" defer></script>
 <script src="/gakumas-sms/assets/js/messages-read-receipts.js" defer></script>
 <script src="/gakumas-sms/assets/js/messages-typing.js" defer></script>
-<script src="/gakumas-sms/assets/js/messages-emoji.js" defer></script>
+<script src="/gakumas-sms/assets/js/messages-emoji.js?v=<?= htmlspecialchars($message_emoji_script_version, ENT_QUOTES, 'UTF-8') ?>" defer></script>
 <script src="/gakumas-sms/assets/js/messages-attachments.js" defer></script>
 <script src="/gakumas-sms/assets/js/messages-actions.js" defer></script>
 <script src="/gakumas-sms/assets/js/messages.js" defer></script>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2026 at 10:35 AM
+-- Generation Time: Jul 31, 2026 at 10:57 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -83,7 +83,6 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (309, 3, '2026-06-25', 65, 55, 75, '2026-06-25 11:44:20', '2026-06-25 11:44:20'),
 (311, 5, '2026-06-25', 65, 55, 65, '2026-06-25 16:26:59', '2026-06-25 16:26:59'),
 (377, 12, '2026-06-30', 130, 100, 105, '2026-06-30 17:53:28', '2026-06-30 17:53:28'),
-(379, 6, '2026-07-01', 55, 55, 60, '2026-07-01 13:12:23', '2026-07-01 13:12:23'),
 (397, 1, '2026-07-03', 75, 75, 80, '2026-07-03 07:59:03', '2026-07-03 07:59:03'),
 (398, 13, '2026-07-03', 80, 90, 70, '2026-07-03 08:00:00', '2026-07-03 08:00:00'),
 (399, 3, '2026-07-03', 65, 55, 75, '2026-07-03 08:01:08', '2026-07-03 08:01:08'),
@@ -95,7 +94,6 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (405, 8, '2026-07-07', 50, 60, 60, '2026-07-07 17:10:12', '2026-07-07 17:10:12'),
 (406, 8, '2026-07-07', 50, 60, 60, '2026-07-07 17:16:30', '2026-07-07 17:16:30'),
 (407, 8, '2026-07-07', 50, 60, 60, '2026-07-07 17:31:20', '2026-07-07 17:31:20'),
-(410, 7, '2026-07-08', 55, 55, 60, '2026-07-08 12:10:17', '2026-07-08 12:10:17'),
 (412, 9, '2026-07-08', 65, 70, 80, '2026-07-08 12:10:57', '2026-07-08 12:10:57'),
 (415, 14, '2026-07-08', 88, 76, 92, '2026-07-08 13:47:13', '2026-07-08 13:47:13'),
 (417, 11, '2026-07-10', 60, 70, 55, '2026-07-10 16:32:03', '2026-07-10 16:32:03'),
@@ -113,9 +111,6 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (434, 11, '2026-07-21', 60, 70, 55, '2026-07-21 16:57:08', '2026-07-21 16:57:08'),
 (435, 14, '2026-07-21', 88, 76, 92, '2026-07-21 17:31:40', '2026-07-21 17:31:40'),
 (436, 12, '2026-07-21', 130, 100, 105, '2026-07-21 17:45:18', '2026-07-21 17:45:18'),
-(437, 7, '2026-07-22', 55, 55, 60, '2026-07-22 11:03:03', '2026-07-22 11:03:03'),
-(438, 7, '2026-07-22', 55, 55, 60, '2026-07-22 11:03:09', '2026-07-22 11:03:09'),
-(439, 7, '2026-07-22', 55, 55, 60, '2026-07-22 11:03:19', '2026-07-22 11:03:19'),
 (440, 7, '2026-07-22', 55, 55, 60, '2026-07-22 11:03:23', '2026-07-22 11:03:23'),
 (441, 14, '2026-07-22', 88, 76, 92, '2026-07-22 12:20:18', '2026-07-22 12:20:18'),
 (442, 14, '2026-07-22', 88, 76, 92, '2026-07-22 12:20:57', '2026-07-22 12:20:57'),
@@ -130,7 +125,6 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (451, 4, '2026-07-24', 55, 55, 65, '2026-07-24 10:56:01', '2026-07-24 10:56:01'),
 (452, 4, '2026-07-24', 55, 55, 65, '2026-07-24 10:56:32', '2026-07-24 10:56:32'),
 (453, 5, '2026-07-24', 65, 55, 65, '2026-07-24 10:57:01', '2026-07-24 10:57:01'),
-(454, 6, '2026-07-24', 55, 55, 60, '2026-07-24 11:03:04', '2026-07-24 11:03:04'),
 (455, 6, '2026-07-24', 55, 55, 60, '2026-07-24 11:03:27', '2026-07-24 11:03:27'),
 (456, 4, '2026-07-24', 55, 55, 65, '2026-07-24 17:32:45', '2026-07-24 17:32:45'),
 (457, 4, '2026-07-24', 55, 55, 65, '2026-07-24 17:50:48', '2026-07-24 17:50:48'),
@@ -155,7 +149,21 @@ INSERT INTO `daily_student_stats` (`id`, `student_id`, `stat_date`, `vocal`, `da
 (476, 2, '2026-07-30', 75, 65, 55, '2026-07-30 09:27:47', '2026-07-30 09:27:47'),
 (477, 6, '2026-07-30', 55, 55, 60, '2026-07-30 16:19:51', '2026-07-30 16:19:51'),
 (478, 2, '2026-07-30', 75, 65, 55, '2026-07-30 16:23:49', '2026-07-30 16:23:49'),
-(479, 2, '2026-07-30', 75, 65, 55, '2026-07-30 16:23:57', '2026-07-30 16:23:57');
+(479, 2, '2026-07-30', 75, 65, 55, '2026-07-30 16:23:57', '2026-07-30 16:23:57'),
+(480, 2, '2026-07-31', 75, 65, 55, '2026-07-31 09:34:14', '2026-07-31 09:34:14'),
+(481, 6, '2026-07-31', 55, 55, 60, '2026-07-31 14:10:39', '2026-07-31 14:10:39'),
+(482, 7, '2026-07-31', 55, 55, 60, '2026-07-31 14:11:18', '2026-07-31 14:11:18'),
+(483, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:15:07', '2026-07-31 14:15:07'),
+(484, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:18:05', '2026-07-31 14:18:05'),
+(485, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:33:26', '2026-07-31 14:33:26'),
+(486, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:33:30', '2026-07-31 14:33:30'),
+(487, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:33:33', '2026-07-31 14:33:33'),
+(488, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:40:02', '2026-07-31 14:40:02'),
+(489, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:43:51', '2026-07-31 14:43:51'),
+(490, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:43:55', '2026-07-31 14:43:55'),
+(491, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:49:54', '2026-07-31 14:49:54'),
+(492, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:49:58', '2026-07-31 14:49:58'),
+(493, 2, '2026-07-31', 75, 65, 55, '2026-07-31 14:50:04', '2026-07-31 14:50:04');
 
 -- --------------------------------------------------------
 
@@ -1970,12 +1978,12 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `avatar`, `is_active`
 (3, 'Dance Trainer', '$2y$10$t9sRByIWadz.sKik8/7BCeBHMW8S.QZjUqdFzjr2seuuDd3Qx7dMi', 'teacher', NULL, 1, '2026-05-26 13:11:56', '2026-07-08 11:51:51', '2026-07-08 11:51:51', '#FF6B9D', '#FFB3D1'),
 (4, 'Visual Trainer', '$2y$10$bGNC.jMo6tcO1e0f6A0q5erVt6QZ2LbnR4kS1AD47.vwZW0J3GQV6', 'teacher', NULL, 1, '2026-05-26 13:12:30', '2026-05-27 11:40:41', NULL, '#FF6B9D', '#FFB3D1'),
 (5, 'Saki Hanami', '$2y$10$ff9abDr59dXAcmMgP6QO3uqs90jpoKPhk3xs8sS5zY3kISRRDVyV6', 'student', 'Saki Hanami.png', 1, '2026-05-26 13:13:13', '2026-07-21 11:48:33', '2026-07-21 11:48:33', '#E30F25', '#FAD0D4'),
-(6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-07-30 16:23:49', '2026-07-30 16:23:49', '#0C7BBB', '#3D95C9'),
+(6, 'Temari Tsukimura', '$2y$10$iSoM6ouEBxTnTSw1CXHFKe89P9Lat.OcPxFayJwF8Y9xNkFjBLrlm', 'student', 'Temari Tsukimura.png', 1, '2026-05-26 13:13:13', '2026-07-31 09:34:14', '2026-07-31 09:34:14', '#0C7BBB', '#3D95C9'),
 (7, 'Kotone Fujita', '$2y$10$b0uAqh6CXeKP3rxgJbKpC.4W2fcJKUEO/qD19wI7P9zfkRx66NYRC', 'student', 'Kotone Fujita.png', 1, '2026-05-26 13:13:13', '2026-07-03 08:01:08', '2026-07-03 08:01:08', '#F8C112', '#FEF3CF'),
 (8, 'Lilja Katsuragi', '$2y$10$U0wQB4kmtvPYWWQX.9oi0OJ60HDhnd/yf.tuf71exJ8MoG8xS0FVa', 'student', 'Lilja Katsuragi.png', 1, '2026-05-26 13:13:13', '2026-07-24 17:32:45', '2026-07-24 17:32:45', '#7DC4D4', '#EAFDFF'),
 (9, 'Sumika Shiun', '$2y$10$XWAu/FVsR0m4XnA9srsx7ev50L3zAlz0qQViMwbhYzSDkRh0KF6cO', 'student', 'Sumika Shiun.png', 1, '2026-05-26 13:13:13', '2026-07-24 10:57:01', '2026-07-24 10:57:01', '#7CFC00', '#96FD33'),
-(10, 'Hiro Shinosawa', '$2y$10$yw50phXBAJaDziCBQu8ul.P/V5GmB5qKyObADsMOiw5nMBEfly4o2', 'student', 'Hiro Shinosawa.png', 1, '2026-05-26 13:13:13', '2026-07-30 16:19:51', '2026-07-30 16:19:51', '#00AFCC', '#BFEAF2'),
-(11, 'China Kuramoto', '$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy', 'student', 'China Kuramoto.png', 1, '2026-05-26 13:13:13', '2026-07-28 16:25:24', '2026-07-28 16:25:24', '#F68B1F', '#FCE0C5'),
+(10, 'Hiro Shinosawa', '$2y$10$yw50phXBAJaDziCBQu8ul.P/V5GmB5qKyObADsMOiw5nMBEfly4o2', 'student', 'Hiro Shinosawa.png', 1, '2026-05-26 13:13:13', '2026-07-31 14:10:39', '2026-07-31 14:10:39', '#00AFCC', '#BFEAF2'),
+(11, 'China Kuramoto', '$2y$10$kFyzwQwuqHfCPtRN3f4N/uIbqFxw9efSIbK3GEcHjpRK3Vw7QE2jy', 'student', 'China Kuramoto.png', 1, '2026-05-26 13:13:13', '2026-07-31 14:11:18', '2026-07-31 14:11:18', '#F68B1F', '#FCE0C5'),
 (12, 'Ume Hanami', '$2y$10$J3odyrCmdaCqHIBPZczN6Ogetu1yEPjb4t5eualYarDubGf9liQpq', 'student', 'Ume Hanami.png', 1, '2026-05-26 13:13:13', '2026-07-07 17:20:13', '2026-07-07 17:16:30', '#EA533A', '#FAD4CB'),
 (13, 'Misuzu Hataya', '$2y$10$o5HsBq.D2KCvw7/nTI6j3.Oauif4UvvViRtc3ntYj7O9JHQ2OoWv6', 'student', 'Misuzu Hataya.png', 1, '2026-05-26 13:13:13', '2026-07-23 13:57:15', '2026-07-23 13:57:15', '#7A99CF', '#D8E0EF'),
 (14, 'Mao Arimura', '$2y$10$k5WzxPeI8a9aX45ap/4nZ.a5gWd9dqCUbxYQtQKdf5nOHOB57hMIO', 'student', 'Mao Arimura.png', 1, '2026-05-26 13:13:13', '2026-07-27 13:10:26', '2026-07-27 13:10:26', '#7F1184', '#DCC2DE'),
@@ -1996,6 +2004,23 @@ CREATE TABLE `user_message_settings` (
   `message_background` varchar(30) NOT NULL DEFAULT 'default',
   `message_text_size` varchar(20) NOT NULL DEFAULT 'normal',
   `compact_layout` tinyint(1) NOT NULL DEFAULT 0,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_notification_settings`
+--
+
+CREATE TABLE `user_notification_settings` (
+  `user_id` int(11) NOT NULL,
+  `messages_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `schedules_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `lessons_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `birthdays_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `requests_enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `system_enabled` tinyint(1) NOT NULL DEFAULT 1,
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -2218,6 +2243,12 @@ ALTER TABLE `user_message_settings`
   ADD PRIMARY KEY (`user_id`);
 
 --
+-- Indexes for table `user_notification_settings`
+--
+ALTER TABLE `user_notification_settings`
+  ADD PRIMARY KEY (`user_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -2231,7 +2262,7 @@ ALTER TABLE `conversations`
 -- AUTO_INCREMENT for table `daily_student_stats`
 --
 ALTER TABLE `daily_student_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=480;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=494;
 
 --
 -- AUTO_INCREMENT for table `events`
@@ -2477,6 +2508,12 @@ ALTER TABLE `teachers`
 --
 ALTER TABLE `user_message_settings`
   ADD CONSTRAINT `fk_user_message_settings_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_notification_settings`
+--
+ALTER TABLE `user_notification_settings`
+  ADD CONSTRAINT `fk_user_notification_settings_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

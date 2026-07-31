@@ -1,0 +1,26 @@
+{
+  "name": "Class 1-2",
+  "stickers": [
+    { "id": "china-ojousama", "label": "China Ojousama", "file": "china-ojousama.webp" },
+    { "id": "china-rich", "label": "China Rich", "file": "china-rich.webp" },
+    { "id": "china-animal", "label": "China Animal", "file": "china-animal.webp" },
+    { "id": "china-leadership", "label": "China Leadership", "file": "china-leadership.webp" },
+    { "id": "china-name", "label": "China Name", "file": "china-name.webp" },
+    { "id": "hiro-physics", "label": "Hiro Physics", "file": "hiro-physics.webp" },
+    { "id": "hiro-skeleton", "label": "Hiro Skeleton", "file": "hiro-skeleton.webp" },
+    { "id": "hiro-power", "label": "Hiro Power", "file": "hiro-power.webp" },
+    { "id": "hiro-dizzy", "label": "Hiro Dizzy", "file": "hiro-dizzy.webp" },
+    { "id": "hiro-name", "label": "Hiro Name", "file": "hiro-name.webp" },
+    { "id": "ume-rolling", "label": "Ume Rolling", "file": "ume-rolling.webp" },
+    { "id": "ume-shouting", "label": "Ume Shouting", "file": "ume-shouting.webp" },
+    { "id": "ume-shy", "label": "Ume Shy", "file": "ume-shy.webp" },
+    { "id": "ume-practicing", "label": "Ume Practicing", "file": "ume-practicing.webp" },
+    { "id": "ume-name", "label": "Ume Name", "file": "ume-name.webp" },
+    { "id": "misuzu-slepping", "label": "Misuzu Sleeping", "file": "misuzu-sleeping.webp" },
+    { "id": "misuzu-cooking", "label": "Misuzu Cooking", "file": "misuzu-cooking.webp" },
+    { "id": "misuzu-knife", "label": "Misuzu Knife", "file": "misuzu-knife.webp" },
+    { "id": "misuzu-escaping-lesson", "label": "Misuzu Escaping Lesson", "file": "misuzu-escaping-lesson.webp" },
+    { "id": "misuzu-name", "label": "Misuzu Name", "file": "misuzu-name.webp" },
+    { "id": "class-1-2", "label": "Class 1-2", "file": "class-1-2.webp" }
+  ]
+}

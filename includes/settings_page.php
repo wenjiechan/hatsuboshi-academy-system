@@ -3,6 +3,7 @@ require_once '../includes/auth.php';
 require_once '../config/database.php';
 require_once '../includes/theme_settings_helpers.php';
 require_once '../includes/message_settings_helpers.php';
+require_once '../includes/notifications_helpers.php';
 require_once '../includes/password_settings_helpers.php';
 
 // Shared settings controller used by admin, producer, teacher, and student wrappers.
@@ -39,6 +40,7 @@ $user_theme = load_user_theme($pdo, (int) $_SESSION['id']);
 $current_primary = $user_theme['primary'];
 $current_secondary = $user_theme['secondary'];
 $message_settings = load_user_message_settings($pdo, (int) $_SESSION['id']);
+$notification_settings = load_user_notification_settings($pdo, (int) $_SESSION['id']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf($_POST['csrf_token'] ?? '');
@@ -65,6 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message_settings['compact_layout']
         );
         $success = 'Message settings updated successfully.';
+    } elseif ($settings_action === 'save_notification_settings') {
+        $enabled_categories = [];
+        foreach (notification_category_options() as $category => $_label) {
+            $enabled_categories[$category] = in_array($category, $_POST['notification_categories'] ?? [], true);
+        }
+        save_user_notification_settings($pdo, (int) $_SESSION['id'], $enabled_categories);
+        $notification_settings = load_user_notification_settings($pdo, (int) $_SESSION['id']);
+        $success = 'Notification settings updated successfully.';
     } elseif ($settings_action === 'cancel_password_change') {
         unset($_SESSION['password_change_verified_at']);
         $password_change_verified = false;
@@ -112,6 +122,7 @@ require_once '../includes/sidebar.php';
 
     <?php require '../includes/theme_settings_page.php'; ?>
     <?php require '../includes/message_settings_page.php'; ?>
+    <?php require '../includes/notification_settings_page.php'; ?>
     <?php require '../includes/password_settings_page.php'; ?>
 </main>
 
